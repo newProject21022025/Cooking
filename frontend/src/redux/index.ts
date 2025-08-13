@@ -1,14 +1,14 @@
 // src/store/index.ts
+
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './userSlice'; // ✨ Імпортуємо наш userSlice
+import userReducer from './userSlice'; // ✨ Импортируем наш userSlice
 
 export const store = configureStore({
   reducer: {
-    user: userReducer, 
-    
+    user: userReducer, // ✨ Добавляем userReducer в наш стор
   }
 });
 
-// Типи для використання в компонентах
+// Типы для использования в компонентах
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -1,0 +1,101 @@
+// src/components/header/Header.module.scss
+
+.header {
+  position: fixed; // Чтобы хедер всегда был вверху
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; // Распределяем элементы по краям
+  align-items: center;
+  padding: 1.5rem 3rem; // Отступы сверху/снизу и по бокам
+  background-color: rgba(0, 0, 0, 0.7); // Полупрозрачный черный фон
+  backdrop-filter: blur(8px); // Эффект размытия
+  -webkit-backdrop-filter: blur(8px); // Для Safari
+  z-index: 1000; // Убедимся, что хедер поверх другого контента
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box; // Учитываем padding в ширине
+
+  &.scrolled {
+    background-color: rgba(0, 0, 0, 0.9); // Более темный фон при скролле
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.logo {
+  a {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #007bff; // Цвет при наведении
+    }
+  }
+}
+
+.navigation {
+  display: flex;
+  gap: 2rem; // Отступы между ссылками
+}
+
+.navLink {
+  font-size: 1.1rem;
+  color: #e0e0e0; // Светлый цвет текста
+  text-decoration: none;
+  padding: 0.5rem 0;
+  position: relative; // Для подчеркивания
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
+
+  // Анимация подчеркивания при наведении
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+.languageSwitcher {
+  display: flex;
+  align-items: center;
+}
+
+.languageButton {
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #fff;
+  }
+
+  &.active {
+    color: #007bff; // Активный язык
+    font-weight: 700;
+  }
+}
+
+.languageSeparator {
+  color: #b0b0b0;
+  margin: 0 0.5rem;
+}
+
