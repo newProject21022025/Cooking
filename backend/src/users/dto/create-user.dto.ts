@@ -1,4 +1,20 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsNumber, IsArray, IsDateString } from 'class-validator';
+// src/users/dto/create-user.dto.ts
+
+import { 
+  IsEmail, 
+  IsNotEmpty, 
+  IsOptional, 
+  IsString, 
+  IsArray, 
+  IsEnum, 
+  IsNumber 
+} from 'class-validator';
+
+export enum UserRole {
+  USER = 'user',
+  PARTNER = 'partner',
+  ADMIN = 'admin',
+}
 
 export class CreateUserDto {
   @IsEmail()
@@ -26,26 +42,25 @@ export class CreateUserDto {
   deliveryAddress?: string;
 
   @IsOptional()
-  @IsString()
-  role?: string;
+  @IsEnum(UserRole)
+  role?: UserRole; // по умолчанию 'user'
 
   @IsOptional()
   @IsArray()
-  orderHistory?: any[];
+  favorites?: string[]; // id блюд
 
   @IsOptional()
   @IsArray()
-  favorites?: any[];
+  orderHistory?: {
+    orderId: string;
+    partnerId: string;
+    date: string;
+    status: 'completed' | 'cancelled' | 'pending';
+  }[];
 
-  @IsOptional()
-  @IsArray()
-  rating?: any[];
-
+  /** Средний рейтинг пользователя */
   @IsOptional()
   @IsNumber()
-  discount?: number;
-
-  @IsOptional()
-  @IsDateString()
-  createdAt?: string;
+  averageRating?: number;
 }
+

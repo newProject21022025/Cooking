@@ -1,15 +1,18 @@
+// app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { SupabaseService } from './supabase/supabase.service';
+import { UsersModule } from './users/users.module';
+import { SupabaseModule } from './supabase/supabase.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // робить змінні доступними у всьому додатку
+      isGlobal: true,
     }),
+    SupabaseModule,
+    UsersModule,
+    AuthModule
   ],
-  providers: [SupabaseService],
-  exports: [SupabaseService],
 })
 export class AppModule {}
-
