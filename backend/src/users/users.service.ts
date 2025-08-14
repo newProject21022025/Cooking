@@ -1,8 +1,6 @@
 // src/users/users.service.ts
 
 
-// src/users/users.service.ts
-
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateUserDto } from './dto/create-user.dto';
