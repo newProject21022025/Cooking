@@ -4,6 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
+import { DishesModule } from './dishes/dishes.module';
+import { PartnersModule } from './partners/partners.module';
+import { PartnerDishesModule } from './partner-dishes/partner-dishes.module';
 
 @Module({
   imports: [
@@ -12,7 +15,10 @@ import { AuthModule } from './auth/auth.module';
     }),
     SupabaseModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    DishesModule,
+    PartnersModule,
+    PartnerDishesModule,
   ],
 })
 export class AppModule {}

@@ -3,17 +3,17 @@
 
 import React from "react";
 import styles from "./page.module.scss";
-// import { useTranslations } from "next-intl"; // Раскомментируйте, если используете переводы
+// import { useTranslations } from "next-intl"; 
 
 export default function PartnersPage() {
-  // const t = useTranslations("Partners"); // Раскомментируйте, если используете переводы
+  // const t = useTranslations("Partners"); 
   return (
     <div className={styles.container}>
       <main className={styles.mainContent}>
-        <h1 className={styles.title}>Личный кабинет партнёра</h1>
+        <h1 className={styles.title}>Особистий кабінет партнера</h1>
         <p className={styles.description}>
-          {/* {t("description")} */} {/* Раскомментируйте, если используете переводы */}
-          Здесь будет содержимое страницы для партнёров.
+          {/* {t("description")} */} 
+          Тут буде вміст сторінки партнерів.
         </p>
       </main>
     </div>

@@ -21,21 +21,21 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound();
   }
 
-  // ✨ Асинхронно загружаем сообщения для текущей локали
+  
   let messages;
   try {
     messages = (await import(`../../../messages/${locale}.json`)).default;
   } catch (error) {
-    // Fallback или обработка ошибки, если файл переводов не найден
+    
     console.error(`Could not load messages for locale ${locale}:`, error);
-    notFound(); // Или используйте запасной язык / пустые сообщения
+    notFound(); 
   }
 
   return (
     <html lang={locale}>
       <body>
         <ReduxProvider>
-          {/* ✨ Передаем загруженные сообщения в NextIntlClientProvider */}
+          
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Header locale={locale} />
             {children}

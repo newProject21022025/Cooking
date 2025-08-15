@@ -7,12 +7,13 @@ import {
   IsString, 
   IsArray, 
   IsEnum, 
-  IsNumber 
+  IsNumber,
+  IsBoolean
 } from 'class-validator';
 
 export enum UserRole {
   USER = 'user',
-  PARTNER = 'partner',
+  // PARTNER = 'partner',
   ADMIN = 'admin',
 }
 
@@ -43,7 +44,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsEnum(UserRole)
-  role?: UserRole; // по умолчанию 'user'
+  role?: UserRole; 
 
   @IsOptional()
   @IsArray()
@@ -58,9 +59,14 @@ export class CreateUserDto {
     status: 'completed' | 'cancelled' | 'pending';
   }[];
 
-  /** Средний рейтинг пользователя */
   @IsOptional()
   @IsNumber()
   averageRating?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isBlocked?: boolean; // по замовчуванню false
 }
+
+
 

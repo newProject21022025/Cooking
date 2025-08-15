@@ -9,8 +9,8 @@ export class SupabaseService {
   constructor(private configService: ConfigService) {
     const url = this.configService.get<string>('SUPABASE_URL');
     const key = this.configService.get<string>('SUPABASE_KEY');
-    console.log('SUPABASE_URL:', this.configService.get('SUPABASE_URL'));
-    console.log('SUPABASE_KEY:', this.configService.get('SUPABASE_KEY'));
+    // console.log('SUPABASE_URL:', this.configService.get('SUPABASE_URL'));
+    // console.log('SUPABASE_KEY:', this.configService.get('SUPABASE_KEY'));
 
     if (!url || !key) {
       throw new Error('Supabase URL або KEY не задані в .env');

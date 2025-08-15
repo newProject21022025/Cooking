@@ -1,7 +1,7 @@
 // src/store/userSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// Определение типа для объекта пользователя (можете расширить по вашей модели из бэкенда)
+
 interface UserState {
   id: string | null;
   email: string | null;
@@ -9,7 +9,7 @@ interface UserState {
   lastName: string | null;
   phoneNumber: string | null;
   deliveryAddress: string | null;
-  role: 'user' | 'partner' | 'admin' | null; // Добавьте 'admin', если у вас есть такая роль
+  role: 'user' | 'partner' | 'admin' | null; 
   averageRating: number | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -26,7 +26,7 @@ const initialState: UserState = {
   role: null,
   averageRating: null,
   isAuthenticated: false,
-  isLoading: true, // Изначально true, пока мы не проверим статус аутентификации
+  isLoading: true, 
   error: null,
 };
 
@@ -34,12 +34,12 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // Начало загрузки пользователя
+    
     userLoading(state) {
       state.isLoading = true;
       state.error = null;
     },
-    // Успешная загрузка пользователя
+    
     userLoaded(state, action: PayloadAction<Omit<UserState, 'isLoading' | 'error' | 'isAuthenticated'>>) {
       state.isLoading = false;
       state.isAuthenticated = true;
@@ -52,12 +52,12 @@ const userSlice = createSlice({
       state.role = action.payload.role;
       state.averageRating = action.payload.averageRating;
     },
-    // Ошибка загрузки пользователя или не авторизован
+    
     userLoadError(state, action: PayloadAction<string>) {
       state.isLoading = false;
       state.isAuthenticated = false;
       state.error = action.payload;
-      // Сбросить данные пользователя при ошибке
+      
       state.id = null;
       state.email = null;
       state.firstName = null;
@@ -67,9 +67,9 @@ const userSlice = createSlice({
       state.role = null;
       state.averageRating = null;
     },
-    // Выход пользователя
+    
     userLoggedOut(state) {
-      Object.assign(state, initialState, { isLoading: false }); // Сбросить состояние до начального, но не загружается
+      Object.assign(state, initialState, { isLoading: false }); 
     },
   },
 });
