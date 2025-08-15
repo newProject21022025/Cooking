@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 1rem; // Отступы между элементами формы
+  gap: 1rem; 
 }
 
 .input {
@@ -54,12 +54,12 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: black;
   font-size: 1rem;
   outline: none;
 
   &:focus {
-    border-color: #0070f3; // Цвет рамки при фокусе
+    border-color: #0070f3; 
     box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.3);
   }
   &::placeholder {

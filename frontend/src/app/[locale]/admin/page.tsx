@@ -3,17 +3,17 @@
 
 import React from "react";
 import styles from "./page.module.scss";
-// import { useTranslations } from "next-intl"; // Раскомментируйте, если используете переводы
+// import { useTranslations } from "next-intl";
 
 export default function AdminPage() {
-  // const t = useTranslations("Admin"); // Раскомментируйте, если используете переводы
+  // const t = useTranslations("Admin"); 
   return (
     <div className={styles.container}>
       <main className={styles.mainContent}>
-        <h1 className={styles.title}>Панель Администратора</h1>
+        <h1 className={styles.title}>Панель Адміністратора</h1>
         <p className={styles.description}>
-          {/* {t("description")} */} {/* Раскомментируйте, если используете переводы */}
-          Здесь будет содержимое страницы администратора. Доступ только для авторизованных администраторов.
+          {/* {t("description")} */} 
+          Тут буде вміст сторінки адміністратора. Доступ лише для авторизованих адміністраторів.
         </p>
       </main>
     </div>

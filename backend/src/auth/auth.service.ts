@@ -12,7 +12,7 @@ export class AuthService {
   ) {}
 
   async login(email: string, pass: string): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByEmail(email); // Предположим, у вас есть такой метод в UsersService
+    const user = await this.usersService.findOneByEmail(email); 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -22,7 +22,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { email: user.email, sub: user.id }; // То, что мы "зашиваем" в токен
+    const payload = { email: user.email, sub: user.id }; // Те, що ми "зашиваємо" у токен
     
     return {
       access_token: this.jwtService.sign(payload),

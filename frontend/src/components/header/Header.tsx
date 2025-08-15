@@ -2,7 +2,7 @@
 
 "use client";
 
-import { usePathname, Link } from "@/i18n/navigation"; // Используем Link из i18n/navigation
+import { usePathname, Link } from "@/i18n/navigation";
 import styles from "./Header.module.scss";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,6 @@ export default function Header({ locale }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
@@ -26,28 +25,28 @@ export default function Header({ locale }: HeaderProps) {
   }, []);
 
   const changeLanguage = (newLocale: string) => {
-    const currentPathWithoutLocale = pathname.replace(`/${locale}`, '');
+    const currentPathWithoutLocale = pathname.replace(`/${locale}`, "");
     window.location.href = `/${newLocale}${currentPathWithoutLocale}`;
   };
 
   return (
-    // Добавим className на header, чтобы стилизовать его в Header.module.scss
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.logo}>
-        <Link href="/">
-          Ваш Логотип
-        </Link>
+        <Link href="/">Ваш Логотип</Link>
       </div>
 
       <nav className={styles.navigation}>
         <Link href="/login" className={styles.navLink}>
-          Войти
+          Увійти
         </Link>
         <Link href="/admin" className={styles.navLink}>
-          Админ
+          Адмін
         </Link>
         <Link href="/partners" className={styles.navLink}>
-          Партнёры
+          Партнери
+        </Link>
+        <Link href="/profile" className={styles.navLink}>
+          Профіль користувача
         </Link>
       </nav>
 

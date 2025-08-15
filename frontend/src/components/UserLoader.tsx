@@ -1,12 +1,14 @@
-// src/components/UserLoader.tsx
 "use client";
 
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-// Changed import path to relative for userSlice
-import { userLoading, userLoaded, userLoadError, userLoggedOut } from '../redux/userSlice'; 
-import { AppDispatch, RootState } from '../redux'; // Changed import path to relative for store types
-import { useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  userLoading,
+  userLoaded,
+  userLoadError,
+  userLoggedOut,
+} from "../redux/userSlice";
+import { AppDispatch, RootState } from "../redux";
 
 interface UserLoaderProps {
   children: React.ReactNode;
@@ -14,53 +16,67 @@ interface UserLoaderProps {
 
 const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, isLoading, error } = useSelector((state: RootState) => state.user);
+  const { isAuthenticated, isLoading } = useSelector(
+    (state: RootState) => state.user
+  );
 
   useEffect(() => {
     const loadUser = async () => {
-      dispatch(userLoading()); 
+      dispatch(userLoading());
 
-      const token = localStorage.getItem('access_token'); 
+      const token = localStorage.getItem("access_token");
 
       if (!token) {
-        dispatch(userLoadError('Токен не найден. Пользователь не авторизован.'));
+        dispatch(userLoadError("Токена не знайдено. Користувач не авторизований."));
         return;
       }
 
       try {
-        const response = await fetch('http://localhost:3000/users/profile', { 
-          method: 'GET',
+        const response = await fetch("http://localhost:3000/users/profile", {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
           if (response.status === 401) {
-            localStorage.removeItem('access_token'); 
+            localStorage.removeItem("access_token");
             dispatch(userLoggedOut());
             return;
           }
-          throw new Error(errorData.message || 'Ошибка при получении профиля пользователя.');
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Помилка при отриманні профілю користувача.");
         }
 
         const userData = await response.json();
-        dispatch(userLoaded(userData)); 
+
+        dispatch(
+          userLoaded({
+            id: userData.id,
+            email: userData.email,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            phoneNumber: userData.phoneNumber,
+            deliveryAddress: userData.deliveryAddress,
+            role: userData.role,
+            averageRating: userData.averageRating,
+          })
+        );
       } catch (err: any) {
-        console.error("Ошибка загрузки пользователя:", err);
-        dispatch(userLoadError(err.message || 'Неизвестная ошибка загрузки пользователя.'));
+        console.error("Помилка завантаження користувача:", err);
+        dispatch(
+          userLoadError(err.message || "Невідома помилка завантаження користувача.")
+        );
       }
     };
 
-    if (!isAuthenticated && isLoading) {
-      loadUser();
-    }
-  }, [dispatch, isAuthenticated, isLoading]); 
+    loadUser();
+  }, [dispatch]);
 
   if (isLoading && !isAuthenticated) {
-     return <div>Загрузка пользователя...</div>;
+    return <div>Завантаження користувача...</div>;
   }
 
   return <>{children}</>;

@@ -6,20 +6,20 @@ import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // ✨ Импортируем ConfigModule и ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config'; 
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    // ✨ Используем registerAsync для получения секрета из ConfigService
+    
     JwtModule.registerAsync({
-      imports: [ConfigModule], // Обязательно импортируем ConfigModule сюда
+      imports: [ConfigModule], 
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'), // Получаем секрет из переменной окружения
+        secret: configService.get<string>('JWT_SECRET'), 
         signOptions: { expiresIn: '7d' },
       }),
-      inject: [ConfigService], // Указываем, что нам нужно внедрить ConfigService
+      inject: [ConfigService], 
     }),
   ],
   providers: [AuthService, JwtStrategy],
