@@ -1,3 +1,4 @@
+// src/components/UserLoader.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -7,8 +8,8 @@ import {
   userLoaded,
   userLoadError,
   userLoggedOut,
-} from "../redux/userSlice";
-import { AppDispatch, RootState } from "../redux";
+} from "@/redux/userSlice";
+import { AppDispatch, RootState } from "@/redux/store"; // або звідти, де ти експортуєш store
 
 interface UserLoaderProps {
   children: React.ReactNode;

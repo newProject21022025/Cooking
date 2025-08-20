@@ -1,3 +1,5 @@
+// src/partner-dishes/partner-dishes.controller.ts
+
 import { Controller, Post, Body, Patch, Param, Delete, Get } from '@nestjs/common';
 import { PartnerDishesService } from './partner-dishes.service';
 import { CreatePartnerDishDto } from './dto/create-partner-dish.dto';

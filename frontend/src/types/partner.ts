@@ -1,3 +1,5 @@
+// src/types/partner.ts
+
 export interface Partner {
     id: string;
     firstName: string;
