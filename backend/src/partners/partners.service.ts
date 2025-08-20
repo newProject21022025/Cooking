@@ -1,3 +1,5 @@
+// src/partners/partners.service.ts
+
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
@@ -26,6 +28,17 @@ export class PartnersService {
   async getAllPartners() {
     const { data, error } = await this.client.from('partners').select('*');
     if (error) throw new BadRequestException(error.message);
+    return data;
+  }
+
+  async findOneByEmail(email: string) {
+    const { data, error } = await this.client
+      .from('partners')
+      .select('*')
+      .eq('email', email)
+      .single();
+  
+    if (error || !data) return null;
     return data;
   }
 }

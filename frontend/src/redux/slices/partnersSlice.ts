@@ -1,6 +1,8 @@
+// src/redux/slices/partnersSlice.ts
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Partner, PartnerDish } from '../../types/partner';
-import { api } from '../../api/partners';
+import { Partner, PartnerDish } from '@/types/partner';
+import { api } from '@/api/partnersApi';
 
 // --- Thunks для партнерів ---
 export const fetchPartners = createAsyncThunk('partners/fetchAll', async () => {

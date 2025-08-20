@@ -1,3 +1,5 @@
+// src/partner-dishes/dto/create-partner-dish.dto.ts
+
 import { IsUUID, IsNumber, IsOptional } from 'class-validator';
 
 export class CreatePartnerDishDto {

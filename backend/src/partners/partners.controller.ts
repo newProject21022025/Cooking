@@ -1,3 +1,5 @@
+// src/partners/partners.controller.ts
+
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';

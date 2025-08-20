@@ -1,3 +1,5 @@
+// src/partner-dishes/partner-dishes.service.ts
+
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePartnerDishDto } from './dto/create-partner-dish.dto';

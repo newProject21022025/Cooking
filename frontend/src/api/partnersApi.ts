@@ -1,5 +1,7 @@
+// src/api/partnersApi.ts
+
 import axios from 'axios';
-import { Partner, PartnerDish } from '../types/partner';
+import { Partner, PartnerDish } from '@/types/partner';
 
 const API_URL = 'http://localhost:3000';
 
