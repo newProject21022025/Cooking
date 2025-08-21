@@ -1,0 +1,337 @@
+/* src/app/[locale]/dishes/[id]/page.module.scss */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-color: transparent; // Фон страницы уже черный благодаря globals.scss
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 960px; // Увеличена максимальная ширина для лучшего контента
+  padding: 3.5rem 2.5rem; // Увеличены отступы
+  background: rgba(255, 255, 255, 0.1); // ✅ Ярче фон
+  border-radius: 20px; // Более скруглённые углы
+  box-shadow: 0 12px 50px 0 rgba(0, 0, 0, 0.55); // ✅ Более выраженная тень
+  backdrop-filter: blur(10px); // ✅ Более сильное размытие
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3); // ✅ Более заметная и яркая рамка
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.backButton {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  background: rgba(255, 255, 255, 0.25); // ✅ Ярче фон кнопки
+  color: #ffffff; // ✅ Чисто белый текст
+  padding: 0.7rem 1.4rem; // Увеличенные отступы
+  border-radius: 12px; // Более скруглённые углы
+  text-decoration: none;
+  font-size: 1.05rem; // Чуть больше шрифт
+  font-weight: 600; // Жирнее шрифт
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.4); // ✅ Ярче фон при наведении
+    transform: translateX(-10px); // Более выраженный сдвиг
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); // ✅ Более заметная тень при наведении
+  }
+}
+
+.title {
+  font-size: 4.2rem; // ✅ Больше размер
+  font-weight: 800; // ✅ Очень жирный
+  margin-bottom: 1rem;
+  color: #ffffff; // ✅ Чисто белый цвет
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9); // ✅ Более выраженная и темная тень
+}
+
+.dishImage {
+  width: 100%;
+  max-width: 750px; // ✅ Увеличенная максимальная ширина
+  height: auto;
+  min-height: 280px; // ✅ Минимальная высота для изображений
+  object-fit: cover;
+  border-radius: 20px; // ✅ Более скруглённые углы
+  margin-top: 2rem;
+  margin-bottom: 3.5rem;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.6); // ✅ Более заметная тень
+  border: 2px solid rgba(255, 255, 255, 0.2); // ✅ Добавлена тонкая рамка вокруг изображения
+}
+
+.section {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 3rem; // ✅ Больше отступ
+  padding: 0 1.5rem; // ✅ Увеличенный горизонтальный отступ
+  h3 {
+    font-size: 2.5rem; // ✅ Больше размер
+    color: #f5f5f5; // ✅ Почти белый цвет
+    margin-bottom: 1.5rem; // ✅ Больше отступ
+    border-bottom: 3px solid rgba(255, 255, 255, 0.15); // ✅ Более толстая и заметная линия
+    padding-bottom: 1rem; // ✅ Отступ под линией
+  }
+}
+
+.description, .recipeText {
+  font-size: 1.3rem; // ✅ Больше размер
+  line-height: 1.9; // ✅ Увеличенный междустрочный интервал
+  color: #ebf5ff; // ✅ Светлее цвет текста
+  white-space: pre-wrap;
+  padding-left: 1rem; // ✅ Небольшой отступ слева
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); // ✅ Легкая тень для читабельности
+}
+
+.ingredientsSection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 3rem; // ✅ Больше отступ
+}
+
+.ingredientsList {
+  background: rgba(255, 255, 255, 0.12); // ✅ Более заметный фон
+  border-radius: 18px; // ✅ Больше скругление
+  padding: 2.2rem; // ✅ Увеличены отступы
+  flex: 1;
+  min-width: 350px; // ✅ Увеличенная минимальная ширина
+  max-width: 48%; // Максимальная ширина для двух колонок
+  margin: 1.2rem; // ✅ Отступ между списками
+  border: 1px solid rgba(255, 255, 255, 0.25); // ✅ Более заметная рамка
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); // ✅ Усиленная тень
+  text-align: left;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px); // ✅ Более выраженный сдвиг
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); // ✅ Более заметная тень при наведении
+  }
+
+  h3 {
+    font-size: 1.8rem; // ✅ Больше размер
+    color: #ffffff; // ✅ Чисто белый цвет
+    margin-top: 0;
+    margin-bottom: 1.5rem; // ✅ Больше отступ
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    font-size: 1.2rem; // ✅ Больше шрифт
+    color: #f0f0f0; // ✅ Более светлый текст
+    margin-bottom: 1rem; // ✅ Отступ между элементами списка
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+/* Стилі для калькулятора порцій */
+.portionCalculator {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 3rem;
+  h3 {
+    font-size: 2.2rem; // ✅ Больше размер
+    color: #f5f5f5;
+    margin-bottom: 1.2rem;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 1rem;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.portionInputGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem; // ✅ Увеличенный отступ
+  background: rgba(255, 255, 255, 0.1); // ✅ Ярче фон для группы
+  border-radius: 15px; // ✅ Более скруглённые углы
+  padding: 1.2rem 2rem; // ✅ Увеличенные отступы
+  border: 1px solid rgba(255, 255, 255, 0.25); // ✅ Более заметная рамка
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); // ✅ Усиленная тень
+}
+
+.portionInput {
+  background: rgba(255, 255, 255, 0.15); // ✅ Ярче фон
+  border: 1px solid rgba(255, 255, 255, 0.4); // ✅ Более заметная рамка
+  border-radius: 12px; // ✅ Больше скругление
+  padding: 1rem 0.8rem; // ✅ Увеличенные отступы
+  color: #fff;
+  font-size: 1.6rem; // ✅ Больше шрифт
+  width: 90px; // Чуть шире
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+  &:focus {
+    border-color: #00e676; // ✅ Яркий неоново-зеленый цвет при фокусе
+    box-shadow: 0 0 0 5px rgba(0, 230, 118, 0.4); // ✅ Мягкая яркая зелёная тень
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+}
+
+.portionButton {
+  background: rgba(0, 230, 118, 0.8); // ✅ Яркий зеленый фон
+  border: 1px solid rgba(0, 230, 118, 0.9); // ✅ Яркая зеленая рамка
+  border-radius: 10px; // ✅ Больше скругление
+  color: #fff;
+  font-size: 2rem; // ✅ Більше шрифт для кнопок
+  font-weight: bold;
+  width: 50px; // Фіксована ширина
+  height: 50px; // Фіксована висота
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); // ✅ Тень
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: #00ff8c; // ✅ Еще ярче при наведении
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  }
+  &:disabled {
+    background: rgba(0, 230, 118, 0.3); // ✅ Более тусклый disabled
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.standardServingsText {
+  font-size: 1.2rem; // ✅ Больше шрифт
+  color: #e0e0e0; // ✅ Светлее цвет
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.loadingMessage, .errorMessage {
+  font-size: 2rem; // ✅ Больше шрифт
+  color: #fff; // ✅ Ярче цвет
+  margin-top: 3.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); // ✅ Более выраженная тень
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 2.5rem 1.5rem;
+    border-radius: 18px;
+  }
+
+  .backButton {
+    top: 20px;
+    left: 20px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+  }
+
+  .title {
+    font-size: 3.2rem;
+    margin-top: 2.5rem;
+  }
+
+  .dishImage {
+    margin-bottom: 2.5rem;
+    min-height: 200px;
+  }
+
+  .section {
+    margin-bottom: 2.5rem;
+    h3 {
+      font-size: 2rem;
+    }
+  }
+
+  .description, .recipeText {
+    font-size: 1.1rem;
+  }
+
+  .ingredientsSection {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ingredientsList {
+    width: 95%;
+    max-width: none;
+    margin: 0.8rem 0;
+    padding: 1.8rem;
+    h3 {
+      font-size: 1.6rem;
+    }
+    li {
+      font-size: 1.05rem;
+    }
+  }
+
+  .portionCalculator {
+    h3 {
+      font-size: 2rem;
+    }
+  }
+  .portionInputGroup {
+    flex-direction: row; // ✅ Оставляем горизонтально на мобильных
+    gap: 0.8rem;
+    padding: 1rem 1.2rem;
+  }
+  .portionInput {
+    width: 70px;
+    font-size: 1.4rem;
+    padding: 0.7rem 0.4rem;
+  }
+  .portionButton {
+    width: 45px;
+    height: 45px;
+    font-size: 1.8rem;
+  }
+  .standardServingsText {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  .section h3, .portionCalculator h3 {
+    font-size: 1.8rem;
+  }
+  .description, .recipeText, .ingredientsList li {
+    font-size: 0.95rem;
+  }
+  .backButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}

@@ -1,21 +1,24 @@
 // src/app/admin/page.tsx
-"use client";
 
-import React from "react";
-import styles from "./page.module.scss";
-// import { useTranslations } from "next-intl";
 
-export default function AdminPage() {
-  // const t = useTranslations("Admin"); 
-  return (
-    <div className={styles.container}>
-      <main className={styles.mainContent}>
-        <h1 className={styles.title}>Панель Адміністратора</h1>
-        <p className={styles.description}>
-          {/* {t("description")} */} 
-          Тут буде вміст сторінки адміністратора. Доступ лише для авторизованих адміністраторів.
-        </p>
-      </main>
-    </div>
-  );
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+
+export default function AUFRootRedirect() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const basePath = pathname.startsWith('/en/admin')
+    ? '/en/admin'
+    : pathname.startsWith('/uk/admin')
+    ? '/uk/admin'
+    : '/admin';
+
+  useEffect(() => {
+    router.push(`${basePath}/edit`);
+  }, [router, basePath]);
+
+  return null;
 }

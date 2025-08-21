@@ -33,13 +33,21 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/users/profile", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // const response = await fetch("http://localhost:3000/users/profile", {
+        //   method: "GET",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+
+        const response = await fetch("http://localhost:3000/auth/profile", { // 👈 один универсальный эндпоинт
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+});
 
         if (!response.ok) {
           if (response.status === 401) {

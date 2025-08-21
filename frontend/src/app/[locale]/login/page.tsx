@@ -9,10 +9,9 @@ import styles from "./page.module.scss";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 
-// Схема валідації
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string().min(6, "Мінімум 6 символів").required("Пароль обов'язковий"),
+  password: Yup.string().min(5, "Мінімум 5 символів").required("Пароль обов'язковий"),
 });
 
 export default function LoginPage() {
@@ -20,10 +19,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { token, user, loading, error } = useAppSelector((state) => state.auth);
 
-  // Редірект після успішного логіну
   useEffect(() => {
     if (!token || !user) return;
-
     switch (user.role) {
       case "admin":
         router.push("/admin");

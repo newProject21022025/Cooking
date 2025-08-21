@@ -1,3 +1,5 @@
+// src/api/dishesApi.ts
+
 import axios from "axios";
 import { Dish, CreateDishDto, UpdateDishDto } from "@/types/dish";
 

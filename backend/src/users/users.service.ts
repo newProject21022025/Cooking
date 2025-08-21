@@ -55,24 +55,24 @@ export class UsersService {
     return data;
   }
 
-  async findOneById(id: string): Promise<any | undefined> {
-    console.log('Попытка поиска пользователя по ID в таблице:', 'users'); 
-    const { data, error } = await this.supabaseService
-      .getClient()
-      .from('users') 
-      .select('*')
-      .eq('id', id)
-      .single();
+  // async findOneById(id: string): Promise<any | undefined> {
+  //   console.log('Попытка поиска пользователя по ID в таблице:', 'users'); 
+  //   const { data, error } = await this.supabaseService
+  //     .getClient()
+  //     .from('users') 
+  //     .select('*')
+  //     .eq('id', id)
+  //     .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return undefined;
-      }
-      console.error('Помилка при пошуку користувача по ID:', error.message); 
-      throw new BadRequestException(error.message);
-    }
-    return data;
-  }
+  //   if (error) {
+  //     if (error.code === 'PGRST116') {
+  //       return undefined;
+  //     }
+  //     console.error('Помилка при пошуку користувача по ID:', error.message); 
+  //     throw new BadRequestException(error.message);
+  //   }
+  //   return data;
+  // }
 
   async updateUser(id: string, dto: UpdateUserDto) {
     // Якщо пароль передають — хешуємо його
@@ -125,6 +125,25 @@ export class UsersService {
     }
   
     return data ? data[0] : null;
+  }
+
+   async findOneById(id: string): Promise<any | undefined> {
+    console.log('Попытка поиска пользователя по ID в таблице:', 'users');
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return undefined;
+      }
+      console.error('Помилка при пошуку користувача по ID:', error.message);
+      throw new BadRequestException(error.message);
+    }
+    return data;
   }
 }
 
