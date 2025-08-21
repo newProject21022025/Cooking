@@ -1,3 +1,5 @@
+// src/types/dish.ts
+
 export interface Ingredient {
     name_ua: string;
     name_en: string;

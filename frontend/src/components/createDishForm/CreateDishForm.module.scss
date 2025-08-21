@@ -1,0 +1,170 @@
+.formWrapper {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #333;
+
+  .subtitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #4a3aff;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  input,
+  textarea {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.2s ease-in-out;
+
+    &:focus {
+      border-color: #4a3aff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 58, 255, 0.2);
+    }
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #e63946;
+  margin-top: -0.3rem;
+}
+
+.ingredientsBlock {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 12px;
+
+ 
+}
+
+.ingredientRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+
+  button {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #e63946;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+}
+
+.addBtn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #4a3aff;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: #372bcf;
+  }
+}
+
+.submitBtn {
+  padding: 0.8rem 1.5rem;
+  background: #06d6a0;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+
+  &:hover {
+    background: #04b383;
+  }
+}
+
+/* 📱 Адаптивность */
+@media (max-width: 768px) {
+  .ingredientRow {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+
+    button {
+      justify-self: flex-end;
+      font-size: 1rem;
+    }
+  }
+
+  .formWrapper {
+    padding: 1.2rem;
+
+    h2 {   // ✅ теперь внутри класса
+      font-size: 1.4rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .formWrapper {
+    margin: 1rem;
+    padding: 1rem;
+
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .submitBtn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.7rem;
+  }
+
+  .addBtn {
+    width: 100%;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+}
