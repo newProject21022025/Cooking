@@ -32,13 +32,13 @@
   position: absolute;
   top: 25px;
   left: 25px;
-  background: rgba(255, 255, 255, 0.25); // ✅ Ярче фон кнопки
-  color: #ffffff; // ✅ Чисто белый текст
-  padding: 0.7rem 1.4rem; // Увеличенные отступы
-  border-radius: 12px; // Более скруглённые углы
+  background: rgba(255, 255, 255, 0.25);
+  color: black; //
+  padding: 0.7rem 1.4rem; 
+  border-radius: 12px; 
   text-decoration: none;
-  font-size: 1.05rem; // Чуть больше шрифт
-  font-weight: 600; // Жирнее шрифт
+  font-size: 1.05rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -52,47 +52,47 @@
 }
 
 .title {
-  font-size: 4.2rem; // ✅ Больше размер
-  font-weight: 800; // ✅ Очень жирный
+  font-size: 4.2rem; 
+  font-weight: 800; 
   margin-bottom: 1rem;
-  color: #ffffff; // ✅ Чисто белый цвет
-  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9); // ✅ Более выраженная и темная тень
+  color: black; 
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9); 
 }
 
 .dishImage {
   width: 100%;
-  max-width: 750px; // ✅ Увеличенная максимальная ширина
+  max-width: 750px; 
   height: auto;
-  min-height: 280px; // ✅ Минимальная высота для изображений
+  min-height: 280px; 
   object-fit: cover;
-  border-radius: 20px; // ✅ Более скруглённые углы
+  border-radius: 20px; 
   margin-top: 2rem;
   margin-bottom: 3.5rem;
-  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.6); // ✅ Более заметная тень
-  border: 2px solid rgba(255, 255, 255, 0.2); // ✅ Добавлена тонкая рамка вокруг изображения
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.6); 
+  border: 2px solid rgba(255, 255, 255, 0.2); 
 }
 
 .section {
   width: 100%;
   text-align: left;
-  margin-bottom: 3rem; // ✅ Больше отступ
-  padding: 0 1.5rem; // ✅ Увеличенный горизонтальный отступ
+  margin-bottom: 3rem; 
+  padding: 0 1.5rem; 
   h3 {
-    font-size: 2.5rem; // ✅ Больше размер
-    color: #f5f5f5; // ✅ Почти белый цвет
-    margin-bottom: 1.5rem; // ✅ Больше отступ
-    border-bottom: 3px solid rgba(255, 255, 255, 0.15); // ✅ Более толстая и заметная линия
-    padding-bottom: 1rem; // ✅ Отступ под линией
+    font-size: 2.5rem;
+    color: black;
+    margin-bottom: 1.5rem; 
+    border-bottom: 3px solid rgba(255, 255, 255, 0.15); 
+    padding-bottom: 1rem; 
   }
 }
 
 .description, .recipeText {
-  font-size: 1.3rem; // ✅ Больше размер
-  line-height: 1.9; // ✅ Увеличенный междустрочный интервал
-  color: #ebf5ff; // ✅ Светлее цвет текста
+  font-size: 1.3rem; 
+  line-height: 1.9; 
+  color:black;
   white-space: pre-wrap;
-  padding-left: 1rem; // ✅ Небольшой отступ слева
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); // ✅ Легкая тень для читабельности
+  padding-left: 1rem; 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
 }
 
 .ingredientsSection {
@@ -100,11 +100,11 @@
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
-  margin-bottom: 3rem; // ✅ Больше отступ
+  margin-bottom: 3rem; 
 }
 
 .ingredientsList {
-  background: rgba(255, 255, 255, 0.12); // ✅ Более заметный фон
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 18px; // ✅ Больше скругление
   padding: 2.2rem; // ✅ Увеличены отступы
   flex: 1;
@@ -123,7 +123,7 @@
 
   h3 {
     font-size: 1.8rem; // ✅ Больше размер
-    color: #ffffff; // ✅ Чисто белый цвет
+    color: black;
     margin-top: 0;
     margin-bottom: 1.5rem; // ✅ Больше отступ
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
@@ -138,7 +138,7 @@
 
   li {
     font-size: 1.2rem; // ✅ Больше шрифт
-    color: #f0f0f0; // ✅ Более светлый текст
+    color: black; // ✅ Более светлый текст
     margin-bottom: 1rem; // ✅ Отступ между элементами списка
     &:last-child {
       margin-bottom: 0;
@@ -153,7 +153,7 @@
   margin-bottom: 3rem;
   h3 {
     font-size: 2.2rem; // ✅ Больше размер
-    color: #f5f5f5;
+    color: black;
     margin-bottom: 1.2rem;
     border-bottom: 3px solid rgba(255, 255, 255, 0.15);
     padding-bottom: 1rem;
@@ -180,7 +180,7 @@
   border: 1px solid rgba(255, 255, 255, 0.4); // ✅ Более заметная рамка
   border-radius: 12px; // ✅ Больше скругление
   padding: 1rem 0.8rem; // ✅ Увеличенные отступы
-  color: #fff;
+  color:black;
   font-size: 1.6rem; // ✅ Больше шрифт
   width: 90px; // Чуть шире
   text-align: center;
@@ -205,7 +205,7 @@
   background: rgba(0, 230, 118, 0.8); // ✅ Яркий зеленый фон
   border: 1px solid rgba(0, 230, 118, 0.9); // ✅ Яркая зеленая рамка
   border-radius: 10px; // ✅ Больше скругление
-  color: #fff;
+  color: black;
   font-size: 2rem; // ✅ Більше шрифт для кнопок
   font-weight: bold;
   width: 50px; // Фіксована ширина
@@ -232,13 +232,13 @@
 
 .standardServingsText {
   font-size: 1.2rem; // ✅ Больше шрифт
-  color: #e0e0e0; // ✅ Светлее цвет
+  color:black; // ✅ Светлее цвет
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .loadingMessage, .errorMessage {
   font-size: 2rem; // ✅ Больше шрифт
-  color: #fff; // ✅ Ярче цвет
+  color:black; // ✅ Ярче цвет
   margin-top: 3.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); // ✅ Более выраженная тень
 }
