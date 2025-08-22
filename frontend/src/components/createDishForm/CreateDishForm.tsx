@@ -4,8 +4,28 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styles from "./CreateDishForm.module.scss";
-import { createDishApi } from "@/api/dishesApi";
 import IngredientsTable from "./constants/IngredientsTable";
+import { Dish, CreateDishDto } from "@/types/dish";
+import { ingredientsByCategory } from "./constants/ingredientsData";
+
+// 👇 Додаємо допоміжний тип для форми (бо потрібна category)
+export interface IngredientForm {
+  name_ua: string;
+  name_en: string;
+  quantity?: number;
+  unit: string;
+  category: string; // main | optional | інші підкатегорії
+}
+
+interface FormValues extends Omit<CreateDishDto, "standard_servings"> {
+  important_ingredients: IngredientForm[];
+  optional_ingredients: IngredientForm[];
+}
+
+interface CreateDishFormProps {
+  initialData?: Partial<Dish>; // для редагування
+  onSubmit: (values: FormValues) => Promise<void>; // обробник submit
+}
 
 const validationSchema = Yup.object({
   name_ua: Yup.string().required("Обов'язково"),
@@ -14,7 +34,6 @@ const validationSchema = Yup.object({
   description_ua: Yup.string().required("Обов'язково"),
   description_en: Yup.string().required("Required"),
   photo: Yup.string().url("Має бути посилання").required("Обов'язково"),
-  // standard_servings: Yup.number().min(1).required("Обов'язково"), // ✅ Видалено
   recipe_ua: Yup.string().required("Обов'язково"),
   recipe_en: Yup.string().required("Required"),
 });
@@ -26,66 +45,56 @@ const dishTypes = [
   { value: "appetizer", label: "🍢 Закуска / Appetizer" },
 ];
 
-export default function CreateDishForm() {
+export default function CreateDishForm({ initialData, onSubmit }: CreateDishFormProps) {
+  // Функція для визначення категорії інгредієнта по назві
+  const mapIngredientWithCategory = (ing: any, defaultCategory: string): IngredientForm => {
+    const foundCategory = Object.keys(ingredientsByCategory).find((cat) =>
+      ingredientsByCategory[cat].some((item) => item.name_ua === ing.name_ua)
+    );
+    return {
+      ...ing,
+      category: foundCategory || defaultCategory,
+    };
+  };
+
   return (
     <div className={styles.formWrapper}>
-      <h2 className={styles.title}>Створити страву</h2>
-      <Formik
+      <h2 className={styles.title}>
+        {initialData ? "Редагувати страву" : "Створити страву"}
+      </h2>
+      <Formik<FormValues>
         initialValues={{
-          name_ua: "",
-          name_en: "",
-          type: "",
-          description_ua: "",
-          description_en: "",
-          photo: "",
-          // standard_servings: 1, // ✅ Видалено
-          important_ingredients: [],
-          optional_ingredients: [],
-          recipe_ua: "",
-          recipe_en: "",
+          name_ua: initialData?.name_ua || "",
+          name_en: initialData?.name_en || "",
+          type: initialData?.type || "",
+          description_ua: initialData?.description_ua || "",
+          description_en: initialData?.description_en || "",
+          photo: initialData?.photo || "",
+          important_ingredients: (initialData?.important_ingredients || []).map((ing) =>
+            mapIngredientWithCategory(ing, "main")
+          ),
+          optional_ingredients: (initialData?.optional_ingredients || []).map((ing) =>
+            mapIngredientWithCategory(ing, "optional")
+          ),
+          recipe_ua: initialData?.recipe_ua || "",
+          recipe_en: initialData?.recipe_en || "",
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values, { resetForm }) => {
-          try {
-            // ✅ Додаємо стандартну кількість порцій
-            const dataToSend = {
-              ...values,
-              standard_servings: 1,
-              // ✅ Видаляємо поле category з інгредієнтів
-              important_ingredients: values.important_ingredients.map(({ category, ...rest }) => rest),
-              optional_ingredients: values.optional_ingredients.map(({ category, ...rest }) => rest),
-            };
-
-            await createDishApi(dataToSend);
-            alert("✅ Страва створена успішно!");
-            resetForm();
-          } catch (err) {
-            console.error(err);
-            alert("❌ Помилка при створенні страви");
-          }
-        }}
+        onSubmit={onSubmit}
       >
-        {({ values }) => (
+        {() => (
           <Form className={styles.form}>
             {/* Назви */}
             <div className={styles.field}>
               <label>Назва (UA)</label>
               <Field name="name_ua" placeholder="Борщ" />
-              <ErrorMessage
-                name="name_ua"
-                component="div"
-                className={styles.error}
-              />
+              <ErrorMessage name="name_ua" component="div" className={styles.error} />
             </div>
 
             <div className={styles.field}>
               <label>Name (EN)</label>
               <Field name="name_en" placeholder="Borscht" />
-              <ErrorMessage
-                name="name_en"
-                component="div"
-                className={styles.error}
-              />
+              <ErrorMessage name="name_en" component="div" className={styles.error} />
             </div>
 
             {/* Тип страви */}
@@ -99,11 +108,7 @@ export default function CreateDishForm() {
                   </option>
                 ))}
               </Field>
-              <ErrorMessage
-                name="type"
-                component="div"
-                className={styles.error}
-              />
+              <ErrorMessage name="type" component="div" className={styles.error} />
             </div>
 
             {/* Опис */}
@@ -122,8 +127,6 @@ export default function CreateDishForm() {
               <Field name="photo" placeholder="https://example.com/image.jpg" />
             </div>
 
-            {/* ✅ Блок для "Кількості порцій" видалено */}
-            
             {/* Основні інгредієнти */}
             <IngredientsTable
               name="important_ingredients"

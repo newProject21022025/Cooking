@@ -1,22 +1,5 @@
 // src/auth/auth.controller.ts
 
-// import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-// import { AuthService } from './auth.service';
-// import { LoginDto } from './dto/login.dto'; 
-
-// @Controller('auth')
-// export class AuthController {
-//   constructor(private authService: AuthService) {}
-
-//   @HttpCode(HttpStatus.OK)
-//   @Post('login')
-//   signIn(@Body() loginDto: LoginDto) {
-//     return this.authService.login(loginDto.email, loginDto.password);
-//   }
-// }
-
-// src/auth/auth.controller.ts
-
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto'; 
@@ -51,19 +34,4 @@ async getProfile(@Request() req) {
     return this.partnersService.findOneById(id);
   }
 }
-
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // async getProfile(@Request() req) {
-  //   const { sub, role } = req.user;
-
-  //   if (role === 'user' || role === 'admin') {
-  //     return this.usersService.findOneById(sub);
-  //   }
-
-  //   if (role === 'partner') {
-  //     return this.partnersService.findOneById(sub);
-  //   }
-  // }
 }

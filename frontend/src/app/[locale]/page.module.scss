@@ -1,16 +1,15 @@
 /* src/app/page.module.scss */
 
-.page {
-  /* Центрирование контента по горизонтали и вертикали */
+.page { 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Гарантируем, что страница занимает всю высоту экрана */
+  min-height: 100vh;
   width: 100%;
-  padding: 2rem; /* Небольшие отступы по краям */
-  box-sizing: border-box; /* Учитываем padding в ширине */
-  background-color: transparent; /* Фон страницы уже черный благодаря globals.scss */
+  padding: 2rem;
+  box-sizing: border-box; 
+  background-color: transparent; 
 }
 
 .main {
@@ -18,33 +17,33 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 1200px; /* Увеличил ширину для размещения карточек */
+  max-width: 1200px; 
   padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05); /* Полупрозрачный фон для блока контента */
-  border-radius: 15px; /* Скруглённые углы */
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Красивая тень */
-  backdrop-filter: blur(4px); /* Эффект размытия фона (glassmorphism) */
-  -webkit-backdrop-filter: blur(4px); /* Для совместимости с Safari */
-  border: 1px solid rgba(255, 255, 255, 0.18); /* Тонкая светлая рамка */
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px; 
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+  backdrop-filter: blur(4px); 
+  -webkit-backdrop-filter: blur(4px); 
+  border: 1px solid rgba(255, 255, 255, 0.18); 
 }
 
 .title {
-  font-size: 3.5rem; /* Размер заголовка */
+  font-size: 3.5rem; 
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #e0e0e0; /* Светлый цвет заголовка */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Тень для текста */
-  animation: fadeIn 1s ease-out forwards; /* Анимация появления */
+  color: black; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+  animation: fadeIn 1s ease-out forwards;
 }
 
 .description {
   font-size: 1.2rem;
   line-height: 1.6;
-  color: #b0b0b0; /* Более тусклый цвет для основного текста */
+  color: black; 
   max-width: 600px;
-  animation: slideInUp 1s ease-out forwards; /* Анимация появления снизу */
-  animation-delay: 0.3s; /* Задержка для анимации */
-  opacity: 0; /* Начальное состояние для анимации */
+  animation: slideInUp 1s ease-out forwards; 
+  animation-delay: 0.3s; 
+  opacity: 0; 
 }
 
 /* 🆕 Стилі для відображення страв */
@@ -88,14 +87,14 @@
 
 .dishTitle {
   font-size: 1.5rem;
-  color: #fff;
+  color: black;
   margin-top: 0;
   margin-bottom: 0.75rem;
 }
 
 .dishDescription {
   font-size: 1rem;
-  color: #ccc;
+  color:black;
   line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
