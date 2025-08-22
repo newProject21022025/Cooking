@@ -54,25 +54,7 @@ export class UsersService {
     }
     return data;
   }
-
-  // async findOneById(id: string): Promise<any | undefined> {
-  //   console.log('Попытка поиска пользователя по ID в таблице:', 'users'); 
-  //   const { data, error } = await this.supabaseService
-  //     .getClient()
-  //     .from('users') 
-  //     .select('*')
-  //     .eq('id', id)
-  //     .single();
-
-  //   if (error) {
-  //     if (error.code === 'PGRST116') {
-  //       return undefined;
-  //     }
-  //     console.error('Помилка при пошуку користувача по ID:', error.message); 
-  //     throw new BadRequestException(error.message);
-  //   }
-  //   return data;
-  // }
+ 
 
   async updateUser(id: string, dto: UpdateUserDto) {
     // Якщо пароль передають — хешуємо його
@@ -143,6 +125,20 @@ export class UsersService {
       console.error('Помилка при пошуку користувача по ID:', error.message);
       throw new BadRequestException(error.message);
     }
+    return data;
+  }
+  
+  async findAll(): Promise<any[]> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('users')
+      .select('*');
+  
+    if (error) {
+      console.error('Помилка при отриманні всіх користувачів:', error.message);
+      throw new BadRequestException(error.message);
+    }
+  
     return data;
   }
 }

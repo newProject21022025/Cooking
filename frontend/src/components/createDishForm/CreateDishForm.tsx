@@ -17,7 +17,7 @@ export interface IngredientForm {
   category: string; // main | optional | інші підкатегорії
 }
 
-interface FormValues extends Omit<CreateDishDto, "standard_servings"> {
+export interface FormValues extends Omit<CreateDishDto, "standard_servings"> {
   important_ingredients: IngredientForm[];
   optional_ingredients: IngredientForm[];
 }
