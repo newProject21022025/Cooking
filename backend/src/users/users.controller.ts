@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Param, Patch, Body, Delete, Post } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -29,11 +30,17 @@ export class UsersController {
     return this.usersService.deleteUser(id);
   }
   @Patch(':id/block')
-  async blockUser(@Param('id') id: string) {
-    return this.usersService.setBlockStatus(id, true);
-  }
-  @Patch(':id/unblock')
-  async unblockUser(@Param('id') id: string) {
-    return this.usersService.setBlockStatus(id, false);
+async blockUser(@Param('id') id: string) { // Видалено @Body() dto
+  return this.usersService.setBlockStatus(id, true);
+}
+
+@Patch(':id/unblock')
+async unblockUser(@Param('id') id: string) { // Видалено @Body() dto
+  return this.usersService.setBlockStatus(id, false);
+}
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  async getAllUsers() {
+    return this.usersService.findAll();
   }
 }

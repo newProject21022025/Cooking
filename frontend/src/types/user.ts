@@ -1,3 +1,5 @@
+// src/types/user.ts
+
 export type UserRole = 'user' | 'partner' | 'admin';
 
 export interface User {
@@ -9,6 +11,7 @@ export interface User {
   deliveryAddress: string | null;
   role: UserRole | null;
   averageRating: number | null;
+  isBlocked?: boolean;
 }
 
 export interface UserState extends User {
