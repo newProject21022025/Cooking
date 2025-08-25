@@ -141,5 +141,49 @@ export class UsersService {
   
     return data;
   }
-}
+  async uploadUserAvatar(userId: string, file: Express.Multer.File) {
+    // 1. Генеруємо унікальне ім'я файлу, щоб уникнути конфліктів
+    const fileExtension = file.originalname.split('.').pop();
+    const fileName = `avatar-${userId}-${Date.now()}.${fileExtension}`;
+    const filePath = `user_avatars/${fileName}`; // Папка в Supabase Storage
 
+    // 2. Завантажуємо файл в Supabase Storage
+    const { data: uploadData, error: uploadError } = await this.supabaseService
+      .getClient()
+      .storage
+      .from('avatars') // Назва вашого бакета в Supabase Storage (створити заздалегідь в панелі Supabase)
+      .upload(filePath, file.buffer, {
+        cacheControl: '3600',
+        upsert: true // Якщо файл існує - перезаписати
+      });
+
+    if (uploadError) {
+      console.error('Помилка завантаження файлу:', uploadError.message);
+      throw new BadRequestException('Не вдалося завантажити зображення');
+    }
+
+    // 3. Отримуємо публічний URL завантаженого файлу
+    const { data: urlData } = this.supabaseService
+      .getClient()
+      .storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
+
+    // 4. Оновлюємо поле 'photo' у користувача в базі даних
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('users')
+      .update({ photo: publicUrl })
+      .eq('id', userId)
+      .select();
+
+    if (error) {
+      console.error('Помилка оновлення фото користувача:', error.message);
+      throw new BadRequestException('Не вдалося оновити профіль');
+    }
+
+    return data ? data[0] : null;
+  }
+}
