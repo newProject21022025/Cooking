@@ -6,6 +6,8 @@ import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Param, Patch, Body, Delete, Post } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
 
 
 @Controller('users')
@@ -43,4 +45,16 @@ async unblockUser(@Param('id') id: string) { // Видалено @Body() dto
   async getAllUsers() {
     return this.usersService.findAll();
   }
+
+  @UseGuards(AuthGuard('jwt')) // Тільки для авторизованих користувачів
+  @Post(':id/avatar')
+  @UseInterceptors(FileInterceptor('file')) // 'file' - ім'я поля у формі, де передається файл
+  async uploadAvatar(
+    @Param('id') userId: string,
+    @UploadedFile() file: Express.Multer.File // Декоратор для отримання файлу
+  ) {
+    // Передаємо обробку файлу сервісу
+    return this.usersService.uploadUserAvatar(userId, file);
+  }
 }
+

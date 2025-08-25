@@ -1,8 +1,6 @@
 // src/partners/partners.service.ts
 
 
-// src/partners/partners.service.ts
-
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
@@ -62,6 +60,40 @@ export class PartnersService {
   console.log("==> PartnersService: Результат пошуку:", data);
   return data;
 }
+
+async deletePartner(id: string) {
+  // Якщо є залежні записи (наприклад, partner-dishes), переконайся,
+  // що у БД налаштовано ON DELETE CASCADE або видаляй їх спочатку.
+  const { data, error } = await this.client
+    .from('partners')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new BadRequestException(error.message);
+  return data; // повертаємо видалений запис (або можеш віддати { success: true })
+}
+
+async toggleBlockPartner(id: string) {
+  const partner = await this.findOneById(id);
+  if (!partner) {
+    throw new BadRequestException('Партнер не знайдений');
+  }
+
+  const newStatus = !partner.isBlocked;
+
+  const { data, error } = await this.client
+    .from('partners')
+    .update({ isBlocked: newStatus })
+    .eq('id', id)
+    .select();
+
+  if (error) throw new BadRequestException(error.message);
+
+  return data[0];
+}
+
 }
 
 
@@ -69,54 +101,3 @@ export class PartnersService {
 
 
 
-
-
-
-
-
-
-
-// import { Injectable, BadRequestException } from '@nestjs/common';
-// import { SupabaseService } from '../supabase/supabase.service';
-// import { CreatePartnerDto } from './dto/create-partner.dto';
-// import * as bcrypt from 'bcrypt';
-
-// @Injectable()
-// export class PartnersService {
-//   constructor(private readonly supabaseService: SupabaseService) {}
-
-//   private get client() {
-//     return this.supabaseService.getClient();
-//   }
-
-//   async createPartner(dto: CreatePartnerDto) {
-//     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-//     const { data, error } = await this.client
-//       .from('partners')
-//       .insert([{ ...dto, password: hashedPassword }])
-//       .select();
-
-//     if (error) throw new BadRequestException(error.message);
-//     return data[0];
-//   }
-
-//   async getAllPartners() {
-//     const { data, error } = await this.client.from('partners').select('*');
-//     if (error) throw new BadRequestException(error.message);
-//     return data;
-//   }
-
-//   async findOneByEmail(email: string) {
-//     const { data, error } = await this.client
-//       .from('partners')
-//       .select('*')
-//       .eq('email', email)
-//       .single();
-  
-//     if (error || !data) return null;
-//     return data;
-//   }
-
-  
-// }
