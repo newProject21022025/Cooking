@@ -1,87 +1,64 @@
 // src/redux/slices/authSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import * as jwt_decode from "jwt-decode"; // правильний імпорт для TypeScript
-
-export interface User {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  deliveryAddress?: string;
-  role: "admin" | "user" | "partner";
-  averageRating?: number;
-}
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import axios from "axios";
+import { loginUser } from "@/api/authApi"; // ✅ імпорт з authApi.ts
 
 interface AuthState {
   token: string | null;
-  user: User | null;
+  isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
-  token: typeof window !== "undefined" ? localStorage.getItem("token") : null,
-  user:
-    typeof window !== "undefined" && localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user")!)
-      : null,
+  token: null,
+  isAuthenticated: false,
   loading: false,
   error: null,
 };
 
-// --- Thunk для логіну ---
-export const login = createAsyncThunk<
-  { token: string; user: User },
-  { email: string; password: string }, // <-- isPartner більше не потрібен
-  { rejectValue: string }
->("auth/login", async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await axios.post("http://localhost:3000/auth/login", credentials);
-    const { access_token, user } = response.data; 
-
-    return { token: access_token, user };
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Помилка авторизації");
+// 🔹 Логін
+export const login = createAsyncThunk(
+  "auth/login",
+  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await loginUser(credentials); // ✅ використовує прямий URL з authApi.ts
+      return response; // { access_token, user }
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Login failed");
+    }
   }
+);
+
+// 🔹 Логаут
+export const logout = createAsyncThunk("auth/logout", async () => {
+  return true;
 });
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logout(state) {
-      state.token = null;
-      state.user = null;
-      state.loading = false;
-      state.error = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        login.fulfilled,
-        (state, action: PayloadAction<{ token: string; user: User }>) => {
-          state.loading = false;
-          state.token = action.payload.token;
-          state.user = action.payload.user;
-          localStorage.setItem("token", action.payload.token);
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
-        }
-      )
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.access_token;
+        state.isAuthenticated = true;
+      })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.token = null;
+        state.isAuthenticated = false;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

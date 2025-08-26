@@ -12,6 +12,7 @@ export const api = {
   updatePartner: (id: string, data: Partial<Partner>) => axios.patch<Partner>(`${API_URL}/partners/${id}`, data),
   deletePartner: (id: string) => axios.delete<Partner>(`${API_URL}/partners/${id}`),
   blockPartner: (id: string) => axios.patch<Partner>(`${API_URL}/partners/${id}/block`),
+  getPartnerById: (userId: string) => axios.get<Partner>(`${API_URL}/partners/${userId}`),
 
   // Страви партнера
   getPartnerMenu: (partnerId: string) => axios.get<PartnerDish[]>(`${API_URL}/partner-dishes/menu/${partnerId}`),

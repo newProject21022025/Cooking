@@ -5,14 +5,13 @@ import { User, UserRole, UpdateUserProfileData } from "@/types/user";
 
 const API_URL = "http://localhost:3000/users";
 
-const getToken = () => {
-  return localStorage.getItem("token");
-};
+const getToken = () => localStorage.getItem("token");
 
 const apiClient = axios.create({
   baseURL: API_URL,
 });
 
+// Додаємо токен до кожного запиту
 apiClient.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {
@@ -21,13 +20,13 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Додайте обробку помилок
+// Єдиний обробник помилок
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      // Можна додати перенаправлення на логін
+      window.location.href = "/login"; // редірект
     }
     return Promise.reject(error);
   }
@@ -46,93 +45,71 @@ export interface CreateUserData {
   isBlocked?: boolean;
 }
 
-// Використовуйте новий тип для оновлення
 export interface UpdateUserData extends Partial<UpdateUserProfileData> {}
 
-// Отримати профіль поточного користувача
+// 🔹 Отримати всіх користувачів
+export const getAllUsers = async (): Promise<User[]> => {
+  const { data } = await apiClient.get<User[]>("/");
+  return data;
+};
+
+// 🔹 Отримати профіль поточного користувача
 export const getCurrentUserProfile = async (): Promise<User> => {
   const { data } = await apiClient.get<User>("/profile");
   return data;
 };
 
-// Оновити дані користувача
+// 🔹 Оновити користувача
 export const updateUser = async (userId: string, userData: UpdateUserData): Promise<User> => {
   const { data } = await apiClient.patch<User>(`/${userId}`, userData);
   return data;
 };
 
-// Оновити профіль поточного користувача (спеціальна функція)
-// src/api/usersApi.ts
+// 🔹 Оновити профіль поточного користувача
 export const updateCurrentUserProfile = async (userData: UpdateUserProfileData): Promise<User> => {
-  // Отримуємо поточного користувача для отримання ID
   const currentUser = await getCurrentUserProfile();
   
-  const cleanedData: any = {};
-  
+  const cleanedData: Record<string, any> = {};
   Object.entries(userData).forEach(([key, value]) => {
-    if (value !== null && value !== undefined && value !== '') {
+    if (value !== null && value !== undefined && value !== "") {
       cleanedData[key] = value;
     }
   });
 
-  console.log("Оновлення користувача з ID:", currentUser.id, "Дані:", cleanedData);
-  
-  try {
-    // Використовуємо правильний ендпоінт з ID користувача
-    const { data } = await apiClient.patch<User>(`/${currentUser.id}`, cleanedData);
-    console.log("Успішна відповідь:", data);
-    return data;
-  } catch (error: any) {
-    console.error("Помилка оновлення профілю:", error.response?.data);
-    throw error;
-  }
+  const { data } = await apiClient.patch<User>(`/${currentUser.id}`, cleanedData);
+  return data;
 };
 
-// Видалити користувача
+// 🔹 Видалити користувача
 export const deleteUser = async (userId: string): Promise<void> => {
   await apiClient.delete(`/${userId}`);
 };
 
-// Заблокувати користувача
+// 🔹 Заблокувати користувача
 export const blockUser = async (userId: string): Promise<User> => {
-  const { data } = await apiClient.patch<User>(`/${userId}/block`, {});
+  const { data } = await apiClient.patch<User>(`/${userId}/block`);
   return data;
 };
 
-// Розблокувати користувача
+// 🔹 Розблокувати користувача
 export const unblockUser = async (userId: string): Promise<User> => {
-  const { data } = await apiClient.patch<User>(`/${userId}/unblock`, {});
+  const { data } = await apiClient.patch<User>(`/${userId}/unblock`);
   return data;
 };
 
-// Завантажити аватар користувача
+// 🔹 Завантажити аватар
 export const uploadUserAvatar = async (userId: string, file: File): Promise<User> => {
   const formData = new FormData();
   formData.append("file", file);
 
   const { data } = await apiClient.post<User>(`/${userId}/avatar`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    headers: { "Content-Type": "multipart/form-data" },
   });
   return data;
 };
 
-// Отримати користувача по ID
+// 🔹 Отримати користувача по ID
 export const getUserById = async (userId: string): Promise<User> => {
   const { data } = await apiClient.get<User>(`/${userId}`);
   return data;
 };
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-    }
-    return Promise.reject(error);
-  }
-);
-
-

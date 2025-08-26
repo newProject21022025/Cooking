@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+// src/partners/dto/create-partner.dto.ts
+
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsNumber, IsBoolean, IsEnum } from 'class-validator';
+
+export enum PartnerRole {
+  partner = 'partner',
+  // ADMIN = 'admin',
+}
 
 export class CreatePartnerDto {
   @IsString()
@@ -28,7 +35,8 @@ export class CreatePartnerDto {
   deliveryAddress?: string;
 
   @IsOptional()
-  role?: string;
+  @IsEnum(PartnerRole)
+  role: PartnerRole = PartnerRole.partner;  // ✅ дефолт partner
 
   @IsOptional()
   orderHistory?: any[];
@@ -42,5 +50,5 @@ export class CreatePartnerDto {
 
   @IsOptional()
   @IsBoolean()
-  isBlocked?: boolean;
+  isBlocked: boolean = false; // ✅ дефолт false
 }

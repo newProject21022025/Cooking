@@ -1,63 +1,67 @@
 // src/store/userSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserState } from '@/types/user';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export type UserRole = 'user' | 'partner' | 'admin';
+
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  photo?: string;
+  role: UserRole;
+}
+
+interface UserState {
+  data: User | null;
+  loading: boolean;
+  error: string | null;
+}
 
 const initialState: UserState = {
-  id: null,
-  email: null,
-  firstName: null,
-  lastName: null,
-  phoneNumber: null,
-  deliveryAddress: null,
-  role: null,
-  averageRating: null,
-  isAuthenticated: false,
-  isLoading: true,
+  data: null,
+  loading: false,
   error: null,
 };
 
+// 🔹 Отримати дані користувача (наприклад, після login)
+export const fetchUser = createAsyncThunk(
+  "user/fetchUser",
+  async (userId: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/users/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to load user");
+    }
+  }
+);
+
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    userLoading(state) {
-      state.isLoading = true;
-      state.error = null;
+    clearUser: (state) => {
+      state.data = null;
     },
-    userLoaded(
-      state,
-      action: PayloadAction<Omit<UserState, 'isLoading' | 'error' | 'isAuthenticated'>>
-    ) {
-      state.isLoading = false;
-      state.isAuthenticated = true;
-      state.id = action.payload.id;
-      state.email = action.payload.email;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
-      state.phoneNumber = action.payload.phoneNumber;
-      state.deliveryAddress = action.payload.deliveryAddress;
-      state.role = action.payload.role;
-      state.averageRating = action.payload.averageRating;
-    },
-    userLoadError(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.isAuthenticated = false;
-      state.error = action.payload;
-
-      state.id = null;
-      state.email = null;
-      state.firstName = null;
-      state.lastName = null;
-      state.phoneNumber = null;
-      state.deliveryAddress = null;
-      state.role = null;
-      state.averageRating = null;
-    },
-    userLoggedOut(state) {
-      Object.assign(state, initialState, { isLoading: false });
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { userLoading, userLoaded, userLoadError, userLoggedOut } = userSlice.actions;
+export const { clearUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,8 +1,17 @@
 // src/partners/partners.controller.ts
 
-import { Controller, Post, Body, Get, Delete, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Delete,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
+import { UpdatePartnerDto } from './dto/update-partner.dto';
 
 @Controller('partners')
 export class PartnersController {
@@ -23,10 +32,13 @@ export class PartnersController {
     return this.partnersService.deletePartner(id);
   }
 
-    // ✅ новий ендпоінт для блокування / розблокування
-    @Patch(':id/block')
-    toggleBlock(@Param('id') id: string) {
-      return this.partnersService.toggleBlockPartner(id);
-    }
-    
+  // ✅ новий ендпоінт для блокування / розблокування
+  @Patch(':id/block')
+  toggleBlock(@Param('id') id: string) {
+    return this.partnersService.toggleBlockPartner(id);
+  }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdatePartnerDto) {
+    return this.partnersService.updatePartner(id, dto);
+  }
 }

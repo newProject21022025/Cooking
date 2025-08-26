@@ -14,9 +14,9 @@ export class UsersService {
     if (!dto.email || !dto.password) {
       throw new BadRequestException('Email and password are required');
     }
-
+  
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
+  
     console.log('Попытка вставки в таблицу:', 'users'); 
     const { data, error } = await this.supabaseService
       .getClient()
@@ -24,14 +24,16 @@ export class UsersService {
       .insert([{
         ...dto,
         password: hashedPassword,
-        // createdAt: new Date().toISOString() // 
-      }]);
-
+        role: dto.role ?? 'user',   // <-- дефолтна роль user
+        isBlocked: dto.isBlocked ?? false, // <-- дефолт false
+      }])
+      .select(); // щоб одразу повернути створений рядок
+  
     if (error) {
       console.error('Ошибка при вставке пользователя:', error.message); 
       throw new BadRequestException(error.message);
     }
-
+  
     console.log('Пользователь успешно создан:', data); 
     return data ? data[0] : null;
   }

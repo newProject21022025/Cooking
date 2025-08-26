@@ -14,6 +14,8 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
+    console.log("==> AuthService: login почався для email:", email);
+
     let entity;
     let role;
 
@@ -30,14 +32,15 @@ export class AuthService {
     }
 
     if (!entity) {
+      console.warn("==> AuthService: Користувача не знайдено");
       throw new UnauthorizedException('Невірні дані (користувача не знайдено)');
     }
-    
-    // ==> ЛОГ: Перевіряємо, чи є ID
+
     console.log("==> AuthService: Знайдено об'єкт. Його ID:", entity.id);
 
     const passwordMatch = await bcrypt.compare(password, entity.password);
     if (!passwordMatch) {
+      console.warn("==> AuthService: Пароль невірний для ID:", entity.id);
       throw new UnauthorizedException('Невірні дані (пароль невірний)');
     }
 
@@ -47,11 +50,13 @@ export class AuthService {
       role: role
     };
 
-    // ==> ЛОГ: Перевіряємо пейлоад перед підписанням
     console.log("==> AuthService: Payload для токена:", payload);
 
+    const access_token = this.jwtService.sign(payload);
+    console.log("==> AuthService: Токен згенеровано");
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
       user: {
         id: entity.id,
         email: entity.email,
@@ -62,6 +67,3 @@ export class AuthService {
     };
   }
 }
-  
-
-

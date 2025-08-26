@@ -3,13 +3,8 @@
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  userLoading,
-  userLoaded,
-  userLoadError,
-  userLoggedOut,
-} from "@/redux/userSlice";
-import { AppDispatch, RootState } from "@/redux/store"; // або звідти, де ти експортуєш store
+import { fetchUser, clearUser } from "@/redux/userSlice";
+import { RootState, AppDispatch } from "@/redux/store";
 
 interface UserLoaderProps {
   children: React.ReactNode;
@@ -17,74 +12,44 @@ interface UserLoaderProps {
 
 const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, isLoading } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { data: user, loading } = useSelector((state: RootState) => state.user);
+  const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    if (!token) {
+      dispatch(clearUser());
+      return;
+    }
+
+    // ⚡ вантажимо профіль користувача з бекенду
     const loadUser = async () => {
-      dispatch(userLoading());
-
-      const token = localStorage.getItem("access_token");
-
-      if (!token) {
-        dispatch(userLoadError("Токена не знайдено. Користувач не авторизований."));
-        return;
-      }
-
       try {
-        // const response = await fetch("http://localhost:3000/users/profile", {
-        //   method: "GET",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // });
-
-        const response = await fetch("http://localhost:3000/auth/profile", { // 👈 один универсальный эндпоинт
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-});
+        // можна зробити окремий ендпоінт /auth/profile, який повертає поточного юзера
+        const response = await fetch("http://localhost:3000/auth/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (!response.ok) {
           if (response.status === 401) {
-            localStorage.removeItem("access_token");
-            dispatch(userLoggedOut());
+            localStorage.removeItem("token");
+            dispatch(clearUser());
             return;
           }
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Помилка при отриманні профілю користувача.");
+          throw new Error("Не вдалося завантажити профіль");
         }
 
         const userData = await response.json();
-
-        dispatch(
-          userLoaded({
-            id: userData.id,
-            email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            phoneNumber: userData.phoneNumber,
-            deliveryAddress: userData.deliveryAddress,
-            role: userData.role,
-            averageRating: userData.averageRating,
-          })
-        );
+        dispatch(fetchUser.fulfilled(userData, "", userData.id)); // вручну диспатчимо fulfilled
       } catch (err: any) {
         console.error("Помилка завантаження користувача:", err);
-        dispatch(
-          userLoadError(err.message || "Невідома помилка завантаження користувача.")
-        );
+        dispatch(clearUser());
       }
     };
 
     loadUser();
-  }, [dispatch]);
+  }, [token, dispatch]);
 
-  if (isLoading && !isAuthenticated) {
+  if (loading && !isAuthenticated) {
     return <div>Завантаження користувача...</div>;
   }
 

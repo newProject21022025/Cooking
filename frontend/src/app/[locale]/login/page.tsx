@@ -17,10 +17,16 @@ const LoginSchema = Yup.object().shape({
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { token, user, loading, error } = useAppSelector((state) => state.auth);
+
+  // 🔹 отримуємо токен з authSlice і дані користувача з userSlice
+  const { token, loading: authLoading, error: authError } = useAppSelector(
+    (state) => state.auth
+  );
+  const { data: user } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    if (!token || !user) return;
+    if (!user) return;
+
     switch (user.role) {
       case "admin":
         router.push("/admin");
@@ -32,7 +38,7 @@ export default function LoginPage() {
         router.push("/profile");
         break;
     }
-  }, [token, user, router]);
+  }, [user, router]);
 
   return (
     <div className={styles.container}>
@@ -57,11 +63,11 @@ export default function LoginPage() {
                 <ErrorMessage name="password" component="div" className={styles.error} />
               </div>
 
-              <button type="submit" className={styles.button} disabled={isSubmitting || loading}>
-                {loading ? "Завантаження..." : "Увійти"}
+              <button type="submit" className={styles.button} disabled={isSubmitting || authLoading}>
+                {authLoading ? "Завантаження..." : "Увійти"}
               </button>
 
-              {error && <p className={styles.error}>{error}</p>}
+              {authError && <p className={styles.error}>{authError}</p>}
             </Form>
           )}
         </Formik>
