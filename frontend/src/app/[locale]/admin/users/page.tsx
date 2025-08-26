@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.scss";
 import { User } from "@/types/user";
-import { getAllUsers, blockUser, unblockUser } from "@/api/usersApi";
+import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
 import { useTranslations, useLocale } from "next-intl";
 
 interface UsersPageProps {
@@ -12,16 +12,14 @@ interface UsersPageProps {
 }
 
 export default function UsersPage({ params }: UsersPageProps) {
-  // const locale = params.locale; // ❌ не мутуємо params, просто копіюємо
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
-  // const t = useTranslations("UsersPage");
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await getAllUsers(); // API запит з токеном
+      const data = await getAllUsers();
       setUsers(data);
     } catch (error) {
       console.error("Помилка при отриманні користувачів:", error);
@@ -37,9 +35,20 @@ export default function UsersPage({ params }: UsersPageProps) {
       } else {
         await blockUser(user.id!);
       }
-      await fetchUsers(); // оновлюємо список після зміни
+      await fetchUsers();
     } catch (error) {
       console.error("Помилка при зміні статусу:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm("Ви впевнені, що хочете видалити цього користувача?")) return;
+
+    try {
+      await deleteUserApi(userId);
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+    } catch (error) {
+      console.error("Помилка при видаленні користувача:", error);
     }
   };
 
@@ -60,6 +69,7 @@ export default function UsersPage({ params }: UsersPageProps) {
             <th>Прізвище</th>
             <th>Роль</th>
             <th>Блокування</th>
+            <th>Дії</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +85,14 @@ export default function UsersPage({ params }: UsersPageProps) {
                   className={user.isBlocked ? styles.unblockBtn : styles.blockBtn}
                 >
                   {user.isBlocked ? "Розблокувати" : "Заблокувати"}
+                </button>
+              </td>
+              <td>
+                <button
+                  onClick={() => handleDeleteUser(user.id!)}
+                  className={styles.deleteBtn}
+                >
+                  Видалити
                 </button>
               </td>
             </tr>

@@ -1,5 +1,6 @@
 // src/users/dto/create-user.dto.ts
 
+
 import { 
   IsEmail, 
   IsNotEmpty, 
@@ -13,8 +14,8 @@ import {
 
 export enum UserRole {
   USER = 'user',
-  // PARTNER = 'partner',
   ADMIN = 'admin',
+  // PARTNER = 'partner',
 }
 
 export class CreateUserDto {
@@ -48,11 +49,11 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsEnum(UserRole)
-  role?: UserRole; 
+  role: UserRole = UserRole.USER;   // ✅ дефолт user
 
   @IsOptional()
   @IsArray()
-  favorites?: string[]; // id блюд
+  favorites?: string[];
 
   @IsOptional()
   @IsArray()
@@ -69,8 +70,6 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsBoolean()
-  isBlocked?: boolean; // по замовчуванню false
+  isBlocked: boolean = false;  // ✅ дефолт false
 }
-
-
 

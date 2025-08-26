@@ -14,6 +14,7 @@ export interface Partner {
     rating?: number;
     isBlocked?: boolean;
     createdAt?: string;
+    password?: string;
   }
   
   export interface PartnerDish {

@@ -17,21 +17,33 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto.email, loginDto.password);
+  async signIn(@Body() loginDto: LoginDto) {
+    console.log("==> AuthController: POST /auth/login отримано запит");
+    console.log("==> AuthController: Тіло запиту:", loginDto);
+
+    try {
+      const result = await this.authService.login(loginDto.email, loginDto.password);
+      console.log("==> AuthController: Login успішний, повертаємо дані");
+      return result;
+    } catch (err) {
+      console.error("==> AuthController: Login помилка:", err.message);
+      throw err;
+    }
   }
 
   @Get('profile')
-@UseGuards(JwtAuthGuard)
-async getProfile(@Request() req) {
-  const { id, role } = req.user;
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Request() req) {
+    console.log("==> AuthController: GET /auth/profile, користувач:", req.user);
 
-  if (role === 'user' || role === 'admin') {
-    return this.usersService.findOneById(id);
-  }
+    const { id, role } = req.user;
 
-  if (role === 'partner') {
-    return this.partnersService.findOneById(id);
+    if (role === 'user' || role === 'admin') {
+      return this.usersService.findOneById(id);
+    }
+
+    if (role === 'partner') {
+      return this.partnersService.findOneById(id);
+    }
   }
-}
 }
