@@ -1,5 +1,4 @@
 // src/partners/partners.controller.ts
-
 import {
   Controller,
   Post,
@@ -27,16 +26,22 @@ export class PartnersController {
     return this.partnersService.getAllPartners();
   }
 
+  // ✅ Додаємо ендпоінт для отримання партнера по ID
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.partnersService.findOneById(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.partnersService.deletePartner(id);
   }
 
-  // ✅ новий ендпоінт для блокування / розблокування
   @Patch(':id/block')
   toggleBlock(@Param('id') id: string) {
     return this.partnersService.toggleBlockPartner(id);
   }
+  
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePartnerDto) {
     return this.partnersService.updatePartner(id, dto);

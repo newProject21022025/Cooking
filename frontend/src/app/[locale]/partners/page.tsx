@@ -1,273 +1,393 @@
 // src/app/partners/page.tsx
 "use client";
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styles from "./page.module.scss";
-import { Partner } from "@/types/partner";
+import { Partner, UpdatePartnerProfileData } from "@/types/partner";
 import { api } from "@/api/partnersApi";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 
-// Валідація
+// Схема валідації для Formik
 const validationSchema = Yup.object({
-  firstName: Yup.string().required("Ім'я обов'язкове").max(50),
-  lastName: Yup.string().required("Прізвище обов'язкове").max(50),
-  email: Yup.string().email("Невірний email").required("Email обов'язковий"),
-  photo: Yup.string().url("Невірний URL фото").nullable(),
-  phoneNumber: Yup.string().nullable(),
-  deliveryAddress: Yup.string().nullable(),
-  password: Yup.string()
-    .nullable()
-    .min(6, "Пароль має містити мінімум 6 символів"),
+  firstName: Yup.string()
+    .required("Ім'я обов'язкове")
+    .max(50, "Ім'я занадто довге"),
+  lastName: Yup.string()
+    .required("Прізвище обов'язкове")
+    .max(50, "Прізвище занадто довге"),
+  phoneNumber: Yup.string()
+    .matches(/^\+?[0-9]{10,15}$/, "Невірний формат телефону")
+    .nullable(),
+  deliveryAddress: Yup.string().max(200, "Адреса занадто довга").nullable(),
 });
 
 export default function PartnerAdminPage() {
-  const user = useSelector((state: RootState) => state.user);
   const [partner, setPartner] = useState<Partner | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadPartner = async () => {
-      if (!user?.id) {
-        setError("Користувач не знайдений");
-        setLoading(false);
-        return;
-      }
+    loadPartnerProfile();
+  }, []);
 
+  // Функція для отримання ID користувача з різних джерел
+  const getUserIdFromStorage = (): string | null => {
+    // Спосіб 1: Безпосередньо з localStorage (якщо зберігаєте при логіні)
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) return storedUserId;
+
+    // Спосіб 2: З токена (якщо ID є в токені)
+    const token = localStorage.getItem('token');
+    if (token) {
       try {
-        setLoading(true);
-
-        // якщо є API getPartnerById
-        const res = await api.getPartnerById(user.id);
-        setPartner(res.data);
-      } catch (err: any) {
-        console.error(err);
-        setError(err.message || "Помилка завантаження партнера");
-      } finally {
-        setLoading(false);
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.userId || payload.sub || null;
+      } catch (e) {
+        console.error("Помилка декодування токена:", e);
       }
-    };
+    }
 
-    loadPartner();
-  }, [user?.id]);
+    // Спосіб 3: З sessionStorage
+    const sessionUserId = sessionStorage.getItem('userId');
+    if (sessionUserId) return sessionUserId;
 
-  const handleSubmit = async (
-    values: Partial<Partner>,
-    { setSubmitting }: any
-  ) => {
+    return null;
+  };
+
+  const loadPartnerProfile = async () => {
     try {
-      if (!partner) return;
+      setLoading(true);
       setError(null);
 
-      const updated = await api.updatePartner(partner.id, values);
-      setPartner(updated.data);
+      // Отримуємо ID користувача
+      const userId = getUserIdFromStorage();
+      
+      if (!userId) {
+        throw new Error("Не вдалося отримати ID користувача. Будь ласка, увійдіть знову.");
+      }
+
+      console.log("Отримуємо профіль партнера з ID:", userId);
+
+      // Використовуємо API для отримання партнера
+      const response = await api.getPartnerById(userId);
+      setPartner(response.data);
+
+    } catch (err: any) {
+      console.error("Помилка завантаження профілю:", err);
+      
+      if (err.response?.status === 404) {
+        setError("Профіль партнера не знайдено. Можливо, неправильний ID.");
+      } else if (err.response?.status === 401) {
+        setError("Необхідно увійти в систему");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+      } else {
+        setError(err.message || "Помилка завантаження профілю");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (
+    values: UpdatePartnerProfileData,
+    { setSubmitting, setErrors }: any
+  ) => {
+    try {
+      setError(null);
+      setUpdateSuccess(false);
+
+      if (!partner) {
+        throw new Error("Дані партнера відсутні");
+      }
+
+      console.log("Оновлюємо партнера з ID:", partner.id, "дані:", values);
+
+      // Оновлюємо профіль партнера
+      const response = await api.updatePartner(partner.id, values);
+      setPartner(response.data);
+      
       setIsEditing(false);
       setUpdateSuccess(true);
-
       setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Помилка оновлення партнера");
+      console.error("Помилка оновлення профілю:", err);
+      if (err.response?.status === 404) {
+        setError("Профіль партнера не знайдено. Можливо, неправильний ID.");
+      } else if (err.response?.data?.errors) {
+        const backendErrors = err.response.data.errors;
+        const formikErrors: any = {};
+        Object.keys(backendErrors).forEach((key) => {
+          formikErrors[key] = backendErrors[key].join(", ");
+        });
+        setErrors(formikErrors);
+      } else {
+        setError(err.message || "Помилка оновлення профілю");
+      }
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <div className={styles.container}>Завантаження...</div>;
-  if (error) return <div className={styles.container}>{error}</div>;
-  if (!partner)
-    return <div className={styles.container}>Партнер не знайдений</div>;
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setAvatarFile(file);
+      
+      // Створюємо попередній перегляд для нового аватара
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-  const initialValues: Partial<Partner> = {
+  if (loading) {
+    return <div className={styles.loading}>Завантаження профілю...</div>;
+  }
+
+  if (error && !partner) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>{error}</div>
+        <div className={styles.testSection}>
+          <h3>Увага: Не вдалося завантажити профіль</h3>
+          <p>Можливі причини:</p>
+          <ul>
+            <li>Ви не увійшли в систему</li>
+            <li>Ваш обліковий запис не має прав партнера</li>
+            <li>Профіль партнера не існує</li>
+          </ul>
+          <button 
+            onClick={() => window.location.reload()}
+            className={styles.testButton}
+          >
+            Спробувати знову
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!partner) {
+    return <div className={styles.error}>Дані партнера відсутні</div>;
+  }
+
+  const initialValues: UpdatePartnerProfileData = {
     firstName: partner.firstName || "",
     lastName: partner.lastName || "",
-    email: partner.email || "",
-    photo: partner.photo || "",
     phoneNumber: partner.phoneNumber || "",
     deliveryAddress: partner.deliveryAddress || "",
-    password: "", // порожній для редагування
+    photo: partner.photo || "",
   };
 
   return (
     <div className={styles.container}>
-      <h3>Редагування партнера</h3>
-
+      <h1 className={styles.title}>Профіль партнера</h1>
+  
       {updateSuccess && (
-        <div className={styles.success}>Партнер успішно оновлено!</div>
+        <div className={styles.success}>Профіль успішно оновлено!</div>
       )}
-
-      {!isEditing ? (
-        <div className={styles.card}>
+  
+      {error && <div className={styles.error}>{error}</div>}
+  
+      <div className={styles.card}>
+        <div className={styles.avatarSection}>
           <div className={styles.avatarContainer}>
-            {partner.photo ? (
+            {avatarPreview ? (
+              <img
+                src={avatarPreview}
+                alt="Новий аватар"
+                className={styles.avatar}
+              />
+            ) : partner.photo ? (
               <img
                 src={partner.photo}
-                alt="Фото партнера"
+                alt="Аватар партнера"
                 className={styles.avatar}
               />
             ) : (
-              <div className={styles.placeholderAvatar}>Немає фото</div>
+              <div className={styles.placeholderAvatar}>
+                {partner.firstName?.charAt(0)}{partner.lastName?.charAt(0)}
+              </div>
             )}
           </div>
-          <p>
-            <strong>ID:</strong> {partner.id}
-          </p>
-          <p>
-            <strong>Ім'я:</strong> {partner.firstName}
-          </p>
-          <p>
-            <strong>Прізвище:</strong> {partner.lastName}
-          </p>
-          <p>
-            <strong>Email:</strong> {partner.email}
-          </p>
-          {partner.phoneNumber && (
-            <p>
-              <strong>Телефон:</strong> {partner.phoneNumber}
-            </p>
+          
+          {isEditing && (
+            <div className={styles.avatarUpload}>
+              <input
+                type="file"
+                id="avatar"
+                name="avatar"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className={styles.avatarInput}
+              />
+              <label htmlFor="avatar" className={styles.avatarLabel}>
+                Змінити аватар
+              </label>
+              {avatarFile && (
+                <span className={styles.avatarFileName}>
+                  {avatarFile.name}
+                </span>
+              )}
+            </div>
           )}
-          {partner.deliveryAddress && (
-            <p>
-              <strong>Адреса:</strong> {partner.deliveryAddress}
-            </p>
-          )}
-          <p>
-            <strong>Роль:</strong> {partner.role}
-          </p>
-          {partner.rating !== undefined && (
-            <p>
-              <strong>Рейтинг:</strong> {partner.rating}
-            </p>
-          )}
-          <button onClick={() => setIsEditing(true)}>
-            Редагувати партнера
-          </button>
         </div>
-      ) : (
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ isSubmitting, dirty }) => (
-            <Form className={styles.form}>
-              <div className={styles.formGroup}>
-                <label htmlFor="firstName">Ім'я</label>
-                <Field
-                  id="firstName"
-                  name="firstName"
-                  className={styles.input}
-                />
-                <ErrorMessage
-                  name="firstName"
-                  component="div"
-                  className={styles.errorText}
-                />
+  
+        {!isEditing ? (
+          // Режим перегляду
+          <>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem}>
+                <strong>ID:</strong> {partner.id}
               </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="lastName">Прізвище</label>
-                <Field id="lastName" name="lastName" className={styles.input} />
-                <ErrorMessage
-                  name="lastName"
-                  component="div"
-                  className={styles.errorText}
-                />
+              <div className={styles.infoItem}>
+                <strong>Email:</strong> {partner.email}
               </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="email">Email</label>
-                <Field
-                  id="email"
-                  name="email"
-                  className={styles.input}
-                  type="email"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className={styles.errorText}
-                />
+              <div className={styles.infoItem}>
+                <strong>Ім'я:</strong> {partner.firstName}
               </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="photo">Фото (URL)</label>
-                <Field id="photo" name="photo" className={styles.input} />
-                <ErrorMessage
-                  name="photo"
-                  component="div"
-                  className={styles.errorText}
-                />
+              <div className={styles.infoItem}>
+                <strong>Прізвище:</strong> {partner.lastName}
               </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="phoneNumber">Телефон</label>
-                <Field
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  className={styles.input}
-                />
-                <ErrorMessage
-                  name="phoneNumber"
-                  component="div"
-                  className={styles.errorText}
-                />
+              {partner.phoneNumber && (
+                <div className={styles.infoItem}>
+                  <strong>Телефон:</strong> {partner.phoneNumber}
+                </div>
+              )}
+              {partner.deliveryAddress && (
+                <div className={styles.infoItem}>
+                  <strong>Адреса доставки:</strong> {partner.deliveryAddress}
+                </div>
+              )}
+              <div className={styles.infoItem}>
+                <strong>Роль:</strong> {partner.role}
               </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="deliveryAddress">Адреса доставки</label>
-                <Field
-                  as="textarea"
-                  id="deliveryAddress"
-                  name="deliveryAddress"
-                  className={styles.textarea}
-                />
-                <ErrorMessage
-                  name="deliveryAddress"
-                  component="div"
-                  className={styles.errorText}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="password">
-                  Пароль (залиште порожнім, якщо не змінювати)
-                </label>
-                <Field
-                  id="password"
-                  name="password"
-                  className={styles.input}
-                  type="password"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className={styles.errorText}
-                />
-              </div>
-
-              <div className={styles.buttonGroup}>
-                <button type="submit" disabled={isSubmitting || !dirty}>
-                  {isSubmitting ? "Збереження..." : "Зберегти"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  disabled={isSubmitting}
-                >
-                  Скасувати
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+              {partner.rating !== undefined && (
+                <div className={styles.infoItem}>
+                  <strong>Рейтинг:</strong> {partner.rating}
+                </div>
+              )}
+              {partner.isBlocked !== undefined && (
+                <div className={styles.infoItem}>
+                  <strong>Статус:</strong> 
+                  <span className={partner.isBlocked ? styles.statusBlocked : styles.statusActive}>
+                    {partner.isBlocked ? " Заблокований" : " Активний"}
+                  </span>
+                </div>
+              )}
+            </div>
+  
+            <button
+              type="button"
+              className={styles.editButton}
+              onClick={() => setIsEditing(true)}
+            >
+              Редагувати профіль
+            </button>
+          </>
+        ) : (
+          // Режим редагування з Formik
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {({ isSubmitting, dirty, values, handleChange }) => (
+              <Form className={styles.form}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="firstName">Ім'я *</label>
+                    <Field 
+                      type="text" 
+                      id="firstName" 
+                      name="firstName" 
+                      className={styles.input} 
+                    />
+                    <ErrorMessage name="firstName" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="lastName">Прізвище *</label>
+                    <Field 
+                      type="text" 
+                      id="lastName" 
+                      name="lastName" 
+                      className={styles.input} 
+                    />
+                    <ErrorMessage name="lastName" component="div" className={styles.errorText} />
+                  </div>
+                </div>
+  
+                <div className={styles.formGroup}>
+                  <label htmlFor="phoneNumber">Телефон</label>
+                  <Field 
+                    type="text" 
+                    id="phoneNumber" 
+                    name="phoneNumber" 
+                    className={styles.input} 
+                    placeholder="+380501234567" 
+                  />
+                  <ErrorMessage name="phoneNumber" component="div" className={styles.errorText} />
+                </div>
+  
+                <div className={styles.formGroup}>
+                  <label htmlFor="deliveryAddress">Адреса доставки</label>
+                  <Field 
+                    as="textarea" 
+                    id="deliveryAddress" 
+                    name="deliveryAddress" 
+                    className={styles.textarea} 
+                    rows={3} 
+                  />
+                  <ErrorMessage name="deliveryAddress" component="div" className={styles.errorText} />
+                </div>
+  
+                <div className={styles.formGroup}>
+                  <label htmlFor="photo">Посилання на фото (якщо не завантажуєте файл)</label>
+                  <Field
+                    type="text"
+                    id="photo"
+                    name="photo"
+                    className={styles.input}
+                    placeholder="https://example.com/photo.jpg"
+                  />
+                </div>
+  
+                <div className={styles.buttonGroup}>
+                  <button 
+                    type="submit" 
+                    className={styles.saveButton} 
+                    disabled={isSubmitting || !dirty}
+                  >
+                    {isSubmitting ? "Збереження..." : "Зберегти зміни"}
+                  </button>
+  
+                  <button 
+                    type="button" 
+                    className={styles.cancelButton} 
+                    onClick={() => {
+                      setIsEditing(false);
+                      setAvatarFile(null);
+                      setAvatarPreview(null);
+                    }} 
+                    disabled={isSubmitting}
+                  >
+                    Скасувати
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </div>
     </div>
   );
 }
