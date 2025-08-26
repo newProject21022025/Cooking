@@ -25,4 +25,12 @@ export interface Partner {
     discount?: number;
     available_portions: number;
   }
+
+  export interface UpdatePartnerProfileData {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    deliveryAddress?: string;
+    photo?: string;
+  }
   

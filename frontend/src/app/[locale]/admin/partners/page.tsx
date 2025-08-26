@@ -18,6 +18,7 @@ export default function Partners() {
     try {
       setLoading(true);
       const res = await api.getPartners();
+      console.log("Отримано партнерів:", res.data);
       setPartners(res.data);
     } catch (error) {
       console.error("Помилка при отриманні партнерів:", error);
