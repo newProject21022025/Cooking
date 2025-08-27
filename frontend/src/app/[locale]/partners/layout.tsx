@@ -1,4 +1,4 @@
-// src/app/[locale]/admin/layout.tsx
+// src/app/locale/partners/layout.tsx
 
 'use client'
 
@@ -6,23 +6,23 @@ import { useRouter, usePathname } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
 import styles from './page.module.scss'
 
-const TABS = ['edit', 'create', 'users', 'partners']
+const TABS = ['personal','edit', 'orders']
 
 export default function AUFLayout({ children }: { children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
 
   // Визначаємо базовий шлях з локаллю
-  const basePath = pathname.startsWith('/en/admin')
-    ? '/en/admin'
-    : pathname.startsWith('/uk/admin')
-    ? '/uk/admin'
-    : '/admin'
+  const basePath = pathname.startsWith('/en/partners')
+    ? '/en/partners'
+    : pathname.startsWith('/uk/partners')
+    ? '/uk/partners'
+    : '/partners'
 
   useEffect(() => {
     // Редірект на /edit, якщо зайшли на базовий /admin
     if (pathname === basePath) {
-      router.push(`${basePath}/edit`)
+      router.push(`${basePath}/personal`)
     }
   }, [pathname, router, basePath])
 

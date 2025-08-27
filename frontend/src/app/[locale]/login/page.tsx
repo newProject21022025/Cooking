@@ -4,24 +4,13 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import styles from "./page.module.scss";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { login } from "@/redux/slices/authSlice";
-
-const LoginSchema = Yup.object().shape({
-  email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string().min(5, "Мінімум 5 символів").required("Пароль обов'язковий"),
-});
+import { useAppSelector } from "@/redux/hooks";
+import LoginForm from "@/components/loginForm/LoginForm";
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const { user, isAuthenticated, loading: authLoading, error: authError } = useAppSelector(
-    (state) => state.auth
-  );
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     if (!user) return;
@@ -44,32 +33,7 @@ export default function LoginPage() {
       <main className={styles.mainContent}>
         <h1 className={styles.title}>Увійти</h1>
         <p className={styles.description}>Будь ласка, введіть дані для входу.</p>
-
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={LoginSchema}
-          onSubmit={(values) => dispatch(login(values))}
-        >
-          {({ isSubmitting }) => (
-            <Form className={styles.form}>
-              <div className={styles.formGroup}>
-                <Field type="email" name="email" placeholder="Email" className={styles.input} />
-                <ErrorMessage name="email" component="div" className={styles.error} />
-              </div>
-
-              <div className={styles.formGroup}>
-                <Field type="password" name="password" placeholder="Пароль" className={styles.input} />
-                <ErrorMessage name="password" component="div" className={styles.error} />
-              </div>
-
-              <button type="submit" className={styles.button} disabled={isSubmitting || authLoading}>
-                {authLoading ? "Завантаження..." : "Увійти"}
-              </button>
-
-              {authError && <p className={styles.error}>{authError}</p>}
-            </Form>
-          )}
-        </Formik>
+        <LoginForm />
       </main>
     </div>
   );

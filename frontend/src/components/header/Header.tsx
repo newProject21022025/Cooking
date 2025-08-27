@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { logout } from "@/redux/slices/authSlice"; // ⚡ экшен для выхода
 
+
 type HeaderProps = {
   locale: "en" | "uk";
 };
