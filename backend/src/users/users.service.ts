@@ -64,10 +64,19 @@ export class UsersService {
       dto.password = await bcrypt.hash(dto.password, 10);
     }
   
+    // ❗ формуємо allowedFields (без role, isBlocked і т.д.)
+    const allowedFields: any = {};
+    if (dto.firstName !== undefined) allowedFields.firstName = dto.firstName;
+    if (dto.lastName !== undefined) allowedFields.lastName = dto.lastName;
+    if (dto.phoneNumber !== undefined) allowedFields.phoneNumber = dto.phoneNumber;
+    if (dto.deliveryAddress !== undefined) allowedFields.deliveryAddress = dto.deliveryAddress;
+    if (dto.photo !== undefined) allowedFields.photo = dto.photo;
+    if (dto.password !== undefined) allowedFields.password = dto.password;
+  
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users')
-      .update(dto)
+      .update(allowedFields)   // ⚡️ тільки дозволені поля
       .eq('id', id)
       .select();
   
@@ -78,6 +87,7 @@ export class UsersService {
   
     return data ? data[0] : null;
   }
+  
 
   async deleteUser(id: string) {
     const { data, error } = await this.supabaseService
