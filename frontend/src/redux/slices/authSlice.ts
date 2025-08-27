@@ -1,27 +1,32 @@
 // src/redux/slices/authSlice.ts
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginUser } from "@/api/authApi";
 import { LoginRequest, LoginResponse } from "@/types/auth";
 
+interface User {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
 interface AuthState {
   token: string | null;
-  user?: {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-  };
+  user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
 }
 
+// 🔹 Завантажуємо дані з localStorage при старті
+const tokenFromStorage = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+const userFromStorage = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+
 const initialState: AuthState = {
-  token: null,
-  user: undefined,
-  isAuthenticated: false,
+  token: tokenFromStorage,
+  user: userFromStorage ? JSON.parse(userFromStorage) : null,
+  isAuthenticated: !!tokenFromStorage,
   loading: false,
   error: null,
 };
@@ -54,9 +59,13 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.access_token; // токен з бекенду
-        state.user = action.payload.user; // зберігаємо об’єкт користувача
+        state.token = action.payload.access_token;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
+
+        // 🔹 Зберігаємо у localStorage
+        localStorage.setItem("token", action.payload.access_token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -64,13 +73,18 @@ const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.token = null;
-        state.user = undefined;
+        state.user = null;
         state.isAuthenticated = false;
+
+        // 🔹 Видаляємо з localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       });
   },
 });
 
 export default authSlice.reducer;
+
 
 
 // import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
