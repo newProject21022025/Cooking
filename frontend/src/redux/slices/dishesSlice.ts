@@ -1,3 +1,5 @@
+// src/redux/slices/dishesSlice.ts
+
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Dish, CreateDishDto, UpdateDishDto } from "@/types/dish";
 import {
