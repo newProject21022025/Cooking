@@ -9,7 +9,13 @@ export const fetchPartnerDishesApi = async () => {
   return response.data;
 };
 
-export const createPartnerDishApi = async (dish: any) => {
+export const createPartnerDishApi = async (dish: {
+  partner_id: string;
+  dish_id: number;
+  price: number;
+  discount?: number;
+  availablePortions: number;
+}) => {
   const response = await axios.post(BASE_URL, dish);
   return response.data;
 };

@@ -1,5 +1,6 @@
 // src/partner-dishes/partner-dishes.service.ts
 
+
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePartnerDishDto } from './dto/create-partner-dish.dto';
@@ -14,9 +15,17 @@ export class PartnerDishesService {
   }
 
   async addDish(dto: CreatePartnerDishDto) {
+    const { partner_id, dish_id, price, discount, availablePortions } = dto;
+
     const { data, error } = await this.client
       .from('partner_dishes')
-      .insert([dto])
+      .insert([{
+        partner_id,
+        dish_id,
+        price,
+        discount: discount ?? 0,
+        available_portions: availablePortions ?? 0,
+      }])
       .select();
 
     if (error) throw new BadRequestException(error.message);
