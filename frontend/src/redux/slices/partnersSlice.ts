@@ -58,18 +58,27 @@ interface PartnersState {
   partnerDishes: PartnerDish[];
   loading: boolean;
   error?: string;
+  selectedPartnerId: string | null; // ⚡ додаємо поле для вибраного партнера
 }
 
 const initialState: PartnersState = {
   partners: [],
   partnerDishes: [],
   loading: false,
+  selectedPartnerId: null, // спочатку нічого не вибрано
 };
 
 const partnersSlice = createSlice({
   name: 'partners',
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedPartner(state, action: PayloadAction<string>) {
+      state.selectedPartnerId = action.payload;
+    },
+    clearSelectedPartner(state) {
+      state.selectedPartnerId = null;
+    },
+  },
   extraReducers: (builder) => {
     // --- Партнери ---
     builder
@@ -107,4 +116,5 @@ const partnersSlice = createSlice({
   },
 });
 
+export const { setSelectedPartner, clearSelectedPartner } = partnersSlice.actions;
 export default partnersSlice.reducer;

@@ -21,7 +21,7 @@ export const createPartnerDishApi = async (dish: {
 };
 
 export const updatePartnerDishApi = async (id: string, dish: any) => {
-  const response = await axios.put(`${BASE_URL}/${id}`, dish);
+  const response = await axios.patch(`${BASE_URL}/${id}`, dish);
   return response.data;
 };
 
