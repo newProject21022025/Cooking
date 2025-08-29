@@ -9,6 +9,28 @@ import {
   updateDishApi,
   deleteDishApi,
 } from "@/api/dishesApi";
+import { RootState } from "@/redux/store";
+import { PartnerDish } from "@/types/partnerDish";
+
+export const selectMergedDishes = (
+  state: RootState,
+  partnerDishes: PartnerDish[]
+) => {
+  return partnerDishes.map((pd: PartnerDish) => {       // ⚡ явно типізуємо pd
+    const dish = state.dishes.items.find((d: Dish) => d.id === pd.dish_id); // ⚡ явно типізуємо d
+    return {
+      id: pd.id,
+      price: pd.price,
+      discount: pd.discount || 0,
+      finalPrice: pd.price - (pd.discount || 0),
+      name: dish?.name_ua || "Без назви",
+      description: dish?.description_ua || "",
+      image: dish?.photo || "",
+      availablePortions: pd.availablePortions,
+    };
+  });
+};
+
 
 // 🔹 Async thunks
 export const fetchDishes = createAsyncThunk<Dish[]>(
