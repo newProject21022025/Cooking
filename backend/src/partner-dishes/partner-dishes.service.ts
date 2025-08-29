@@ -33,15 +33,22 @@ export class PartnerDishesService {
   }
 
   async updateDish(id: string, dto: UpdatePartnerDishDto) {
+    const payload = {
+      price: dto.price,
+      discount: dto.discount ?? 0,
+      available_portions: dto.availablePortions ?? 0,
+    };
+  
     const { data, error } = await this.client
       .from('partner_dishes')
-      .update(dto)
+      .update(payload)
       .eq('id', id)
       .select();
-
+  
     if (error) throw new BadRequestException(error.message);
     return data[0];
   }
+  
 
   async deleteDish(id: string) {
     const { data, error } = await this.client
