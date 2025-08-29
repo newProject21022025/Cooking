@@ -5,6 +5,7 @@ import authReducer from './slices/authSlice'; // Імпортуємо authSlice
 import dishesReducer from './slices/dishesSlice'; // Імпортуємо dishesSlice
 import partnerDishesReducer from './slices/partnerDishesSlice'; // Імпортуємо partnerDishesSlice
 import partnersReducer from './slices/partnersSlice'; // Імпортуємо partnersSlice
+import basketReducer from './slices/basketSlice'; // Імпортуємо basketSlice
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     dishes: dishesReducer,
     partnerDishes: partnerDishesReducer,
     partners: partnersReducer,
+    basket:basketReducer, 
   }
 });
 

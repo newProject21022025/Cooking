@@ -1,17 +1,17 @@
-// src/types/partnerDish.ts
+// // src/types/partnerDish.ts
 
-import { Dish } from "./dish";
+// import { Dish } from "./dish";
 
-export interface PartnerDish {
-  id: string;
-  partner_id: string;
-  dish_id: number;  // ✅ number
-  price: number;
-  discount?: number;
-  availablePortions: number;
+// export interface PartnerDish {
+//   id: string;
+//   partner_id: string;
+//   dish_id: number;  // ✅ number
+//   price: number;
+//   discount?: number;
+//   availablePortions: number;
 
-  dishes?: Dish;
-}
+//   dishes?: Dish;
+// }
 
-export type CreatePartnerDishDto = Omit<PartnerDish, "id" | "dishes">;
-export type UpdatePartnerDishDto = Partial<CreatePartnerDishDto>;
+// export type CreatePartnerDishDto = Omit<PartnerDish, "id" | "dishes">;
+// export type UpdatePartnerDishDto = Partial<CreatePartnerDishDto>;
