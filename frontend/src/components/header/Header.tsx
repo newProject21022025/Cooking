@@ -1,37 +1,40 @@
 // src/components/header/Header.tsx
 
+
 "use client";
 
-import { usePathname, Link } from "@/i18n/navigation";
-import styles from "./Header.module.scss";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import { RootState } from "@/redux/store";
+import Link from "next/link";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { logout } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";
+import styles from "./Header.module.scss";
 
-type HeaderProps = {
-  locale: "en" | "uk";
-};
+type HeaderProps = { locale: "uk" | "en" };
 
 export default function Header({ locale }: HeaderProps) {
+  const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
   const pathname = usePathname();
   const router = useRouter();
-  // const dispatch = useDispatch();
-  
-const dispatch = useDispatch<AppDispatch>()
-
-  const [scrolled, setScrolled] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const { token, user: authUser } = useSelector((state: RootState) => state.auth);
   const isAuthenticated = !!token;
+  const role = authUser?.role?.toLowerCase();
 
   useEffect(() => {
+    setMounted(true);
+
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (!mounted) return <header className={styles.header} />;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -42,8 +45,6 @@ const dispatch = useDispatch<AppDispatch>()
     const currentPathWithoutLocale = pathname.replace(`/${locale}`, "");
     window.location.href = `/${newLocale}${currentPathWithoutLocale}`;
   };
-
-  const role = authUser?.role?.toLowerCase();
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
@@ -58,7 +59,6 @@ const dispatch = useDispatch<AppDispatch>()
           </Link>
         ) : (
           <>
-            {/* Меню за роллю */}
             {role === "admin" && (
               <>
                 <Link href="/profile" className={styles.navLink}>Профіль</Link>
@@ -74,7 +74,9 @@ const dispatch = useDispatch<AppDispatch>()
               <Link href="/partners" className={styles.navLink}>Партнери</Link>
             )}
 
-            <button onClick={handleLogout} className={styles.navLink}>Вийти</button>
+            <button onClick={handleLogout} className={styles.navLink}>
+              Вийти
+            </button>
           </>
         )}
       </nav>
@@ -99,6 +101,9 @@ const dispatch = useDispatch<AppDispatch>()
 }
 
 
+
+
+
 // "use client";
 
 // import { usePathname, Link } from "@/i18n/navigation";
@@ -107,7 +112,8 @@ const dispatch = useDispatch<AppDispatch>()
 // import { useRouter } from "next/navigation";
 // import { useSelector, useDispatch } from "react-redux";
 // import { RootState } from "@/redux/store";
-// import { logout } from "@/redux/slices/authSlice"; // ⚡ экшен для выхода
+// import { logout } from "@/redux/slices/authSlice";
+// import type { AppDispatch } from "@/redux/store";
 
 
 // type HeaderProps = {
@@ -117,25 +123,23 @@ const dispatch = useDispatch<AppDispatch>()
 // export default function Header({ locale }: HeaderProps) {
 //   const pathname = usePathname();
 //   const router = useRouter();
-//   const dispatch = useDispatch();
+//   // const dispatch = useDispatch();
+  
+// const dispatch = useDispatch<AppDispatch>()
 
 //   const [scrolled, setScrolled] = useState(false);
 
-//   // ✅ теперь берём токен и юзера из authSlice
-//   const { token, user } = useSelector((state: RootState) => state.auth);
+//   const { token, user: authUser } = useSelector((state: RootState) => state.auth);
 //   const isAuthenticated = !!token;
 
 //   useEffect(() => {
-//     const handleScroll = () => {
-//       setScrolled(window.scrollY > 10);
-//     };
+//     const handleScroll = () => setScrolled(window.scrollY > 10);
 //     window.addEventListener("scroll", handleScroll);
 //     return () => window.removeEventListener("scroll", handleScroll);
 //   }, []);
 
 //   const handleLogout = () => {
-//     localStorage.removeItem("access_token");
-//     dispatch(logout()); // ⚡ экшен очистки auth
+//     dispatch(logout());
 //     router.push("/login");
 //   };
 
@@ -144,6 +148,8 @@ const dispatch = useDispatch<AppDispatch>()
 //     window.location.href = `/${newLocale}${currentPathWithoutLocale}`;
 //   };
 
+//   const role = authUser?.role?.toLowerCase();
+
 //   return (
 //     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
 //       <div className={styles.logo}>
@@ -151,42 +157,32 @@ const dispatch = useDispatch<AppDispatch>()
 //       </div>
 
 //       <nav className={styles.navigation}>
-//   {!isAuthenticated ? (
-//     <Link href="/login" className={styles.navLink}>
-//       Увійти
-//     </Link>
-//   ) : (
-//     <>
-//       {/* Показуємо профіль тільки для user і admin */}
-//       {(user?.role === "user" || user?.role === "admin") && (
-//         <Link href="/profile" className={styles.navLink}>
-//           Профіль
-//         </Link>
-//       )}
+//         {!isAuthenticated ? (
+//           <Link href="/login" className={styles.navLink}>
+//             Увійти
+//           </Link>
+//         ) : (
+//           <>
+//             {/* Меню за роллю */}
+//             {role === "admin" && (
+//               <>
+//                 <Link href="/profile" className={styles.navLink}>Профіль</Link>
+//                 <Link href="/admin" className={styles.navLink}>Адмін</Link>
+//               </>
+//             )}
 
-//       {/* Посилання для адміна */}
-//       {user?.role === "admin" && (
-//         <Link href="/admin" className={styles.navLink}>
-//           Адмін
-//         </Link>
-//       )}
+//             {role === "user" && (
+//               <Link href="/profile" className={styles.navLink}>Профіль</Link>
+//             )}
 
-//       {/* Посилання для партнера */}
-//       {user?.role === "partner" && (
-//         <Link href="/partners" className={styles.navLink}>
-//           Партнери
-//         </Link>
-//       )}
+//             {role === "partner" && (
+//               <Link href="/partners" className={styles.navLink}>Партнери</Link>
+//             )}
 
-//       {/* Кнопка Вийти для всіх */}
-//       <button onClick={handleLogout} className={styles.navLink}>
-//         Вийти
-//       </button>
-//     </>
-//   )}
-// </nav>
-
-
+//             <button onClick={handleLogout} className={styles.navLink}>Вийти</button>
+//           </>
+//         )}
+//       </nav>
 
 //       <div className={styles.languageSwitcher}>
 //         <button
@@ -206,3 +202,5 @@ const dispatch = useDispatch<AppDispatch>()
 //     </header>
 //   );
 // }
+
+

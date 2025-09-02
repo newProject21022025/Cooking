@@ -1,110 +1,130 @@
 // src/app/[locale]/buyDishes/basket/page.module.scss
 
-.container {
-    padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-  
-    h2 {
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
+.checkoutContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+
+  .empty {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #555;
   }
-  
-  .basketList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .basketItem {
+
+  .checkoutContent {
     display: flex;
-    gap: 20px;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    background-color: #fff;
-    align-items: center;
-    transition: box-shadow 0.2s;
-  
-    &:hover {
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    gap: 32px;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      gap: 20px;
     }
   }
-  
-  .dishPhoto {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .details {
+
+  .basket {
     flex: 1;
-  
-    h3 {
-      margin: 0 0 5px 0;
-      font-size: 20px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      margin-bottom: 16px;
+      color: #333;
     }
-  
-    p {
-      margin: 3px 0;
-      font-size: 14px;
-      color: #555;
-    }
-  
-    .controls {
-      margin-top: 10px;
+
+    .basketList {
       display: flex;
-      align-items: center;
-      gap: 10px;
-  
-      button {
-        padding: 5px 10px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f7f7f7;
-        cursor: pointer;
-        transition: background-color 0.2s;
-  
-        &:hover {
-          background-color: #e0e0e0;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .basketItem {
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 12px;
+
+      .dishPhoto {
+        width: 100px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .details {
+        flex: 1;
+
+        h3 {
+          margin: 0 0 6px 0;
+        }
+
+        p {
+          margin: 2px 0;
+          font-size: 0.95rem;
+          color: #555;
+        }
+
+        .controls {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 8px;
+
+          button {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: #f3f3f3;
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover {
+              background: #e0e0e0;
+            }
+          }
+
+          span {
+            min-width: 24px;
+            text-align: center;
+          }
         }
       }
-  
-      span {
-        min-width: 25px;
-        text-align: center;
-        font-weight: bold;
+    }
+
+    .total {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+      }
+
+      button {
+        padding: 8px 16px;
+        background: #4f46e5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover {
+          background: #4338ca;
+        }
       }
     }
   }
-  
-  .total {
-    margin-top: 20px;
-    text-align: right;
-  
-    h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-  
-    button {
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      background-color: #ff6b6b;
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.2s;
-  
-      &:hover {
-        background-color: #ff4b4b;
-      }
+
+  .orderFormContainer {
+    flex: 1;
+
+    @media (max-width: 900px) {
+      margin-top: 16px;
     }
   }
-  
+}

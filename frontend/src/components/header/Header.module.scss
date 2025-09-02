@@ -1,101 +1,91 @@
 // src/components/header/Header.module.scss
 
 .header {
-  position: fixed; // Чтобы хедер всегда был вверху
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 1000;
+  background: rgba(141, 100, 100, 0.9);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
   display: flex;
-  justify-content: space-between; // Распределяем элементы по краям
   align-items: center;
-  padding: 1.5rem 3rem; // Отступы сверху/снизу и по бокам
-  background-color: rgba(0, 0, 0, 0.7); // Полупрозрачный черный фон
-  backdrop-filter: blur(8px); // Эффект размытия
-  -webkit-backdrop-filter: blur(8px); // Для Safari
-  z-index: 1000; // Убедимся, что хедер поверх другого контента
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-sizing: border-box; // Учитываем padding в ширине
+  justify-content: space-between;
+  padding: 12px 24px;
+  box-shadow: none;  
 
   &.scrolled {
-    background-color: rgba(0, 0, 0, 0.9); // Более темный фон при скролле
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 24px;
   }
 }
 
 .logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
   a {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fff;
     text-decoration: none;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: #007bff; // Цвет при наведении
-    }
+    color: inherit;
   }
 }
 
 .navigation {
   display: flex;
-  gap: 2rem; // Отступы между ссылками
+  align-items: center;
+  gap: 20px;
 }
 
 .navLink {
-  font-size: 1.1rem;
-  color: #e0e0e0; // Светлый цвет текста
+  font-size: 16px;
+  color: #333;
   text-decoration: none;
-  padding: 0.5rem 0;
-  position: relative; // Для подчеркивания
-  transition: color 0.3s ease;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
 
   &:hover {
-    color: #007bff;
+    background: #f2f2f2;
+    color: #000;
   }
 
-  // Анимация подчеркивания при наведении
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: #007bff;
-    transition: width 0.3s ease;
-  }
-
-  &:hover::after {
-    width: 100%;
+  button & {
+    background: none;
+    border: none;
+    cursor: pointer;
   }
 }
 
 .languageSwitcher {
   display: flex;
   align-items: center;
+  gap: 8px;
+  margin-left: 16px;
 }
 
 .languageButton {
-  background: none;
-  border: none;
-  color: #b0b0b0;
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 600;
+  color: #666;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #fff;
-  }
+  transition: color 0.2s ease;
 
   &.active {
-    color: #007bff; // Активный язык
-    font-weight: 700;
+    color: #000;
+    text-decoration: underline;
+  }
+
+  &:hover {
+    color: #000;
   }
 }
 
 .languageSeparator {
-  color: #b0b0b0;
-  margin: 0 0.5rem;
+  font-size: 14px;
+  color: #aaa;
 }
-
