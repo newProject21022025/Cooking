@@ -159,39 +159,73 @@ export class OrdersService {
 
   // Додатковий метод: Оновлення статусу замовлення
   async updateOrderStatus(orderNumber: string, status: string): Promise<Order | null> {
+    try {
+      const { data, error } = await this.supabaseService
+        .getClient()
+        .from('orders')
+        .update({
+          status // оновлюємо тільки статус
+        })
+        .eq('order_number', orderNumber)
+        .select();
+  
+      if (error) {
+        console.error('Помилка при оновленні статусу:', error);
+        throw new Error(`Помилка оновлення: ${error.message}`);
+      }
+  
+      if (!data || data.length === 0) {
+        console.warn(`Замовлення ${orderNumber} не знайдено для оновлення`);
+        return null;
+      }
+  
+      const updated = data[0];
+  
+      return {
+        orderNumber: updated.order_number,
+        createdAt: new Date(updated.created_at),
+        userId: updated.user_id,
+        partnerId: updated.partner_id,
+        firstName: updated.first_name,
+        lastName: updated.last_name,
+        email: updated.email,
+        phone: updated.phone,
+        address: updated.address,
+        items: updated.items,
+        totalSum: updated.total_sum,
+        status: updated.status
+      };
+    } catch (err: any) {
+      console.error('Невідома помилка при оновленні статусу:', err);
+      throw new Error(err.message || 'Помилка оновлення статусу');
+    }
+  }
+  
+  
+  
+  async getOrdersByPartner(partnerId: string): Promise<Order[]> {
     const { data, error } = await this.supabaseService
       .getClient()
       .from('orders')
-      .update({ 
-        status: status,
-        updated_at: new Date().toISOString()
-      })
-      .eq('order_number', orderNumber)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Помилка при оновленні статусу:', error);
-      throw new Error(`Помилка оновлення: ${error.message}`);
-    }
-
-    if (!data) {
-      return null;
-    }
-
-    return {
-      orderNumber: data.order_number,
-      createdAt: new Date(data.created_at),
-      userId: data.user_id,
-      partnerId: data.partner_id,
-      firstName: data.first_name,
-      lastName: data.last_name,
-      email: data.email,
-      phone: data.phone,
-      address: data.address,
-      items: data.items,
-      totalSum: data.total_sum,
-      status: data.status
-    };
-  }
+      .select('*')
+      .eq('partner_id', partnerId)
+      .order('created_at', { ascending: false });
+  
+    if (error) throw new Error(error.message);
+  
+    return data.map(order => ({
+      orderNumber: order.order_number,
+      createdAt: new Date(order.created_at),
+      userId: order.user_id,
+      partnerId: order.partner_id,
+      firstName: order.first_name,
+      lastName: order.last_name,
+      email: order.email,
+      phone: order.phone,
+      address: order.address,
+      items: order.items,
+      totalSum: order.total_sum,
+      status: order.status
+    }));
+  }  
 }

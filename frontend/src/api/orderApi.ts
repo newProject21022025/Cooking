@@ -27,3 +27,9 @@ export const updateOrderStatusApi = async (orderNumber: string, status: string):
   const response = await axios.patch(`${API_URL}/${orderNumber}/status`, { status });
   return response.data;
 };
+
+export const fetchOrdersByPartnerApi = async (partnerId: string): Promise<Order[]> => {
+  const response = await axios.get(`${API_URL}/partner/${partnerId}`);
+  return response.data;
+};
+
