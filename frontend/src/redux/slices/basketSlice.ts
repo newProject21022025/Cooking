@@ -1,5 +1,5 @@
 // src/redux/slices/basketSlice.ts
-// src/redux/slices/basketSlice.ts
+
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PartnerDish } from "@/types/partner";
@@ -15,8 +15,23 @@ interface BasketState {
   items: BasketItem[];
 }
 
+// Завантажуємо з localStorage, якщо там щось є
+const loadBasketFromStorage = (): BasketItem[] => {
+  if (typeof window !== "undefined") {
+    const data = localStorage.getItem("basket");
+    if (data) return JSON.parse(data);
+  }
+  return [];
+};
+
+const saveBasketToStorage = (items: BasketItem[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("basket", JSON.stringify(items));
+  }
+};
+
 const initialState: BasketState = {
-  items: [],
+  items: loadBasketFromStorage(),
 };
 
 const basketSlice = createSlice({
@@ -25,7 +40,6 @@ const basketSlice = createSlice({
   reducers: {
     addToBasket(state, action: PayloadAction<BasketItem>) {
       const { partnerDish } = action.payload;
-      // Якщо така страва від цього партнера вже є, збільшуємо кількість
       const existingItem = state.items.find(
         (item) => item.partnerDish.id === partnerDish.id
       );
@@ -34,12 +48,13 @@ const basketSlice = createSlice({
       } else {
         state.items.push(action.payload);
       }
+      saveBasketToStorage(state.items);
     },
     removeFromBasket(state, action: PayloadAction<string>) {
-      // видаляємо по id partnerDish
       state.items = state.items.filter(
         (item) => item.partnerDish.id !== action.payload
       );
+      saveBasketToStorage(state.items);
     },
     updateQuantity(
       state,
@@ -51,9 +66,11 @@ const basketSlice = createSlice({
       if (item) {
         item.quantity = action.payload.quantity;
       }
+      saveBasketToStorage(state.items);
     },
     clearBasket(state) {
       state.items = [];
+      saveBasketToStorage(state.items);
     },
   },
 });
@@ -62,4 +79,3 @@ export const { addToBasket, removeFromBasket, updateQuantity, clearBasket } =
   basketSlice.actions;
 
 export default basketSlice.reducer;
-

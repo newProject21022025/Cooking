@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSearchParams } from "next/navigation";
 import { RootState, AppDispatch } from "@/redux/store";
-import { fetchPartnerMenu } from "@/redux/slices/partnersSlice";
+import { fetchPartnerMenu, setSelectedPartner } from "@/redux/slices/partnersSlice";
 import { fetchDishes } from "@/redux/slices/dishesSlice";
 import { addToBasket } from "@/redux/slices/basketSlice";
 import styles from "./page.module.scss";
@@ -15,14 +15,21 @@ export default function DishesPage() {
   const dispatch = useDispatch<AppDispatch>();
   const searchParams = useSearchParams();
 
-  // 1️⃣ PartnerId з query або Redux
+  // PartnerId з query або Redux
   const partnerIdFromQuery = searchParams.get("partnerId");
   const selectedPartnerId = useSelector(
     (state: RootState) => state.partners.selectedPartnerId
   );
   const partnerId = partnerIdFromQuery || selectedPartnerId;
 
-  // 2️⃣ PartnerDishes та всі страви
+  // Синхронізація Redux з query
+  useEffect(() => {
+    if (partnerIdFromQuery) {
+      dispatch(setSelectedPartner(partnerIdFromQuery));
+    }
+  }, [partnerIdFromQuery, dispatch]);
+
+  // Дані з Redux
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
   );
@@ -30,7 +37,7 @@ export default function DishesPage() {
     (state: RootState) => state.dishes
   );
 
-  // 3️⃣ Завантажуємо меню та всі страви
+  // Завантаження меню
   useEffect(() => {
     if (partnerId) {
       dispatch(fetchPartnerMenu(partnerId));
@@ -41,23 +48,23 @@ export default function DishesPage() {
   if (!partnerId) return <p>Партнера не вибрано</p>;
   if (loadingPartnerDishes || loadingDishes) return <p>Завантаження меню...</p>;
 
-  // 4️⃣ Мапінг PartnerDish + Dish
-  const mergedDishes = partnerDishes.map((pd) => {
-    const dish = dishes.find((d) => d.id === pd.dish_id);
-    if (!dish) return null;
-    const finalPrice = pd.discount ? pd.price - pd.price * (pd.discount / 100) : pd.price;
-    return {
-      partnerDish: pd,
-      dish,
-      finalPrice,
-    };
-  }).filter(Boolean) as {
+  // Мапінг PartnerDish + Dish
+  const mergedDishes = partnerDishes
+    .map((pd) => {
+      const dish = dishes.find((d) => d.id === pd.dish_id);
+      if (!dish) return null;
+      const finalPrice = pd.discount
+        ? pd.price - pd.price * (pd.discount / 100)
+        : pd.price;
+      return { partnerDish: pd, dish, finalPrice };
+    })
+    .filter(Boolean) as {
     partnerDish: typeof partnerDishes[0];
     dish: typeof dishes[0];
     finalPrice: number;
   }[];
 
-  // 5️⃣ Рендер карток
+  // Рендер
   return (
     <div className={styles.container}>
       <h2>Меню партнера {partnerId}</h2>
@@ -71,7 +78,8 @@ export default function DishesPage() {
               <h3>{dish.name_ua}</h3>
               <p>{dish.description_ua}</p>
               <p>
-                Ціна: {partnerDish.price} грн {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
+                Ціна: {partnerDish.price} грн{" "}
+                {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
               </p>
               <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
               <button
