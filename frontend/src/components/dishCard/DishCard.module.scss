@@ -1,0 +1,56 @@
+// src/components/DishCard/DishCard.module.scss
+
+.dishCard {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .dishPhoto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .dishInfo {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .dishTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+  
+  .dishDescription {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+  }
+  
+  /* Підсвічування інгредієнтів, якщо потрібно */
+  .highlightIngredient {
+    background-color: #e6f4ea;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.85rem;
+    margin-right: 4px;
+    color: #2a7f3e;
+  }
+  
