@@ -106,8 +106,8 @@ export interface IngredientOption {
   };
   
   export const mainCategories = [
-    "Мʼясо", "Риба", "Крупи", "Овочі", "Фрукти", "Молочні продукти", "Зелень"
+    "Мʼясо", "Риба", "Крупи", "Овочі", "Фрукти", "Молочні продукти" 
   ];
   
-  export const optionalCategories = ["Спеції", "Інше"];
+  export const optionalCategories = ["Зелень", "Спеції", "Інше"];
   
