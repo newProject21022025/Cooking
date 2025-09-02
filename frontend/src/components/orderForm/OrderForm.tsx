@@ -20,17 +20,27 @@ const OrderSchema = Yup.object().shape({
   address: Yup.string().required("Введіть адресу доставки"),
 });
 
-export default function OrderForm() {
+interface OrderFormProps {
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?: string;
+    deliveryAddress?: string;
+  } | null;
+}
+
+export default function OrderForm({ user }: OrderFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const items = useSelector((state: RootState) => state.basket.items);
 
   const initialValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phone: user?.phoneNumber || "",        // ⚡ підставляємо phoneNumber
+    address: user?.deliveryAddress || "",  // ⚡ підставляємо deliveryAddress
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
@@ -38,26 +48,26 @@ export default function OrderForm() {
       alert("Кошик порожній");
       return;
     }
-  
+
     const orderItems = items.map((i) => ({
       partnerDishId: i.partnerDish.id,
-      dishId: i.dish.id.toString(), // перетворюємо на string
+      dishId: i.dish.id.toString(),
       name: i.dish.name_ua,
       photo: i.dish.photo,
       price: i.partnerDish.price,
       discount: i.partnerDish.discount,
       quantity: i.quantity,
     }));
-  
+
     try {
       const response = await dispatch(
         createOrder({
-          partnerId: items[0].partnerDish.partner_id, // виправлено на partner_id
+          partnerId: items[0].partnerDish.partner_id,
           ...values,
           items: orderItems,
         })
       ).unwrap();
-  
+
       alert(`Замовлення створено! Номер: ${response.orderNumber}`);
       dispatch(clearBasket());
       router.push("/"); 
@@ -65,7 +75,6 @@ export default function OrderForm() {
       alert("Помилка при створенні замовлення: " + error.message);
     }
   };
-  
 
   return (
     <div className={styles.orderForm}>
@@ -74,6 +83,7 @@ export default function OrderForm() {
         initialValues={initialValues}
         validationSchema={OrderSchema}
         onSubmit={handleSubmit}
+        enableReinitialize // ⚡ для підвантаження user після асинхронного завантаження
       >
         {({ isSubmitting }) => (
           <Form className={styles.form}>
@@ -116,3 +126,5 @@ export default function OrderForm() {
     </div>
   );
 }
+
+

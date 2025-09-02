@@ -80,34 +80,64 @@ export class OrdersController {
 
   // Додатковий ендпоінт: Оновлення статусу
   @Patch(':orderNumber/status')
-  async updateStatus(
-    @Param('orderNumber') orderNumber: string,
-    @Body() body: { status: string }
-  ) {
-    try {
-      const updatedOrder = await this.ordersService.updateOrderStatus(orderNumber, body.status);
-      if (!updatedOrder) {
-        throw new HttpException(
-          {
-            success: false,
-            message: 'Замовлення не знайдено'
-          },
-          HttpStatus.NOT_FOUND
-        );
-      }
-      return {
-        success: true,
-        message: 'Статус замовлення оновлено',
-        order: updatedOrder
-      };
-    } catch (error) {
+async updateStatus(
+  @Param('orderNumber') orderNumber: string,
+  @Body() body: { status: string }
+) {
+  if (!body?.status) {
+    throw new HttpException(
+      {
+        success: false,
+        message: "Статус не передано"
+      },
+      HttpStatus.BAD_REQUEST
+    );
+  }
+
+  try {
+    const updatedOrder = await this.ordersService.updateOrderStatus(orderNumber, body.status);
+
+    if (!updatedOrder) {
       throw new HttpException(
         {
           success: false,
-          message: error.message
+          message: 'Замовлення не знайдено'
         },
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.NOT_FOUND
       );
     }
+
+    return {
+      success: true,
+      message: 'Статус замовлення оновлено',
+      order: updatedOrder
+    };
+  } catch (error: any) {
+    console.error("Помилка PATCH /orders/:orderNumber/status", error);
+    throw new HttpException(
+      {
+        success: false,
+        message: error.message || 'Внутрішня помилка сервера'
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
   }
+}
+
+  // GET /orders/partner/:partnerId
+@Get('partner/:partnerId')
+async findByPartner(@Param('partnerId') partnerId: string) {
+  try {
+    const orders = await this.ordersService.getOrdersByPartner(partnerId);
+    return orders;
+  } catch (error) {
+    throw new HttpException(
+      {
+        success: false,
+        message: error.message
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
 }
