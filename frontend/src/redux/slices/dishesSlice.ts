@@ -10,7 +10,7 @@ import {
   deleteDishApi,
 } from "@/api/dishesApi";
 import { RootState } from "@/redux/store";
-import { PartnerDish } from "@/types/partnerDish";
+import { PartnerDish } from "@/types/partner";
 
 export const selectMergedDishes = (
   state: RootState,
