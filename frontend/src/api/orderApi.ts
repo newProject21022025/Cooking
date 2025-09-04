@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CreateOrderDto, Order } from '@/types/order';
 
-const API_URL = 'http://localhost:3000/orders'; // або повний URL до твого бекенду
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders`; // або повний URL до твого бекенду
 
 export const createOrderApi = async (order: CreateOrderDto): Promise<{ success: boolean; orderNumber: string }> => {
   const response = await axios.post(API_URL, order);

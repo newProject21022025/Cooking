@@ -3,7 +3,7 @@
 import axios from "axios";
 import { Dish, CreateDishDto, UpdateDishDto } from "@/types/dish";
 
-const API_URL = "http://localhost:3000/dishes";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dishes`;
 
 // 🔹 Отримати всі страви
 export const fetchDishesApi = async (): Promise<Dish[]> => {

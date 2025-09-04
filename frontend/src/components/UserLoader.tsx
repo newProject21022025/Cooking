@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, clearUser } from "@/redux/userSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`;
+
 interface UserLoaderProps {
   children: React.ReactNode;
 }
@@ -21,11 +23,9 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
       return;
     }
 
-    // ⚡ вантажимо профіль користувача з бекенду
     const loadUser = async () => {
       try {
-        // можна зробити окремий ендпоінт /auth/profile, який повертає поточного юзера
-        const response = await fetch("http://localhost:3000/auth/profile", {
+        const response = await fetch(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -39,7 +39,7 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
         }
 
         const userData = await response.json();
-        dispatch(fetchUser.fulfilled(userData, "", userData.id)); // вручну диспатчимо fulfilled
+        dispatch(fetchUser.fulfilled(userData, "", userData.id));
       } catch (err: any) {
         console.error("Помилка завантаження користувача:", err);
         dispatch(clearUser());
