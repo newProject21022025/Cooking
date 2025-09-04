@@ -1,3 +1,5 @@
+// main.ts
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -13,6 +15,10 @@ async function bootstrap() {
       skipMissingProperties: true,
     }),
   );
+
+   // 🔁 Підтримка :locale як глобального параметра
+  //  app.setGlobalPrefix(':locale');
+
   const allowedOrigins = [
     // 'https://urban-fusion-amber.vercel.app',
     // 'https://urban-fusion-5fee.vercel.app',
@@ -28,8 +34,14 @@ async function bootstrap() {
     exposedHeaders: ['Authorization'],
   });
 
-  
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on port ${port}`);
+  });
 
-  await app.listen(3000);
+  
+  // await app.listen(3000);
 }
+
 bootstrap();
+

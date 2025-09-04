@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { Partner, PartnerDish } from '@/types/partner';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 
 // Додаємо інтерцептор для автоматичного додавання токена
 const apiClient = axios.create({

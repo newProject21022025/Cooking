@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/partner-dishes";
+const BASE_URL =`${process.env.NEXT_PUBLIC_BACKEND_URL}/partner-dishes`;
 
 export const fetchPartnerDishesApi = async () => {
   const response = await axios.get(BASE_URL);

@@ -3,7 +3,7 @@
 import axios from "axios";
 import { User, UserRole, UpdateUserProfileData } from "@/types/user";
 
-const API_URL = "http://localhost:3000/users";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`;
 
 const getToken = () => localStorage.getItem("token");
 

@@ -3,7 +3,7 @@
 import axios from "axios";
 import { LoginRequest, LoginResponse } from "@/types/auth";
 
-const API_URL = "http://localhost:3000/auth"; // заміни на свій бекенд
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth`; // заміни на свій бекенд
 
 export const loginUser = async (
   data: LoginRequest
