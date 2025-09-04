@@ -28,3 +28,13 @@ export interface Dish {
 
 export type CreateDishDto = Omit<Dish, "id">;
 export type UpdateDishDto = Partial<CreateDishDto>;
+
+// ✅ Тип для форми
+export interface FormValues
+  extends Omit<
+    CreateDishDto,
+    "important_ingredients" | "optional_ingredients"
+  > {
+  important_ingredients: IngredientForm[];
+  optional_ingredients: IngredientForm[];
+}
