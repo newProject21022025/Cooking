@@ -71,10 +71,13 @@ export default function OrderForm({ user }: OrderFormProps) {
       alert(`Замовлення створено! Номер: ${response.orderNumber}`);
       dispatch(clearBasket());
       router.push("/"); 
-    } catch (error: any) {
-      alert("Помилка при створенні замовлення: " + error.message);
-    }
-  };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert("Помилка при створенні замовлення: " + error.message);
+      } else {
+        alert("Помилка при створенні замовлення");
+      }
+  }  };
 
   return (
     <div className={styles.orderForm}>
@@ -88,7 +91,7 @@ export default function OrderForm({ user }: OrderFormProps) {
         {({ isSubmitting }) => (
           <Form className={styles.form}>
             <div className={styles.field}>
-              <label>Ім'я</label>
+              <label>Ім&aposя</label>
               <Field type="text" name="firstName" />
               <ErrorMessage name="firstName" component="div" className={styles.error} />
             </div>

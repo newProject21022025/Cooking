@@ -1,24 +1,37 @@
 // src/app/admin/create/page.tsx
+
 "use client";
 
 import React from "react";
 import styles from "./page.module.scss";
-import CreateDishForm, { FormValues } from "@/components/createDishForm/CreateDishForm";
+import CreateDishForm from "@/components/createDishForm/CreateDishForm";
+import { FormValues, CreateDishDto } from "@/types/dish";
 import { createDishApi } from "@/api/dishesApi";
 
 export default function AdminPage() {
   const handleSubmit = async (values: FormValues) => {
-    try {
-      // Додаємо стандартну порцію, щоб відповідало CreateDishDto
-      const dto = {
-        ...values,
-        standard_servings: 1, // значення за замовчуванням
-      };
+    const dto: CreateDishDto = {
+      ...values,
+      important_ingredients: values.important_ingredients.map(({ name_ua, name_en, quantity, unit }) => ({
+        name_ua,
+        name_en,
+        quantity: quantity ?? 0,
+        unit,
+      })),
+      optional_ingredients: values.optional_ingredients.map(({ name_ua, name_en, quantity, unit }) => ({
+        name_ua,
+        name_en,
+        quantity: quantity ?? 0,
+        unit,
+      })),
+      standard_servings: values.standard_servings ?? 1,
+    };
 
+    try {
       await createDishApi(dto);
       alert("Страву створено успішно!");
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert("Помилка при створенні страви");
     }
   };
@@ -31,7 +44,6 @@ export default function AdminPage() {
           Тут буде вміст сторінки адміністратора. Доступ лише для авторизованих адміністраторів.
         </p>
 
-        {/* Передаємо handleSubmit у CreateDishForm */}
         <CreateDishForm onSubmit={handleSubmit} />
       </main>
     </div>

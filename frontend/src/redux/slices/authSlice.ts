@@ -5,7 +5,7 @@ import { loginUser } from "@/api/authApi";
 import { LoginRequest, LoginResponse } from "@/types/auth";
 
 interface User {
-  id: string | number; 
+  id: string | number;
   email: string;
   firstName: string;
   lastName: string | null;
@@ -21,8 +21,10 @@ interface AuthState {
 }
 
 // 🔹 Ініціалізація з localStorage
-const tokenFromStorage = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-const userFromStorage = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+const tokenFromStorage =
+  typeof window !== "undefined" ? localStorage.getItem("token") : null;
+const userFromStorage =
+  typeof window !== "undefined" ? localStorage.getItem("user") : null;
 
 const initialState: AuthState = {
   token: tokenFromStorage,
@@ -39,8 +41,13 @@ export const login = createAsyncThunk(
     try {
       const response: LoginResponse = await loginUser(credentials);
       return response; // { access_token, user }
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      // Якщо бекенд повертає обʼєкт з response.data.message
+      // можна спробувати його типізовано отримати
+      return rejectWithValue("Login failed");
     }
   }
 );
@@ -83,4 +90,3 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-

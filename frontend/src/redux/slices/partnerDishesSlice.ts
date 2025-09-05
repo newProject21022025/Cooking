@@ -1,7 +1,7 @@
 // src/redux/slices/partnerDishesSlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { PartnerDish, CreatePartnerDishDto, UpdatePartnerDishDto } from "@/types/partnerDish";
+import { PartnerDish, CreatePartnerDishDto, UpdatePartnerDishDto } from "@/types/partner";
 import {
   createPartnerDishApi,
   fetchPartnerDishesApi,
@@ -23,7 +23,7 @@ export const fetchPartnerDishes = createAsyncThunk<PartnerDish[], string>(
   "partnerDishes/fetchAll",
   async (partnerId: string) => {
     const response = await axios.get(
-      `http://localhost:3000/partner-dishes/menu/${partnerId}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/partner-dishes/menu/${partnerId}`
     );
     return response.data;
   }

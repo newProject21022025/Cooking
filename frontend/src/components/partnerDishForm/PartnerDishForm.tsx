@@ -6,7 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { 
     // PartnerDish, 
-    CreatePartnerDishDto } from "@/types/partnerDish";
+    CreatePartnerDishDto } from "@/types/partner";
 
 interface PartnerDishFormProps {
   initialValues: Partial<CreatePartnerDishDto>;
