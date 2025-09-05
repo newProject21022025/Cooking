@@ -166,7 +166,7 @@ export default function PartnerAdminPage() {
             <div className={styles.infoGrid}>
               <div><strong>ID:</strong> {partner.id}</div>
               <div><strong>Email:</strong> {partner.email}</div>
-              <div><strong>Ім'я:</strong> {partner.firstName}</div>
+              <div><strong>Ім&aposя:</strong> {partner.firstName}</div>
               <div><strong>Прізвище:</strong> {partner.lastName}</div>
               {partner.phoneNumber && <div><strong>Телефон:</strong> {partner.phoneNumber}</div>}
               {partner.deliveryAddress && <div><strong>Адреса доставки:</strong> {partner.deliveryAddress}</div>}
