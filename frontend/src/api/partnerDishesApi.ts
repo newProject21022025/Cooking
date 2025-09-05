@@ -1,22 +1,23 @@
 // src/api/partnerDishesApi.ts
 
 import axios from "axios";
-import { PartnerDish } from "../types/partner";
+import { PartnerDish, CreatePartnerDishDto, UpdatePartnerDishDto } from "@/types/partner";
 
-
-const BASE_URL =`${process.env.NEXT_PUBLIC_BACKEND_URL}/partner-dishes`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/partner-dishes`;
 
 export const fetchPartnerDishesApi = async (): Promise<PartnerDish[]> => {
   const response = await axios.get<PartnerDish[]>(BASE_URL);
   return response.data;
 };
 
-export const createPartnerDishApi = async (dish: PartnerDish): Promise<PartnerDish> => {
+// ⚡ create приймає DTO без id
+export const createPartnerDishApi = async (dish: CreatePartnerDishDto): Promise<PartnerDish> => {
   const response = await axios.post<PartnerDish>(BASE_URL, dish);
   return response.data;
 };
 
-export const updatePartnerDishApi = async (id: string, dish: Partial<PartnerDish>): Promise<PartnerDish> => {
+// update теж приймає DTO без id
+export const updatePartnerDishApi = async (id: string, dish: UpdatePartnerDishDto): Promise<PartnerDish> => {
   const response = await axios.patch<PartnerDish>(`${BASE_URL}/${id}`, dish);
   return response.data;
 };
