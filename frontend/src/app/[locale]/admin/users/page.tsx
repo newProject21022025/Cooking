@@ -5,15 +5,12 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.scss";
 import { User } from "@/types/user";
 import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 
-interface UsersPageProps {
-  params: { locale: string };
-}
-
-export default function UsersPage({ params }: UsersPageProps) {
+// 🔹 Просто PageProps не потрібно явно, якщо ти не використовуєш інші props
+export default function UsersPage({ params }: { params: { locale: string } }) {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const locale = useLocale();
 
   const fetchUsers = async () => {
@@ -28,9 +25,8 @@ export default function UsersPage({ params }: UsersPageProps) {
     }
   };
 
-  // 🔹 Безпечне блокування/розблокування
   const handleBlockToggle = async (user: User) => {
-    if (!user.id) return; // якщо id null — нічого не робимо
+    if (!user.id) return;
     try {
       if (user.isBlocked) {
         await unblockUser(user.id);
@@ -43,9 +39,8 @@ export default function UsersPage({ params }: UsersPageProps) {
     }
   };
 
-  // 🔹 Безпечне видалення користувача
   const handleDeleteUser = async (userId: string | null | undefined) => {
-    if (!userId) return; // перевірка
+    if (!userId) return;
     if (!confirm("Ви впевнені, що хочете видалити цього користувача?")) return;
 
     try {
@@ -88,7 +83,7 @@ export default function UsersPage({ params }: UsersPageProps) {
                 <button
                   onClick={() => handleBlockToggle(user)}
                   className={user.isBlocked ? styles.unblockBtn : styles.blockBtn}
-                  disabled={!user.id} // блокуємо кнопку, якщо id немає
+                  disabled={!user.id}
                 >
                   {user.isBlocked ? "Розблокувати" : "Заблокувати"}
                 </button>
@@ -109,6 +104,7 @@ export default function UsersPage({ params }: UsersPageProps) {
     </div>
   );
 }
+
 
 
 
