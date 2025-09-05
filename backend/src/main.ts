@@ -20,7 +20,7 @@ async function bootstrap() {
   //  app.setGlobalPrefix(':locale');
 
   const allowedOrigins = [
-    // 'https://urban-fusion-amber.vercel.app',
+    'https://cooking-beta.vercel.app',
     // 'https://urban-fusion-5fee.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001',
