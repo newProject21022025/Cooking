@@ -21,7 +21,7 @@ async function bootstrap() {
 
   const allowedOrigins = [
     'https://cooking-beta.vercel.app',
-    // 'https://urban-fusion-5fee.vercel.app',
+    'https://cooking-ujfo.vercel.app ',    
     'http://localhost:3000',
     'http://localhost:3001',
   ];
