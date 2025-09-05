@@ -12,8 +12,8 @@ export interface Partner {
   phoneNumber?: string;
   deliveryAddress?: string;
   role?: string;
-  orderHistory?: any[];
-  favorites?: any[];
+  orderHistory?: unknown[];
+  favorites?: unknown[];
   rating?: number;
   isBlocked?: boolean;
   createdAt?: string;
@@ -27,8 +27,8 @@ export interface PartnerDish {
   dish_id: number;
   price: number;
   discount?: number;
-  availablePortions: number;  // ✅ camelCase, щоб збігалося з frontend
-  dishes?: Dish;              // якщо хочеш з’єднати з Dish
+  availablePortions: number; // ✅ camelCase, щоб збігалося з frontend
+  dishes?: Dish; // якщо хочеш з’єднати з Dish
 }
 
 // DTO для створення та оновлення

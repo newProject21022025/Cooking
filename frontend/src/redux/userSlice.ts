@@ -30,13 +30,20 @@ export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/users/${userId}`);
+      const response = await axios.get<User>(`/api/users/${userId}`);
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to load user");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data?.message || "Failed to load user");
+      } else if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue("Failed to load user");
+      }
     }
   }
 );
+
 
 const userSlice = createSlice({
   name: "user",

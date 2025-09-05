@@ -40,8 +40,9 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
 
         const userData = await response.json();
         dispatch(fetchUser.fulfilled(userData, "", userData.id));
-      } catch (err: any) {
-        console.error("Помилка завантаження користувача:", err);
+      } catch (err: unknown) {
+        const error = err as { message?: string }
+        console.error("Помилка завантаження користувача:", error.message ?? err);
         dispatch(clearUser());
       }
     };

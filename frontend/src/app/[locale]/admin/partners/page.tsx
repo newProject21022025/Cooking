@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { api } from "@/api/partnersApi";
 import { Partner } from "@/types/partner";
@@ -38,10 +38,13 @@ export default function Partners() {
   });
 
   // ✅ відправка форми
-  const handleSubmit = async (values: { email: string; password: string }, { resetForm }: any) => {
+  const handleSubmit = async (
+    values: { email: string; password: string },
+    { resetForm }: FormikHelpers<{ email: string; password: string }>
+  ) => {
     try {
       await api.createPartner(values);
-      await fetchPartners(); // оновити список
+      await fetchPartners();
       resetForm();
     } catch (error) {
       console.error("Помилка при створенні партнера:", error);
