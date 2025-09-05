@@ -7,16 +7,13 @@ import { User } from "@/types/user";
 import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
 import { useTranslations, useLocale } from "next-intl";
 
-interface UsersPageProps {
-  params: { locale: string };
-}
-
-export default function UsersPage({ params }: UsersPageProps) {
+export default function UsersPage() {
   const t = useTranslations("admin.users");
   const locale = useLocale();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // 🔹 Отримати всіх користувачів
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -29,6 +26,7 @@ export default function UsersPage({ params }: UsersPageProps) {
     }
   };
 
+  // 🔹 Блокування/розблокування користувача
   const handleBlockToggle = async (user: User) => {
     if (!user.id) return;
     try {
@@ -43,6 +41,7 @@ export default function UsersPage({ params }: UsersPageProps) {
     }
   };
 
+  // 🔹 Видалення користувача
   const handleDeleteUser = async (userId: string | null | undefined) => {
     if (!userId) return;
     if (!confirm(t("confirmDelete"))) return;
