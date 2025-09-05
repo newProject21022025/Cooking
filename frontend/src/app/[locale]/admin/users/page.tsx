@@ -5,13 +5,17 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.scss";
 import { User } from "@/types/user";
 import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
-import { useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
-// 🔹 Просто PageProps не потрібно явно, якщо ти не використовуєш інші props
-export default function UsersPage({ params }: { params: { locale: string } }) {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UsersPageProps {
+  params: { locale: string };
+}
+
+export default function UsersPage({ params }: UsersPageProps) {
+  const t = useTranslations("admin.users");
   const locale = useLocale();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchUsers = async () => {
     try {
@@ -19,7 +23,7 @@ export default function UsersPage({ params }: { params: { locale: string } }) {
       const data = await getAllUsers();
       setUsers(data);
     } catch (error) {
-      console.error("Помилка при отриманні користувачів:", error);
+      console.error(t("fetchError"), error);
     } finally {
       setLoading(false);
     }
@@ -35,19 +39,19 @@ export default function UsersPage({ params }: { params: { locale: string } }) {
       }
       await fetchUsers();
     } catch (error) {
-      console.error("Помилка при зміні статусу:", error);
+      console.error(t("statusChangeError"), error);
     }
   };
 
   const handleDeleteUser = async (userId: string | null | undefined) => {
     if (!userId) return;
-    if (!confirm("Ви впевнені, що хочете видалити цього користувача?")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       await deleteUserApi(userId);
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch (error) {
-      console.error("Помилка при видаленні користувача:", error);
+      console.error(t("deleteError"), error);
     }
   };
 
@@ -55,21 +59,21 @@ export default function UsersPage({ params }: { params: { locale: string } }) {
     fetchUsers();
   }, []);
 
-  if (loading) return <div>Завантаження користувачів...</div>;
-  if (!users.length) return <div>Користувачів ще немає</div>;
+  if (loading) return <div>{t("loading")}</div>;
+  if (!users.length) return <div>{t("noUsers")}</div>;
 
   return (
     <div className={styles.container}>
-      <h1>Користувачі</h1>
+      <h1>{t("title")}</h1>
       <table className={styles.usersTable}>
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Ім’я</th>
-            <th>Прізвище</th>
-            <th>Роль</th>
-            <th>Блокування</th>
-            <th>Дії</th>
+            <th>{t("email")}</th>
+            <th>{t("firstName")}</th>
+            <th>{t("lastName")}</th>
+            <th>{t("role")}</th>
+            <th>{t("block")}</th>
+            <th>{t("actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -85,7 +89,7 @@ export default function UsersPage({ params }: { params: { locale: string } }) {
                   className={user.isBlocked ? styles.unblockBtn : styles.blockBtn}
                   disabled={!user.id}
                 >
-                  {user.isBlocked ? "Розблокувати" : "Заблокувати"}
+                  {user.isBlocked ? t("unblock") : t("block")}
                 </button>
               </td>
               <td>
@@ -94,7 +98,7 @@ export default function UsersPage({ params }: { params: { locale: string } }) {
                   className={styles.deleteBtn}
                   disabled={!user.id}
                 >
-                  Видалити
+                  {t("delete")}
                 </button>
               </td>
             </tr>
