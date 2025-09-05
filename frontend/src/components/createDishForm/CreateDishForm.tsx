@@ -1,7 +1,7 @@
 // src/components/createDishForm/CreateDishForm.tsx
 "use client";
 
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers  } from "formik";
 import * as Yup from "yup";
 import styles from "./CreateDishForm.module.scss";
 import IngredientsTable from "./constants/IngredientsTable";
@@ -51,7 +51,7 @@ const mapIngredientWithCategory = (ing: Ingredient, defaultCategory: string): In
 // handleFileChange
 const handleFileChange = async (
   e: React.ChangeEvent<HTMLInputElement>,
-  setFieldValue: (field: keyof FormValues, value: any, shouldValidate?: boolean) => void
+  setFieldValue: FormikHelpers<FormValues>["setFieldValue"]
 ) => {
   const file = e.target.files?.[0];
   if (!file) return;
@@ -61,8 +61,8 @@ const handleFileChange = async (
     const result = await uploadToCloudinary(file);
     setFieldValue("photo", result.secure_url);
   } catch (err: unknown) {
-    const error = err as { message?: string };
-    console.error("Помилка завантаження фото:", error.message ?? err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Помилка завантаження фото:", errorMessage);
     alert("Не вдалося завантажити фото");
   } finally {
     setUploading(false);
@@ -92,12 +92,14 @@ const handleSubmit = async (values: FormValues) => {
     await onSubmit(payload);
     alert("Страва створена!");
   } catch (err: unknown) {
-    const error = err as { response?: { data?: any }; message?: string };
-    console.error("Помилка створення страви:", error.response?.data || error.message);
+    const errorMessage =
+      err instanceof Error
+        ? err.message
+        : (err as { response?: { data?: unknown } })?.response?.data || String(err);
+    console.error("Помилка створення страви:", errorMessage);
     alert("Помилка при створенні страви");
   }
 };
-
 
   return (
     <div className={styles.formWrapper}>
