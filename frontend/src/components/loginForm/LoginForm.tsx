@@ -3,12 +3,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import styles from "@/app/[locale]/login/page.module.scss";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
-import { registerUser } from "@/api/usersApi";
+import { registerUser, CreateUserData } from "@/api/usersApi";
 
 // Валідації
 const LoginSchema = Yup.object().shape({
@@ -23,6 +23,14 @@ const RegisterSchema = Yup.object().shape({
   password: Yup.string().min(5, "Мінімум 5 символів").required("Пароль обов'язковий"),
 });
 
+// Типи для форми
+interface FormValues extends CreateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
 export default function LoginForm() {
   const dispatch = useAppDispatch();
   const { loading: authLoading, error: authError } = useAppSelector((state) => state.auth);
@@ -31,7 +39,6 @@ export default function LoginForm() {
   const [mounted, setMounted] = useState(false);
   const [formError, setFormError] = useState("");
 
-  // Чекаємо, поки компонент змонтується, щоб уникнути hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -41,36 +48,42 @@ export default function LoginForm() {
     setFormError("");
   };
 
-  const handleRegister = async (values: any, setSubmitting: (val: boolean) => void) => {
+  const handleRegister = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     try {
-      await registerUser(values);
+      const { firstName, lastName, email, password } = values;
+      await registerUser({ firstName, lastName, email, password });
       alert("Реєстрація успішна! Тепер можна увійти.");
       setIsRegister(false);
-    } catch (err: any) {
-      setFormError(err.response?.data?.message || "Сталася помилка при реєстрації");
+    } catch (err: unknown) {
+      // 🔹 Типізація error без any
+      if (err instanceof Error) {
+        setFormError(err.message);
+      } else {
+        const e = err as { response?: { data?: { message?: string } } };
+        setFormError(e.response?.data?.message || "Сталася помилка при реєстрації");
+      }
     } finally {
-      setSubmitting(false);
+      helpers.setSubmitting(false);
     }
   };
 
-  if (!mounted) return null; // або можна показати лоадер
+  if (!mounted) return null;
 
   return (
     <Formik
-      initialValues={{ firstName: "", lastName: "", email: "", password: "" }} // завжди один об'єкт
+      initialValues={{ firstName: "", lastName: "", email: "", password: "" }}
       validationSchema={isRegister ? RegisterSchema : LoginSchema}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={(values, helpers) => {
         if (isRegister) {
-          handleRegister(values, setSubmitting);
+          handleRegister(values, helpers);
         } else {
           dispatch(login({ email: values.email, password: values.password }));
-          setSubmitting(false);
+          helpers.setSubmitting(false);
         }
       }}
     >
       {({ isSubmitting }) => (
         <Form className={styles.form}>
-          {/* Поля для реєстрації */}
           {isRegister && (
             <>
               <div className={styles.formGroup}>
@@ -84,7 +97,6 @@ export default function LoginForm() {
             </>
           )}
 
-          {/* Поля email/password */}
           <div className={styles.formGroup}>
             <Field type="email" name="email" placeholder="Email" className={styles.input} />
             <ErrorMessage name="email" component="div" className={styles.error} />
@@ -94,15 +106,12 @@ export default function LoginForm() {
             <ErrorMessage name="password" component="div" className={styles.error} />
           </div>
 
-          {/* Кнопка сабміту */}
           <button type="submit" className={styles.button} disabled={isSubmitting || authLoading}>
             {isSubmitting || authLoading ? "Завантаження..." : isRegister ? "Зареєструватися" : "Вхід"}
           </button>
 
-          {/* Помилки */}
           {(authError || formError) && <p className={styles.error}>{authError || formError}</p>}
 
-          {/* Перемикач під формою */}
           <div style={{ marginTop: "10px", textAlign: "center" }}>
             <button type="button" className={styles.toggleButton} onClick={toggleForm}>
               {isRegister ? "Увійти" : "Реєстрація"}
