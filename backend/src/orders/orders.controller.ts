@@ -145,18 +145,20 @@ async findByPartner(@Param('partnerId') partnerId: string) {
 @Get('history')
 async findHistory(
   @Query('partnerId') partnerId: string,
-  @Query('userId') userId: string
+  @Query('userId') userId?: string
 ) {
-  if (!partnerId || !userId) {
+  if (!partnerId) {
     throw new HttpException(
-      'Не передано partnerId або userId',
+      'Не передано partnerId',
       HttpStatus.BAD_REQUEST
     );
   }
 
   try {
     const orders = await this.ordersService.getOrdersByPartnerAndUser(partnerId, userId);
-    return orders;
+    return orders.length > 0
+      ? orders
+      : { success: false, message: 'Замовлення не знайдено' };
   } catch (error) {
     throw new HttpException(
       {
@@ -167,5 +169,6 @@ async findHistory(
     );
   }
 }
+
 
 }
