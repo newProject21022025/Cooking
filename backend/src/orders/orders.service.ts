@@ -36,12 +36,59 @@ export class OrdersService {
     return `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   }
 
+  // async createOrder(orderData: Omit<Order, 'orderNumber' | 'createdAt' | 'totalSum' | 'status'>): Promise<Order> {
+  //   const totalSum = orderData.items.reduce((sum, item) => {
+  //     const finalPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price;
+  //     return sum + finalPrice * item.quantity;
+  //   }, 0);
+
+  //   const newOrder: Order = {
+  //     ...orderData,
+  //     orderNumber: this.generateOrderNumber(),
+  //     createdAt: new Date(),
+  //     totalSum,
+  //     status: 'created'
+  //   };
+
+  //   const { data, error } = await this.supabaseService
+  //     .getClient()
+  //     .from('orders')
+  //     .insert([
+  //       {
+  //         order_number: newOrder.orderNumber,
+  //         partner_id: newOrder.partnerId,
+  //         user_id: newOrder.userId || null,
+  //         first_name: newOrder.firstName,
+  //         last_name: newOrder.lastName,
+  //         email: newOrder.email,
+  //         phone: newOrder.phone,
+  //         address: newOrder.address,
+  //         items: newOrder.items,
+  //         total_sum: totalSum,
+  //         status: 'created',
+  //         created_at: new Date().toISOString()
+  //       }
+  //     ])
+  //     .select();
+
+  //   if (error) {
+  //     console.error('Помилка при записі в Supabase:', error);
+  //     throw new Error(`Помилка бази даних: ${error.message}`);
+  //   }
+
+  //   console.log('Успішно записано в Supabase:', data);
+  //   return newOrder;
+  // }
   async createOrder(orderData: Omit<Order, 'orderNumber' | 'createdAt' | 'totalSum' | 'status'>): Promise<Order> {
+    if (!orderData.userId) {
+      console.warn('userId не передано, замовлення буде зберігатись без прив’язки до користувача');
+    }
+  
     const totalSum = orderData.items.reduce((sum, item) => {
       const finalPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price;
       return sum + finalPrice * item.quantity;
     }, 0);
-
+  
     const newOrder: Order = {
       ...orderData,
       orderNumber: this.generateOrderNumber(),
@@ -49,7 +96,7 @@ export class OrdersService {
       totalSum,
       status: 'created'
     };
-
+  
     const { data, error } = await this.supabaseService
       .getClient()
       .from('orders')
@@ -57,7 +104,7 @@ export class OrdersService {
         {
           order_number: newOrder.orderNumber,
           partner_id: newOrder.partnerId,
-          user_id: newOrder.userId || null,
+          user_id: newOrder.userId ?? null, // ⚡ тут зберігаємо userId
           first_name: newOrder.firstName,
           last_name: newOrder.lastName,
           email: newOrder.email,
@@ -70,15 +117,16 @@ export class OrdersService {
         }
       ])
       .select();
-
+  
     if (error) {
       console.error('Помилка при записі в Supabase:', error);
       throw new Error(`Помилка бази даних: ${error.message}`);
     }
-
+  
     console.log('Успішно записано в Supabase:', data);
     return newOrder;
   }
+  
 
   async getOrders(): Promise<Order[]> {
     const { data, error } = await this.supabaseService
@@ -228,14 +276,19 @@ export class OrdersService {
       status: order.status
     }));
   }  
-  async getOrdersByPartnerAndUser(partnerId: string, userId: string): Promise<Order[]> {
-    const { data, error } = await this.supabaseService
+  async getOrdersByPartnerAndUser(partnerId: string, userId?: string): Promise<Order[]> {
+    let query = this.supabaseService
       .getClient()
       .from('orders')
       .select('*')
       .eq('partner_id', partnerId)
-      .eq('user_id', userId)
       .order('created_at', { ascending: false });
+  
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+  
+    const { data, error } = await query;
   
     if (error) throw new Error(error.message);
   
@@ -249,9 +302,10 @@ export class OrdersService {
       email: order.email,
       phone: order.phone,
       address: order.address,
-      items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
+      items: order.items,
       totalSum: order.total_sum,
       status: order.status
     }));
   }
+  
 }  
