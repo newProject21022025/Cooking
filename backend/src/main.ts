@@ -19,20 +19,42 @@ async function bootstrap() {
    // 🔁 Підтримка :locale як глобального параметра
   //  app.setGlobalPrefix(':locale');
 
+  // const allowedOrigins = [
+  //   'https://cooking-beta.vercel.app',
+  //   'https://cooking-ujfo.vercel.app',    
+  //   'http://localhost:3000',
+  //   'http://localhost:3001',
+  // ];
+
+  // app.enableCors({
+  //   origin: allowedOrigins,
+  //   credentials: true,
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  //   allowedHeaders: 'Content-Type,Authorization',
+  //   exposedHeaders: ['Authorization'],
+  // });
+  
   const allowedOrigins = [
     'https://cooking-beta.vercel.app',
-    'https://cooking-ujfo.vercel.app ',    
+    'https://cooking-ujfo.vercel.app', // ✅ без пробілу
     'http://localhost:3000',
     'http://localhost:3001',
   ];
-
+  
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+      }
+    },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type,Authorization',
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     exposedHeaders: ['Authorization'],
   });
+  
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0', () => {
