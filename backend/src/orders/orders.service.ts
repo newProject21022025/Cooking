@@ -249,10 +249,9 @@ export class OrdersService {
       email: order.email,
       phone: order.phone,
       address: order.address,
-      items: order.items,
+      items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
       totalSum: order.total_sum,
       status: order.status
     }));
   }
-  
-}
+}  
