@@ -24,19 +24,23 @@ export default function BasketPage() {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; 
+  if (!isClient) return null;
 
   const handleIncrease = (id: string) => {
     const item = items.find((i) => i.partnerDish.id === id);
     if (item) {
-      dispatch(updateQuantity({ partnerDishId: id, quantity: item.quantity + 1 }));
+      dispatch(
+        updateQuantity({ partnerDishId: id, quantity: item.quantity + 1 })
+      );
     }
   };
 
   const handleDecrease = (id: string) => {
     const item = items.find((i) => i.partnerDish.id === id);
     if (item && item.quantity > 1) {
-      dispatch(updateQuantity({ partnerDishId: id, quantity: item.quantity - 1 }));
+      dispatch(
+        updateQuantity({ partnerDishId: id, quantity: item.quantity - 1 })
+      );
     }
   };
 
@@ -46,7 +50,8 @@ export default function BasketPage() {
 
   const totalSum = items.reduce((sum, item) => {
     const finalPrice = item.partnerDish.discount
-      ? item.partnerDish.price - (item.partnerDish.price * item.partnerDish.discount) / 100
+      ? item.partnerDish.price -
+        (item.partnerDish.price * item.partnerDish.discount) / 100
       : item.partnerDish.price;
     return sum + finalPrice * item.quantity;
   }, 0);
@@ -65,11 +70,16 @@ export default function BasketPage() {
                 {items.map((item) => {
                   const { partnerDish, dish, quantity } = item;
                   const finalPrice = partnerDish.discount
-                    ? partnerDish.price - (partnerDish.price * partnerDish.discount) / 100
+                    ? partnerDish.price -
+                      (partnerDish.price * partnerDish.discount) / 100
                     : partnerDish.price;
                   return (
                     <li key={partnerDish.id} className={styles.basketItem}>
-                      <img src={dish.photo} alt={dish.name_ua} className={styles.dishPhoto} />
+                      <img
+                        src={dish.photo}
+                        alt={dish.name_ua}
+                        className={styles.dishPhoto}
+                      />
                       <div className={styles.details}>
                         <h3>{dish.name_ua}</h3>
                         <p>{dish.description_ua}</p>
@@ -77,10 +87,20 @@ export default function BasketPage() {
                         <p>Знижка: {partnerDish.discount || 0}%</p>
                         <p>Сума: {finalPrice * quantity} грн</p>
                         <div className={styles.controls}>
-                          <button onClick={() => handleDecrease(partnerDish.id)}>-</button>
+                          <button
+                            onClick={() => handleDecrease(partnerDish.id)}
+                          >
+                            -
+                          </button>
                           <span>{quantity}</span>
-                          <button onClick={() => handleIncrease(partnerDish.id)}>+</button>
-                          <button onClick={() => handleRemove(partnerDish.id)}>Видалити</button>
+                          <button
+                            onClick={() => handleIncrease(partnerDish.id)}
+                          >
+                            +
+                          </button>
+                          <button onClick={() => handleRemove(partnerDish.id)}>
+                            Видалити
+                          </button>
                         </div>
                       </div>
                     </li>
@@ -89,13 +109,15 @@ export default function BasketPage() {
               </ul>
               <div className={styles.total}>
                 <h3>Загальна сума: {totalSum} грн</h3>
-                <button onClick={() => dispatch(clearBasket())}>Очистити кошик</button>
+                <button onClick={() => dispatch(clearBasket())}>
+                  Очистити кошик
+                </button>
               </div>
             </div>
 
             {/* Форма замовлення */}
             <div className={styles.orderFormContainer}>
-            {user ? <OrderForm user={user} /> : <p>Завантаження профілю...</p>}
+              <OrderForm user={user || null} />
             </div>
           </div>
         )}
@@ -103,5 +125,3 @@ export default function BasketPage() {
     </UserLoader>
   );
 }
-
-

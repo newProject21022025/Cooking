@@ -228,4 +228,31 @@ export class OrdersService {
       status: order.status
     }));
   }  
+  async getOrdersByPartnerAndUser(partnerId: string, userId: string): Promise<Order[]> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('orders')
+      .select('*')
+      .eq('partner_id', partnerId)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+  
+    if (error) throw new Error(error.message);
+  
+    return data.map(order => ({
+      orderNumber: order.order_number,
+      createdAt: new Date(order.created_at),
+      userId: order.user_id,
+      partnerId: order.partner_id,
+      firstName: order.first_name,
+      lastName: order.last_name,
+      email: order.email,
+      phone: order.phone,
+      address: order.address,
+      items: order.items,
+      totalSum: order.total_sum,
+      status: order.status
+    }));
+  }
+  
 }

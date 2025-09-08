@@ -2,6 +2,7 @@
 
 import { Controller, Post, Body, Get, Param, Delete, Patch, HttpException, HttpStatus } from '@nestjs/common';
 import { OrdersService } from './orders.service';
+import { Query } from '@nestjs/common';
 
 @Controller('orders')
 export class OrdersController {
@@ -140,4 +141,31 @@ async findByPartner(@Param('partnerId') partnerId: string) {
     );
   }
 }
+// GET /orders/history?partnerId=...&userId=...
+@Get('history')
+async findHistory(
+  @Query('partnerId') partnerId: string,
+  @Query('userId') userId: string
+) {
+  if (!partnerId || !userId) {
+    throw new HttpException(
+      'Не передано partnerId або userId',
+      HttpStatus.BAD_REQUEST
+    );
+  }
+
+  try {
+    const orders = await this.ordersService.getOrdersByPartnerAndUser(partnerId, userId);
+    return orders;
+  } catch (error) {
+    throw new HttpException(
+      {
+        success: false,
+        message: error.message
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 }

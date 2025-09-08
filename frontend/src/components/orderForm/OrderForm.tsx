@@ -36,12 +36,13 @@ export default function OrderForm({ user }: OrderFormProps) {
   const items = useSelector((state: RootState) => state.basket.items);
 
   const initialValues = {
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phoneNumber || "",        // ⚡ підставляємо phoneNumber
-    address: user?.deliveryAddress || "",  // ⚡ підставляємо deliveryAddress
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    email: user?.email ?? "",
+    phone: user?.phoneNumber ?? "",
+    address: user?.deliveryAddress ?? "",
   };
+  
 
   const handleSubmit = async (values: typeof initialValues) => {
     if (items.length === 0) {
@@ -91,7 +92,7 @@ export default function OrderForm({ user }: OrderFormProps) {
         {({ isSubmitting }) => (
           <Form className={styles.form}>
             <div className={styles.field}>
-              <label>Ім&aposя</label>
+              <label>Ім&apos;я</label>
               <Field type="text" name="firstName" />
               <ErrorMessage name="firstName" component="div" className={styles.error} />
             </div>
