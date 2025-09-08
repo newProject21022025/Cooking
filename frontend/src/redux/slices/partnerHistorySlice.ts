@@ -1,6 +1,7 @@
 // src/redux/slices/partnerHistorySlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchPartnerOrderHistoryApi, PartnerOrderHistoryItem } from "@/api/partnerDishesApi";
+import { AxiosError } from "axios";
 
 interface PartnerHistoryState {
   history: PartnerOrderHistoryItem[];
@@ -18,13 +19,23 @@ export const fetchPartnerHistory = createAsyncThunk<
   PartnerOrderHistoryItem[],
   { partnerId: string; userId: string },
   { rejectValue: string }
->("partnerHistory/fetch", async ({ partnerId, userId }, { rejectWithValue }) => {
-  try {
-    return await fetchPartnerOrderHistoryApi(partnerId, userId);
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Помилка при завантаженні історії");
+>(
+  "partnerHistory/fetch",
+  async ({ partnerId, userId }, { rejectWithValue }) => {
+    try {
+      return await fetchPartnerOrderHistoryApi(partnerId, userId);
+    } catch (err: unknown) {
+      // ⚡ Type-safe обробка
+      if (err instanceof AxiosError) {
+        return rejectWithValue(err.response?.data?.message || "Помилка при завантаженні історії");
+      }
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+      return rejectWithValue("Невідома помилка при завантаженні історії");
+    }
   }
-});
+);
 
 const partnerHistorySlice = createSlice({
   name: "history",
