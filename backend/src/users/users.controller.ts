@@ -7,12 +7,25 @@ import { AuthGuard } from '@nestjs/passport';
 import { Param, Patch, Body, Delete, Post } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  // Ендпоінт для реєстрації
+  @Post('register')
+  async register(@Body() dto: CreateUserDto) {
+    // Перевірка, чи користувач з таким email вже існує
+    const existingUser = await this.usersService.findOneByEmail(dto.email);
+    if (existingUser) {
+      throw new BadRequestException('Користувач з таким email вже існує');
+    }
+
+    const user = await this.usersService.createUser(dto);
+    return user;
+  }
 
   @Post()
   create(@Body() dto: CreateUserDto) {
