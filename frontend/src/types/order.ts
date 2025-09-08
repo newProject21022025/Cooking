@@ -33,3 +33,18 @@ export interface CreateOrderDto {
   address: string;
   items: OrderItem[];
 }
+
+// export interface OrderHistory {
+//   orderNumber: string;
+//   createdAt: string; // або Date, якщо перетворювати
+//   userId?: string;
+//   partnerId: string;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   phone: string;
+//   address: string;
+//   items: OrderItem[];
+//   totalSum: number;
+//   status?: string;
+// }

@@ -7,6 +7,7 @@ import { Dish, Ingredient } from "@/types/dish";
 import styles from "./page.module.scss";
 import Link from "next/link";
 import { useLocale } from "next-intl";
+import PartnersList from "@/components/partners/PartnersList";
 
 export default function DishDetailPage() {
   const params = useParams();
@@ -90,7 +91,7 @@ export default function DishDetailPage() {
 
   if (error) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page}>        
         <div className={styles.errorMessage}>{error}</div>
         <Link href="/" className={styles.backButton}>
           Повернутися на головну
@@ -112,6 +113,7 @@ export default function DishDetailPage() {
 
   return (
     <div className={styles.page}>
+      <PartnersList />
       <main className={styles.main}>
         <Link href="/" className={styles.backButton}>
           ← Назад до списку страв

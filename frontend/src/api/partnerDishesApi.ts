@@ -26,3 +26,31 @@ export const deletePartnerDishApi = async (id: string): Promise<string> => {
   await axios.delete(`${BASE_URL}/${id}`);
   return id;
 };
+
+export interface PartnerOrderHistoryItem {
+  orderId: string;
+  userId: string;
+  partnerId: string;
+  items: {
+    dishId: number;
+    name: string;
+    price: number;
+    quantity: number;
+    discount?: number;
+  }[];
+  totalPrice: number;
+  createdAt: string;
+  status: string;
+}
+
+// Отримати історію замовлень конкретного партнера для конкретного користувача
+export const fetchPartnerOrderHistoryApi = async (
+  partnerId: string,
+  userId: string
+): Promise<PartnerOrderHistoryItem[]> => {
+  const response = await axios.get<PartnerOrderHistoryItem[]>(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/history`,
+    { params: { partnerId, userId } }
+  );
+  return response.data;
+};

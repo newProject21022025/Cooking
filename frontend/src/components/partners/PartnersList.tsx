@@ -4,9 +4,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { fetchPartners, setSelectedPartner } from "@/redux/slices/partnersSlice";
+import {
+  fetchPartners,
+  setSelectedPartner,
+} from "@/redux/slices/partnersSlice";
 import { useRouter, usePathname } from "next/navigation";
-
+import styles from "./PartnersList.module.scss";
 
 const PartnersList = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,18 +32,36 @@ const PartnersList = () => {
     dispatch(setSelectedPartner(partnerId)); // зберігаємо у Redux
     router.push(`/${locale}/buyDishes/dishes?partnerId=${partnerId}`);
   };
-  
+
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Наші партнери</h2>
-      <ul className="space-y-2">
+    <div className={styles.container}>
+      <h2 className={styles.tittle}>Наші партнери</h2>
+      <p className={styles.text}>
+        Смачно та швидко! Замовляйте у наших перевірених партнерів вже сьогодні!
+      </p>
+      <ul className={styles.list}>
         {partners.map((partner) => (
           <li
             key={partner.id}
-            className="border p-2 rounded hover:bg-gray-100 cursor-pointer"
+            className={styles.item}
             onClick={() => handlePartnerClick(partner.id)}
           >
-            {partner.firstName} {partner.lastName}
+            <span className={styles.avatar}>
+              {partner.photo ? (
+                <img
+                  src={partner.photo}
+                  alt={`${partner.firstName} ${partner.lastName}`}
+                />
+              ) : (
+                <span className={styles.placeholder}>
+                  {partner.firstName?.[0] ?? ""}
+                  {partner.lastName?.[0] ?? ""}
+                </span>
+              )}
+            </span>
+            <span className={styles.name}>
+              {partner.firstName} {partner.lastName}
+            </span>
           </li>
         ))}
       </ul>
