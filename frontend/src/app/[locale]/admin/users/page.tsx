@@ -8,7 +8,7 @@ import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from
 import { useTranslations, useLocale } from "next-intl";
 
 export default function UsersPage() {
-  const t = useTranslations("admin.users");
+  const t = useTranslations("adminUsers");
   const locale = useLocale();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

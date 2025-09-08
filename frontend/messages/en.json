@@ -8,7 +8,7 @@
         "text": "This is the home page where you can find the latest updates and features."
     },
     
-    "admin.users": {
+    "adminUsers": {
         "title": "Users",
         "loading": "Loading users...",
         "noUsers": "No users yet",
