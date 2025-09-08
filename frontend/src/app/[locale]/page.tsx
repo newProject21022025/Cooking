@@ -10,6 +10,7 @@ import Link from "next/link";
 import PartnersList from "@/components/partners/PartnersList";
 import DishCard from "@/components/dishCard/DishCard";
 import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
+import IngredientCircle from "@/components/ingredientCircle/IngredientCircle";
 
 // Компонент для відображення однієї страви
 // const DishCard = ({ dish }: { dish: Dish }) => {
@@ -53,13 +54,13 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-      <PartnersList/>
+        <PartnersList />
         <h1 className={styles.title}>{t("title")}</h1>
         {/* <p className={styles.description}>
           {t("text")}
         </p> */}
-          <IngredientFilter />
-        
+        <IngredientFilter />
+
         {/* <div className={styles.dishList}>
           {loading ? (
             <p className={styles.loadingMessage}>Завантаження страв...</p>
@@ -71,8 +72,20 @@ export default function Home() {
             )
           )}
         </div> */}
-        
       </main>
+      <IngredientCircle
+        name="Vitamin A"
+        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjEQ_MZwwJHZ8FP-GPP6gfjSf6YFp-PblJWw&s"
+        benefits={[
+          { text: "Promotes skin health" },
+          { text: "Boosts immune health" },
+          { text: "Supports eye health" },
+          { text: "Vital for organ function" },
+          { text: "Strengthens bones" },
+          { text: "Improves metabolism" },
+          { text: "Improves metabolism" },
+        ]}
+      />
     </div>
   );
 }
