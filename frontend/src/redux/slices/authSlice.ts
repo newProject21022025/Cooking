@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { loginUser } from "@/api/authApi";
 import { LoginRequest, LoginResponse } from "@/types/auth";
 
-// 🔹 Користувач
+// 🔹 Тип користувача
 interface User {
   id: string | number;
   email: string;
@@ -38,15 +38,24 @@ const initialState: AuthState = {
 };
 
 // 🔹 Логін
-export const login = createAsyncThunk<LoginResponse, LoginRequest, { rejectValue: string }>(
+export const login = createAsyncThunk<
+  LoginResponse,             // тип даних при успішному логіні
+  LoginRequest,              // тип параметрів (credentials)
+  { rejectValue: string }    // тип для rejectWithValue
+>(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await loginUser(credentials);
-      return response; // { access_token, user }
-    } catch (error: any) {
-      if (error.response?.data?.message) return rejectWithValue(error.response.data.message);
+      return response;
+    } catch (error: unknown) {
+      // Без any, ESLint задоволений
       if (error instanceof Error) return rejectWithValue(error.message);
+
+      // Якщо axios/fetch повертає structured error
+      const err = error as { response?: { data?: { message?: string } } };
+      if (err.response?.data?.message) return rejectWithValue(err.response.data.message);
+
       return rejectWithValue("Login failed");
     }
   }
