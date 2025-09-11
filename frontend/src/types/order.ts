@@ -36,3 +36,9 @@ export interface CreateOrderDto {
   items: OrderItem[];
 }
 
+export interface OrderWithPartnerInfo extends Order {
+  partnerFirstName: string;
+  partnerLastName: string;
+  partnerPhoto: string;
+}
+
