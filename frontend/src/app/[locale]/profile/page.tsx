@@ -143,7 +143,7 @@ export default function ProfilePage() {
           <>
             <p><strong>ID:</strong> {user.id}</p>
             <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Ім'я:</strong> {user.firstName}</p>
+            <p><strong>Ім&apos;я:</strong> {user.firstName}</p>
             <p><strong>Прізвище:</strong> {user.lastName}</p>
             {user.phoneNumber && <p><strong>Телефон:</strong> {user.phoneNumber}</p>}
             {user.deliveryAddress && <p><strong>Адреса доставки:</strong> {user.deliveryAddress}</p>}
@@ -163,7 +163,7 @@ export default function ProfilePage() {
             {({ isSubmitting, dirty, values, setFieldValue }) => (
               <Form className={styles.form}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="firstName">Ім'я</label>
+                  <label htmlFor="firstName">Ім&apos;я</label>
                   <Field type="text" id="firstName" name="firstName" className={styles.input} />
                   <ErrorMessage name="firstName" component="div" className={styles.errorText} />
                 </div>
