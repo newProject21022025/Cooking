@@ -5,21 +5,24 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
-import { fetchPartnerHistory } from "@/redux/slices/partnerHistorySlice";
+import { fetchUserHistory } from "@/redux/slices/userHistorySlice";
 import styles from "./page.module.scss";
 
 interface PartnerHistoryProps {
-  partnerId: string;
   userId: string;
+  partnerId: string;
 }
 
-export default function PartnerHistory({ partnerId, userId }: PartnerHistoryProps) {
+export default function PartnerHistory({ userId, partnerId }: PartnerHistoryProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { history, loading, error } = useSelector((state: RootState) => state.history);
+  const { history, loading, error } = useSelector((state: RootState) => state.userHistory);
 
   useEffect(() => {
-    dispatch(fetchPartnerHistory({ partnerId, userId }));
-  }, [dispatch, partnerId, userId]);
+    if (userId) {
+      // ✅ Тепер передаємо один об'єкт з userId та partnerId
+      dispatch(fetchUserHistory({ userId }));
+    }
+  }, [dispatch, userId]);
 
   if (loading) return <p>Завантаження історії...</p>;
   if (error) return <p>Помилка: {error}</p>;
@@ -30,10 +33,10 @@ export default function PartnerHistory({ partnerId, userId }: PartnerHistoryProp
       <h2>Історія замовлень</h2>
       <ul className={styles.historyList}>
         {history.map((order) => (
-          <li key={order.orderId} className={styles.historyItem}>
-            <p>Номер замовлення: {order.orderId}</p>
+          <li key={order.orderNumber} className={styles.historyItem}>
+            <p>Номер замовлення: {order.orderNumber}</p>
             <p>Дата: {new Date(order.createdAt).toLocaleString()}</p>
-            <p>Статус: {order.status}</p>
+            <p>Статус: {order.status || "Не визначено"}</p>
             <ul>
               {order.items.map((item, idx) => (
                 <li key={idx}>
@@ -41,7 +44,7 @@ export default function PartnerHistory({ partnerId, userId }: PartnerHistoryProp
                 </li>
               ))}
             </ul>
-            <p>Сума замовлення: {order.totalPrice} грн</p>
+            <p>Сума замовлення: {order.totalSum} грн</p>
           </li>
         ))}
       </ul>

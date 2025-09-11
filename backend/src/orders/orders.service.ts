@@ -36,49 +36,6 @@ export class OrdersService {
     return `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   }
 
-  // async createOrder(orderData: Omit<Order, 'orderNumber' | 'createdAt' | 'totalSum' | 'status'>): Promise<Order> {
-  //   const totalSum = orderData.items.reduce((sum, item) => {
-  //     const finalPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price;
-  //     return sum + finalPrice * item.quantity;
-  //   }, 0);
-
-  //   const newOrder: Order = {
-  //     ...orderData,
-  //     orderNumber: this.generateOrderNumber(),
-  //     createdAt: new Date(),
-  //     totalSum,
-  //     status: 'created'
-  //   };
-
-  //   const { data, error } = await this.supabaseService
-  //     .getClient()
-  //     .from('orders')
-  //     .insert([
-  //       {
-  //         order_number: newOrder.orderNumber,
-  //         partner_id: newOrder.partnerId,
-  //         user_id: newOrder.userId || null,
-  //         first_name: newOrder.firstName,
-  //         last_name: newOrder.lastName,
-  //         email: newOrder.email,
-  //         phone: newOrder.phone,
-  //         address: newOrder.address,
-  //         items: newOrder.items,
-  //         total_sum: totalSum,
-  //         status: 'created',
-  //         created_at: new Date().toISOString()
-  //       }
-  //     ])
-  //     .select();
-
-  //   if (error) {
-  //     console.error('Помилка при записі в Supabase:', error);
-  //     throw new Error(`Помилка бази даних: ${error.message}`);
-  //   }
-
-  //   console.log('Успішно записано в Supabase:', data);
-  //   return newOrder;
-  // }
   async createOrder(orderData: Omit<Order, 'orderNumber' | 'createdAt' | 'totalSum' | 'status'>): Promise<Order> {
     if (!orderData.userId) {
       console.warn('userId не передано, замовлення буде зберігатись без прив’язки до користувача');
@@ -276,22 +233,23 @@ export class OrdersService {
       status: order.status
     }));
   }  
-  async getOrdersByPartnerAndUser(partnerId: string, userId?: string): Promise<Order[]> {
-    let query = this.supabaseService
+  async getOrdersByUser(userId: string): Promise<Order[]> {
+    const { data, error } = await this.supabaseService
       .getClient()
       .from('orders')
       .select('*')
-      .eq('partner_id', partnerId)
+      .eq('user_id', userId) // ⬅️ Фільтруємо за user_id
       .order('created_at', { ascending: false });
-  
-    if (userId) {
-      query = query.eq('user_id', userId);
+
+    if (error) {
+      console.error('Помилка при пошуку замовлень за userId:', error);
+      throw new Error(error.message);
     }
-  
-    const { data, error } = await query;
-  
-    if (error) throw new Error(error.message);
-  
+
+    if (!data) {
+      return [];
+    }
+
     return data.map(order => ({
       orderNumber: order.order_number,
       createdAt: new Date(order.created_at),
@@ -307,5 +265,4 @@ export class OrdersService {
       status: order.status
     }));
   }
-  
 }  

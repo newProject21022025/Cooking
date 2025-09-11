@@ -1,3 +1,5 @@
+// src/types/order.ts
+
 export interface OrderItem {
   partnerDishId: string;
   dishId: string;
@@ -34,17 +36,3 @@ export interface CreateOrderDto {
   items: OrderItem[];
 }
 
-// export interface OrderHistory {
-//   orderNumber: string;
-//   createdAt: string; // або Date, якщо перетворювати
-//   userId?: string;
-//   partnerId: string;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   phone: string;
-//   address: string;
-//   items: OrderItem[];
-//   totalSum: number;
-//   status?: string;
-// }
