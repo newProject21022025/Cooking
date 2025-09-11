@@ -22,6 +22,7 @@ const OrderSchema = Yup.object().shape({
 
 interface OrderFormProps {
   user?: {
+    id?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
@@ -34,6 +35,9 @@ export default function OrderForm({ user }: OrderFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const items = useSelector((state: RootState) => state.basket.items);
+  
+  // ⚡ беремо userId з Redux
+  const userId = user?.id; // string | undefined
 
   const initialValues = {
     firstName: user?.firstName ?? "",
@@ -42,7 +46,6 @@ export default function OrderForm({ user }: OrderFormProps) {
     phone: user?.phoneNumber ?? "",
     address: user?.deliveryAddress ?? "",
   };
-  
 
   const handleSubmit = async (values: typeof initialValues) => {
     if (items.length === 0) {
@@ -64,6 +67,7 @@ export default function OrderForm({ user }: OrderFormProps) {
       const response = await dispatch(
         createOrder({
           partnerId: items[0].partnerDish.partner_id,
+          userId, // ⚡ додаємо userId сюди
           ...values,
           items: orderItems,
         })
@@ -71,14 +75,15 @@ export default function OrderForm({ user }: OrderFormProps) {
 
       alert(`Замовлення створено! Номер: ${response.orderNumber}`);
       dispatch(clearBasket());
-      router.push("/"); 
+      router.push("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
         alert("Помилка при створенні замовлення: " + error.message);
       } else {
         alert("Помилка при створенні замовлення");
       }
-  }  };
+    }
+  };
 
   return (
     <div className={styles.orderForm}>
@@ -92,7 +97,7 @@ export default function OrderForm({ user }: OrderFormProps) {
         {({ isSubmitting }) => (
           <Form className={styles.form}>
             <div className={styles.field}>
-              <label>Ім&apos;я</label>
+              <label>Ім&aposя</label>
               <Field type="text" name="firstName" />
               <ErrorMessage name="firstName" component="div" className={styles.error} />
             </div>

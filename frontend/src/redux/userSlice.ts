@@ -5,7 +5,7 @@ import axios from "axios";
 export type UserRole = 'user' | 'partner' | 'admin';
 
 interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;

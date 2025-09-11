@@ -1,3 +1,5 @@
+// src/api/orderApi.ts
+
 import axios from 'axios';
 import { CreateOrderDto, Order } from '@/types/order';
 
@@ -32,4 +34,19 @@ export const fetchOrdersByPartnerApi = async (partnerId: string): Promise<Order[
   const response = await axios.get(`${API_URL}/partner/${partnerId}`);
   return response.data;
 };
+
+
+export const fetchOrdersByUserApi = async (userId: string): Promise<Order[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      console.warn('Замовлення для цього користувача не знайдено.');
+      return []; // Повертаємо порожній масив, якщо замовлення не знайдено
+    }
+    throw error; // Викидаємо інші помилки далі
+  }
+};
+
 
