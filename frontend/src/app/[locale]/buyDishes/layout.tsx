@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 import styles from "./page.module.scss";
 
-const TABS = ["dishes", "basket","history", "info"];
+const TABS = ["dishes", "basket", "info"];
 
 export default function AUFLayout({ children }: { children: ReactNode }) {
   const router = useRouter();

@@ -28,6 +28,13 @@ export interface Order {
   status?: string;
 }
 
+// Додаємо новий інтерфейс для розширених даних замовлення
+export interface OrderWithPartnerInfo extends Order {
+  partnerFirstName: string;
+  partnerLastName: string;
+  partnerPhoto: string;
+}
+
 @Injectable()
 export class OrdersService {
   constructor(private supabaseService: SupabaseService) {}
@@ -233,36 +240,62 @@ export class OrdersService {
       status: order.status
     }));
   }  
-  async getOrdersByUser(userId: string): Promise<Order[]> {
-    const { data, error } = await this.supabaseService
+  async getOrdersByUser(userId: string): Promise<OrderWithPartnerInfo[]> {
+    const { data: ordersData, error: ordersError } = await this.supabaseService
       .getClient()
       .from('orders')
       .select('*')
-      .eq('user_id', userId) // ⬅️ Фільтруємо за user_id
+      .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Помилка при пошуку замовлень за userId:', error);
-      throw new Error(error.message);
+    if (ordersError) {
+      console.error('Помилка при пошуку замовлень:', ordersError);
+      throw new Error(ordersError.message);
     }
 
-    if (!data) {
+    if (!ordersData || ordersData.length === 0) {
       return [];
     }
 
-    return data.map(order => ({
-      orderNumber: order.order_number,
-      createdAt: new Date(order.created_at),
-      userId: order.user_id,
-      partnerId: order.partner_id,
-      firstName: order.first_name,
-      lastName: order.last_name,
-      email: order.email,
-      phone: order.phone,
-      address: order.address,
-      items: order.items,
-      totalSum: order.total_sum,
-      status: order.status
-    }));
+    const partnerIds = [...new Set(ordersData.map(order => order.partner_id))];
+
+    const { data: partnersData, error: partnersError } = await this.supabaseService
+      .getClient()
+      .from('partners')
+      .select('id, firstName, lastName, photo')
+      .in('id', partnerIds);
+
+    if (partnersError) {
+      console.error('Помилка при отриманні даних партнерів:', partnersError);
+      throw new Error(partnersError.message);
+    }
+
+    const partnersMap = new Map(partnersData.map(partner => [partner.id, partner]));
+
+    return ordersData.map((order: any) => {
+      const partnerInfo = partnersMap.get(order.partner_id);
+
+      // ВИПРАВЛЕНО: Розгортаємо всі поля з оригінального об'єкта `order`
+      // і додаємо нові поля, пов'язані з партнером.
+      return {
+        ...order, // ⬅️ Додаємо всі існуючі поля
+        orderNumber: order.order_number, // Оновлюємо, якщо імена полів відрізняються
+        createdAt: order.created_at,
+        userId: order.user_id,
+        partnerId: order.partner_id,
+        firstName: order.first_name,
+        lastName: order.last_name,
+        email: order.email,
+        phone: order.phone,
+        address: order.address,
+        items: order.items,
+        totalSum: order.total_sum,
+        status: order.status,
+        
+        partnerFirstName: partnerInfo?.firstName || 'Невідомо',
+        partnerLastName: partnerInfo?.lastName || 'Невідомо',
+        partnerPhoto: partnerInfo?.photo || ''
+      };
+    });
   }
-}  
+}

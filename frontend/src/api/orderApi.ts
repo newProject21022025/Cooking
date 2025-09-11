@@ -1,7 +1,7 @@
 // src/api/orderApi.ts
 
 import axios from 'axios';
-import { CreateOrderDto, Order } from '@/types/order';
+import { CreateOrderDto, Order, OrderWithPartnerInfo } from '@/types/order';
 
 const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders`; // або повний URL до твого бекенду
 
@@ -36,16 +36,22 @@ export const fetchOrdersByPartnerApi = async (partnerId: string): Promise<Order[
 };
 
 
-export const fetchOrdersByUserApi = async (userId: string): Promise<Order[]> => {
+export const fetchOrdersByUserApi = async (userId: string): Promise<OrderWithPartnerInfo[]> => {
   try {
     const response = await axios.get(`${API_URL}/user/${userId}`);
-    return response.data;
+    // Тут важливо перевірити, що API повертає саме масив
+    if (Array.isArray(response.data)) {
+      return response.data as OrderWithPartnerInfo[]; // Приводимо тип, оскільки бекенд тепер повертає розширені дані
+    }
+    // Якщо дані не є масивом, повертаємо порожній масив або викидаємо помилку
+    console.error('API-відповідь не є масивом:', response.data);
+    return [];
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       console.warn('Замовлення для цього користувача не знайдено.');
-      return []; // Повертаємо порожній масив, якщо замовлення не знайдено
+      return [];
     }
-    throw error; // Викидаємо інші помилки далі
+    throw error;
   }
 };
 

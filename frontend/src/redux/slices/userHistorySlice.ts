@@ -1,11 +1,11 @@
 // src/redux/slices/userHistorySlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Order } from "@/types/order";
+import { Order, OrderWithPartnerInfo } from "@/types/order";
 import { fetchOrdersByUserApi } from "@/api/orderApi";
 
 interface UserHistoryState {
-  history: Order[];
+  history: OrderWithPartnerInfo[];
   loading: boolean;
   error: string | null;
 }
@@ -14,7 +14,7 @@ interface FetchUserHistoryPayload {
   userId: string;
 }
 
-export const fetchUserHistory = createAsyncThunk<Order[], FetchUserHistoryPayload, { rejectValue: string }>(
+export const fetchUserHistory = createAsyncThunk<OrderWithPartnerInfo[], FetchUserHistoryPayload, { rejectValue: string }>(
   "userHistory/fetch",
   async ({ userId }, { rejectWithValue }) => {
     try {
@@ -53,13 +53,13 @@ const userHistorySlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUserHistory.fulfilled, (state, action: PayloadAction<Order[]>) => {
+      .addCase(fetchUserHistory.fulfilled, (state, action: PayloadAction<OrderWithPartnerInfo[]>) => {
         state.loading = false;
         state.history = action.payload;
       })
       .addCase(fetchUserHistory.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || action.error.message || "Помилка при отриманні історії";
+        state.error = (action.payload as string) || action.error.message || "Помилка при отриманні історії";
       });
   },
 });
