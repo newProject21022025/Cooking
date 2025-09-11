@@ -51,35 +51,35 @@ export interface PartnerOrderHistoryItem {
 }
 
 
-export const fetchPartnerOrderHistoryApi = async (
-  partnerId: string,
-  userId: string
-): Promise<PartnerOrderHistoryItem[]> => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/history`,
-    { params: { partnerId, userId } }
-  );
+// export const fetchPartnerOrderHistoryApi = async (
+//   partnerId: string,
+//   userId: string
+// ): Promise<PartnerOrderHistoryItem[]> => {
+//   const res = await axios.get(
+//     `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/history`,
+//     { params: { partnerId, userId } }
+//   );
 
-  // Перевірка на success
-  if (!res.data || (res.data as any).success === false) {
-    return [];
-  }
+//   // Перевірка на success
+//   if (!res.data || (res.data as any).success === false) {
+//     return [];
+//   }
 
-  return res.data.map((order: any) => ({
-    orderNumber: order.order_number, // ⚡ збігається з бекендом і типом
-    createdAt: order.created_at,
-    status: order.status,
-    items: typeof order.items === "string" ? JSON.parse(order.items) : order.items,
-    totalSum: parseFloat(order.total_sum), // ⚡ збігається з бекендом і типом
-    userId: order.user_id,
-    partnerId: order.partner_id,
-    firstName: order.first_name,
-    lastName: order.last_name,
-    email: order.email,
-    phone: order.phone,
-    address: order.address,
-  }));
-};
+//   return res.data.map((order: any) => ({
+//     orderNumber: order.order_number, // ⚡ збігається з бекендом і типом
+//     createdAt: order.created_at,
+//     status: order.status,
+//     items: typeof order.items === "string" ? JSON.parse(order.items) : order.items,
+//     totalSum: parseFloat(order.total_sum), // ⚡ збігається з бекендом і типом
+//     userId: order.user_id,
+//     partnerId: order.partner_id,
+//     firstName: order.first_name,
+//     lastName: order.last_name,
+//     email: order.email,
+//     phone: order.phone,
+//     address: order.address,
+//   }));
+// };
 
 
 
