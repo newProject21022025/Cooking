@@ -12,6 +12,7 @@ import DishCard from "@/components/dishCard/DishCard";
 import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
 import IngredientCircle from "@/components/ingredientCircle/IngredientCircle";
 
+
 // Компонент для відображення однієї страви
 // const DishCard = ({ dish }: { dish: Dish }) => {
 //   const locale = useLocale(); // ✅ Отримуємо поточну локаль

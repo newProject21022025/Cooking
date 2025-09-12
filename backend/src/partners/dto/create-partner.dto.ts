@@ -1,6 +1,6 @@
 // src/partners/dto/create-partner.dto.ts
 
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsNumber, IsBoolean, IsEnum } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsNumber, IsBoolean, IsEnum, IsObject } from 'class-validator';
 
 export enum PartnerRole {
   partner = 'partner',
@@ -34,9 +34,14 @@ export class CreatePartnerDto {
   @IsString()
   deliveryAddress?: string;
 
+  // ✅ Додаємо нове поле "description"
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @IsOptional()
   @IsEnum(PartnerRole)
-  role: PartnerRole = PartnerRole.partner;  // ✅ дефолт partner
+  role: PartnerRole = PartnerRole.partner; // ✅ дефолт partner
 
   @IsOptional()
   orderHistory?: any[];
@@ -51,4 +56,15 @@ export class CreatePartnerDto {
   @IsOptional()
   @IsBoolean()
   isBlocked: boolean = false; // ✅ дефолт false
+
+  @IsOptional()
+  @IsObject()
+  socials?: {
+    facebook?: string;
+    telegram?: string;
+    linkedin?: string;
+    whatsapp?: string;
+    instagram?: string;
+    [key: string]: string | undefined; // ✅ дозволяє додавати нові соцмережі
+  };
 }

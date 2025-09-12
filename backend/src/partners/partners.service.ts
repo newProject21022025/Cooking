@@ -103,22 +103,27 @@ export class PartnersService {
     if (!partner) {
       throw new BadRequestException('Партнер не знайдений');
     }
-
+  
     const updateData: any = { ...dto };
-
-    // Хешуємо пароль, якщо він переданий
+  
     if (dto.password) {
       updateData.password = await bcrypt.hash(dto.password, 10);
     }
-
+  
+    // 🔹 Якщо socials передані, збережемо їх у JSONB
+    if (dto.socials) {
+      updateData.socials = dto.socials;
+    }
+  
     const { data, error } = await this.client
       .from('partners')
       .update(updateData)
       .eq('id', id)
       .select();
-
+  
     if (error) throw new BadRequestException(error.message);
-
+  
     return data[0];
   }
+  
 }
