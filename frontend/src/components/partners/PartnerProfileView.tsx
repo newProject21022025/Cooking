@@ -62,7 +62,7 @@ export default function PartnerProfileView({ partner, onEdit }: PartnerProfileVi
       <div className={styles.infoGrid}>
         <div><strong>ID:</strong> {partner.id}</div>
         <div><strong>Email:</strong> {partner.email}</div>
-        <div><strong>Ім'я:</strong> {partner.firstName}</div>
+        <div><strong>Ім&apos;я:</strong> {partner.firstName}</div>
         <div><strong>Прізвище:</strong> {partner.lastName}</div>
         {partner.phoneNumber && (
           <div>

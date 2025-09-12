@@ -75,7 +75,7 @@ export default function PartnerProfileForm({ initialValues, onSubmit, onCancel }
           </div>
           
           <div className={styles.formGroup}>
-            <label htmlFor="firstName" className={styles.label}>Ім'я</label>
+            <label htmlFor="firstName" className={styles.label}>Ім&apos;я</label>
             <Field name="firstName" placeholder="Ім'я" className={styles.input} />
             <ErrorMessage name="firstName" component="div" className={styles.errorText} />
           </div>
