@@ -11,6 +11,7 @@ export interface Partner {
   email: string;
   phoneNumber?: string;
   deliveryAddress?: string;
+  description?: string;
   role?: string;
   orderHistory?: unknown[];
   favorites?: unknown[];
@@ -18,6 +19,14 @@ export interface Partner {
   isBlocked?: boolean;
   createdAt?: string;
   password?: string;
+  socials?: {
+    facebook?: string;
+    telegram?: string;
+    linkedin?: string;
+    whatsapp?: string;
+    instagram?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 // ⚡ Універсальний тип страви партнера
@@ -42,4 +51,13 @@ export interface UpdatePartnerProfileData {
   phoneNumber?: string;
   deliveryAddress?: string;
   photo?: string;
+  description?: string;
+  socials?: {
+    facebook?: string;
+    telegram?: string;
+    linkedin?: string;
+    whatsapp?: string;
+    instagram?: string;
+    [key: string]: string | undefined;
+  };
 }

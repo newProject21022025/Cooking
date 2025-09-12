@@ -1,5 +1,5 @@
 // src/partners/dto/update-partner.dto.ts
-import { IsOptional, IsString, IsEmail, IsBoolean, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsEmail, IsBoolean, IsNumber, IsObject } from 'class-validator';
 
 export class UpdatePartnerDto {
   @IsOptional()
@@ -32,6 +32,10 @@ export class UpdatePartnerDto {
 
   @IsOptional()
   @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
   role?: string;
 
   @IsOptional()
@@ -41,4 +45,15 @@ export class UpdatePartnerDto {
   @IsOptional()
   @IsBoolean()
   isBlocked?: boolean;
+
+  @IsOptional()
+  @IsObject()
+  socials?: {
+    facebook?: string;
+    telegram?: string;
+    linkedin?: string;
+    whatsapp?: string;
+    instagram?: string;
+    [key: string]: string | undefined; // ✅ дозволяє додавати нові соцмережі
+  };
 }
