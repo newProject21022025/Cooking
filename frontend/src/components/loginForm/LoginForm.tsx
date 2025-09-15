@@ -8,19 +8,28 @@ import * as Yup from "yup";
 import styles from "@/app/[locale]/login/page.module.scss";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
-import { registerUser, CreateUserData } from "@/api/usersApi";
+import { registerUser, CreateUserData, resetPassword } from "@/api/usersApi";
+import { AxiosError } from "axios";
 
 // Валідації
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string().min(5, "Мінімум 5 символів").required("Пароль обов'язковий"),
+  password: Yup.string()
+    .min(5, "Мінімум 5 символів")
+    .required("Пароль обов'язковий"),
 });
 
 const RegisterSchema = Yup.object().shape({
   firstName: Yup.string().required("Ім'я обов'язкове"),
   lastName: Yup.string().required("Прізвище обов'язкове"),
   email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string().min(5, "Мінімум 5 символів").required("Пароль обов'язковий"),
+  password: Yup.string()
+    .min(5, "Мінімум 5 символів")
+    .required("Пароль обов'язковий"),
+});
+
+const ResetPasswordSchema = Yup.object().shape({
+  email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
 });
 
 // Типи для форми
@@ -33,11 +42,15 @@ interface FormValues extends CreateUserData {
 
 export default function LoginForm() {
   const dispatch = useAppDispatch();
-  const { loading: authLoading, error: authError } = useAppSelector((state) => state.auth);
+  const { loading: authLoading, error: authError } = useAppSelector(
+    (state) => state.auth
+  );
 
   const [isRegister, setIsRegister] = useState(false);
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [formError, setFormError] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -45,23 +58,61 @@ export default function LoginForm() {
 
   const toggleForm = () => {
     setIsRegister(!isRegister);
+    setIsResetPassword(false);
     setFormError("");
+    setResetMessage("");
   };
 
-  const handleRegister = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
+  const toggleResetPassword = () => {
+    setIsResetPassword(!isResetPassword);
+    setIsRegister(false);
+    setFormError("");
+    setResetMessage("");
+  };
+
+  const handleRegister = async (
+    values: FormValues,
+    helpers: FormikHelpers<FormValues>
+  ) => {
     try {
       const { firstName, lastName, email, password } = values;
       await registerUser({ firstName, lastName, email, password });
       alert("Реєстрація успішна! Тепер можна увійти.");
       setIsRegister(false);
     } catch (err: unknown) {
-      // 🔹 Типізація error без any
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
         const e = err as { response?: { data?: { message?: string } } };
-        setFormError(e.response?.data?.message || "Сталася помилка при реєстрації");
+        setFormError(
+          e.response?.data?.message || "Сталася помилка при реєстрації"
+        );
       }
+    } finally {
+      helpers.setSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async (
+    values: FormValues,
+    helpers: FormikHelpers<FormValues>
+  ) => {
+    try {
+      await resetPassword({ email: values.email });
+      setResetMessage("Інструкція для відновлення пароля надіслана на email");
+      setFormError("");
+    } catch (err: unknown) { // Використовуйте 'unknown' для безпеки
+      // Перевіряємо, чи є помилка від Axios
+      if (err instanceof AxiosError && err.response) {
+        // Якщо так, отримуємо повідомлення про помилку з об'єкта відповіді
+        setFormError(
+          (err.response.data.message as string) || "Сталася помилка при відновленні пароля"
+        );
+      } else {
+        // Якщо це інша помилка, встановлюємо загальне повідомлення
+        setFormError("Сталася невідома помилка");
+      }
+      setResetMessage("");
     } finally {
       helpers.setSubmitting(false);
     }
@@ -72,11 +123,17 @@ export default function LoginForm() {
   return (
     <Formik
       initialValues={{ firstName: "", lastName: "", email: "", password: "" }}
-      validationSchema={isRegister ? RegisterSchema : LoginSchema}
+      validationSchema={
+        isRegister
+          ? RegisterSchema
+          : isResetPassword
+          ? ResetPasswordSchema
+          : LoginSchema
+      }
       onSubmit={(values, helpers) => {
-        if (isRegister) {
-          handleRegister(values, helpers);
-        } else {
+        if (isRegister) handleRegister(values, helpers);
+        else if (isResetPassword) handleResetPassword(values, helpers);
+        else {
           dispatch(login({ email: values.email, password: values.password }));
           helpers.setSubmitting(false);
         }
@@ -87,35 +144,111 @@ export default function LoginForm() {
           {isRegister && (
             <>
               <div className={styles.formGroup}>
-                <Field type="text" name="firstName" placeholder="Ім'я" className={styles.input} />
-                <ErrorMessage name="firstName" component="div" className={styles.error} />
+                <Field
+                  type="text"
+                  name="firstName"
+                  placeholder="Ім'я"
+                  className={styles.input}
+                />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className={styles.error}
+                />
               </div>
               <div className={styles.formGroup}>
-                <Field type="text" name="lastName" placeholder="Прізвище" className={styles.input} />
-                <ErrorMessage name="lastName" component="div" className={styles.error} />
+                <Field
+                  type="text"
+                  name="lastName"
+                  placeholder="Прізвище"
+                  className={styles.input}
+                />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className={styles.error}
+                />
               </div>
             </>
           )}
 
           <div className={styles.formGroup}>
-            <Field type="email" name="email" placeholder="Email" className={styles.input} />
-            <ErrorMessage name="email" component="div" className={styles.error} />
-          </div>
-          <div className={styles.formGroup}>
-            <Field type="password" name="password" placeholder="Пароль" className={styles.input} />
-            <ErrorMessage name="password" component="div" className={styles.error} />
+            <Field
+              type="email"
+              name="email"
+              placeholder="Email"
+              className={styles.input}
+            />
+            <ErrorMessage
+              name="email"
+              component="div"
+              className={styles.error}
+            />
           </div>
 
-          <button type="submit" className={styles.button} disabled={isSubmitting || authLoading}>
-            {isSubmitting || authLoading ? "Завантаження..." : isRegister ? "Зареєструватися" : "Вхід"}
+          {!isResetPassword && (
+            <div className={styles.formGroup}>
+              <Field
+                type="password"
+                name="password"
+                placeholder="Пароль"
+                className={styles.input}
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className={styles.error}
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={isSubmitting || authLoading}
+          >
+            {isSubmitting || authLoading
+              ? "Завантаження..."
+              : isRegister
+              ? "Зареєструватися"
+              : isResetPassword
+              ? "Відновити пароль"
+              : "Вхід"}
           </button>
 
-          {(authError || formError) && <p className={styles.error}>{authError || formError}</p>}
+          {(authError || formError) && (
+            <p className={styles.error}>{authError || formError}</p>
+          )}
+          {resetMessage && <p style={{ color: "green" }}>{resetMessage}</p>}
 
           <div style={{ marginTop: "10px", textAlign: "center" }}>
-            <button type="button" className={styles.toggleButton} onClick={toggleForm}>
-              {isRegister ? "Увійти" : "Реєстрація"}
-            </button>
+            {!isResetPassword && (
+              <>
+                <button
+                  type="button"
+                  className={styles.toggleButton}
+                  onClick={toggleForm}
+                >
+                  {isRegister ? "Увійти" : "Реєстрація"}
+                </button>
+                <button
+                  type="button"
+                  className={styles.toggleButton}
+                  onClick={toggleResetPassword}
+                >
+                  Забули пароль?
+                </button>
+              </>
+            )}
+            {isResetPassword && (
+              <button
+                type="button"
+                className={styles.toggleButton}
+                onClick={toggleResetPassword}
+              >
+                Повернутись до входу
+              </button>
+            )}
           </div>
         </Form>
       )}

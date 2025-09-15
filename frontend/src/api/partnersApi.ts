@@ -18,6 +18,14 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Зміна пароля партнера
+export const changePartnerPassword = (id: string, currentPassword: string, newPassword: string) => {
+  return apiClient.patch(`/partners/${id}/change-password`, {
+    currentPassword,
+    newPassword,
+  });
+};
+
 export const api = {
   // Партнери
   getPartners: () => apiClient.get<Partner[]>(`/partners`),
@@ -26,6 +34,7 @@ export const api = {
   updatePartner: (id: string, data: Partial<Partner>) => apiClient.patch<Partner>(`/partners/${id}`, data),
   deletePartner: (id: string) => apiClient.delete<Partner>(`/partners/${id}`),
   blockPartner: (id: string) => apiClient.patch<Partner>(`/partners/${id}/block`),
+  changePartnerPassword,
 
   // Страви партнера
   getPartnerMenu: (partnerId: string) => apiClient.get<PartnerDish[]>(`/partner-dishes/menu/${partnerId}`),

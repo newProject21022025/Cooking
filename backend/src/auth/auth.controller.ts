@@ -12,7 +12,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-    private partnersService: PartnersService,
+    private partnersService: PartnersService,    
   ) {}
 
   @HttpCode(HttpStatus.OK)
@@ -45,5 +45,10 @@ export class AuthController {
     if (role === 'partner') {
       return this.partnersService.findOneById(id);
     }
+  }
+  @HttpCode(HttpStatus.OK)
+  @Post('reset-password')
+  async resetPassword(@Body('email') email: string) {
+    return this.authService.resetPassword(email);
   }
 }

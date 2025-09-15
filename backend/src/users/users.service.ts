@@ -10,6 +10,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
+  private get client() {
+    return this.supabaseService.getClient();
+  }
   async createUser(dto: CreateUserDto) {
     if (!dto.email || !dto.password) {
       throw new BadRequestException('Email and password are required');
@@ -197,5 +200,17 @@ export class UsersService {
     }
 
     return data ? data[0] : null;
+  }
+  async updatePassword(id: string, hashedPassword: string) {
+    const { data, error } = await this.client
+      .from('users')
+      .update({ password: hashedPassword })
+      .eq('id', id)
+      .select()
+      .single();
+  
+    if (error) throw new BadRequestException(error.message);
+  
+    return data;
   }
 }

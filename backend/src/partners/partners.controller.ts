@@ -11,6 +11,7 @@ import {
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
 
 @Controller('partners')
 export class PartnersController {
@@ -41,9 +42,18 @@ export class PartnersController {
   toggleBlock(@Param('id') id: string) {
     return this.partnersService.toggleBlockPartner(id);
   }
-  
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePartnerDto) {
     return this.partnersService.updatePartner(id, dto);
+  }
+
+  @Patch(':id/change-password')
+  async changePassword(
+    @Param('id') id: string,
+    @Body() body: { currentPassword: string; newPassword: string }
+  ) {
+    const { currentPassword, newPassword } = body;
+    return this.partnersService.changePassword(id, currentPassword, newPassword);
   }
 }
