@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
+import { MailerService } from '../mailer/mailer.service';
 
 export interface OrderItem {
   partnerDishId: string;
@@ -37,7 +38,7 @@ export interface OrderWithPartnerInfo extends Order {
 
 @Injectable()
 export class OrdersService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private mailerService: MailerService) {}
 
   private generateOrderNumber(): string {
     return `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
