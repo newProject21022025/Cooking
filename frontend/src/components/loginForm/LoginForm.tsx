@@ -9,6 +9,7 @@ import styles from "@/app/[locale]/login/page.module.scss";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 import { registerUser, CreateUserData, resetPassword } from "@/api/usersApi";
+import { AxiosError } from "axios";
 
 // Валідації
 const LoginSchema = Yup.object().shape({
@@ -100,10 +101,17 @@ export default function LoginForm() {
       await resetPassword({ email: values.email });
       setResetMessage("Інструкція для відновлення пароля надіслана на email");
       setFormError("");
-    } catch (err: any) {
-      setFormError(
-        err.response?.data?.message || "Сталася помилка при відновленні пароля"
-      );
+    } catch (err: unknown) { // Використовуйте 'unknown' для безпеки
+      // Перевіряємо, чи є помилка від Axios
+      if (err instanceof AxiosError && err.response) {
+        // Якщо так, отримуємо повідомлення про помилку з об'єкта відповіді
+        setFormError(
+          (err.response.data.message as string) || "Сталася помилка при відновленні пароля"
+        );
+      } else {
+        // Якщо це інша помилка, встановлюємо загальне повідомлення
+        setFormError("Сталася невідома помилка");
+      }
       setResetMessage("");
     } finally {
       helpers.setSubmitting(false);
