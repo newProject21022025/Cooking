@@ -44,12 +44,22 @@ const formatPhoneNumber = (input: string): string => {
   return formatted;
 };
 
+const passwordValidationSchema = Yup.object({
+  currentPassword: Yup.string().required("Поточний пароль обов'язковий"),
+  newPassword: Yup.string().min(5, "Мінімум 5 символів").required("Новий пароль обов'язковий"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword")], "Паролі не співпадають")
+    .required("Підтвердіть пароль"),
+});
+
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   
   useEffect(() => {
     loadUserProfile();
@@ -126,11 +136,34 @@ export default function ProfilePage() {
     photo: user.photo || "",
   };
 
+  const handlePasswordChange = async (
+    values: { currentPassword: string; newPassword: string; confirmPassword: string },
+    helpers: FormikHelpers<{ currentPassword: string; newPassword: string; confirmPassword: string }>
+  ) => {
+    try {
+      setPasswordError(null);
+      if (!user) throw new Error("Дані користувача відсутні");
+
+      // Виклик API для зміни пароля
+      await updateCurrentUserProfile({ password: values.newPassword }); // якщо хочеш через окремий метод updatePassword
+      setPasswordSuccess(true);
+      helpers.resetForm();
+      setTimeout(() => setPasswordSuccess(false), 3000);
+    } catch (err: any) {
+      setPasswordError(err.response?.data?.message || "Сталася помилка при зміні пароля");
+    } finally {
+      helpers.setSubmitting(false);
+    }
+  };
+
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Профіль користувача</h1>
+  
       {updateSuccess && <div className={styles.success}>Профіль успішно оновлено!</div>}
       {error && <div className={styles.error}>{error}</div>}
+  
       <div className={styles.card}>
         <div className={styles.avatarContainer}>
           {user.photo ? (
@@ -139,6 +172,7 @@ export default function ProfilePage() {
             <div className={styles.placeholderAvatar}>Немає фото</div>
           )}
         </div>
+  
         {!isEditing ? (
           <>
             <p><strong>ID:</strong> {user.id}</p>
@@ -149,75 +183,145 @@ export default function ProfilePage() {
             {user.deliveryAddress && <p><strong>Адреса доставки:</strong> {user.deliveryAddress}</p>}
             <p><strong>Роль:</strong> {user.role}</p>
             {user.averageRating !== null && <p><strong>Середній рейтинг:</strong> {user.averageRating}</p>}
-            <button type="button" className={styles.editButton} onClick={() => setIsEditing(true)}>
+  
+            <button
+              type="button"
+              className={styles.editButton}
+              onClick={() => setIsEditing(true)}
+            >
               Редагувати профіль
             </button>
           </>
         ) : (
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-            enableReinitialize
-          >
-            {({ isSubmitting, dirty, values, setFieldValue }) => (
-              <Form className={styles.form}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="firstName">Ім&apos;я</label>
-                  <Field type="text" id="firstName" name="firstName" className={styles.input} />
-                  <ErrorMessage name="firstName" component="div" className={styles.errorText} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="lastName">Прізвище</label>
-                  <Field type="text" id="lastName" name="lastName" className={styles.input} />
-                  <ErrorMessage name="lastName" component="div" className={styles.errorText} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="phoneNumber">Телефон</label>
-                  <Field
-                    type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    className={styles.input}
-                    placeholder="+380 (XX) XXX-XX-XX"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const formatted = formatPhoneNumber(e.target.value);
-                      setFieldValue("phoneNumber", formatted);
-                    }}
-                    value={values.phoneNumber || "+380"}
-                  />
-                  <ErrorMessage name="phoneNumber" component="div" className={styles.errorText} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="deliveryAddress">Адреса доставки</label>
-                  <Field as="textarea" id="deliveryAddress" name="deliveryAddress" className={styles.textarea} rows={3} />
-                  <ErrorMessage name="deliveryAddress" component="div" className={styles.errorText} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="photo">Посилання на фото</label>
-                  <Field
-                    type="text"
-                    id="photo"
-                    name="photo"
-                    className={styles.input}
-                    placeholder="Вставте URL фото"
-                  />
-                  <ErrorMessage name="photo" component="div" className={styles.errorText} />
-                </div>
-                <div className={styles.buttonGroup}>
-                  <button type="submit" className={styles.saveButton} disabled={isSubmitting || !dirty}>
-                    {isSubmitting ? "Збереження..." : "Зберегти"}
-                  </button>
-                  <button type="button" className={styles.cancelButton} onClick={() => setIsEditing(false)} disabled={isSubmitting}>
-                    Скасувати
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
+          <>
+            {/* Форма редагування профілю */}
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              enableReinitialize
+            >
+              {({ isSubmitting, dirty, values, setFieldValue }) => (
+                <Form className={styles.form}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="firstName">Ім&apos;я</label>
+                    <Field type="text" id="firstName" name="firstName" className={styles.input} />
+                    <ErrorMessage name="firstName" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="lastName">Прізвище</label>
+                    <Field type="text" id="lastName" name="lastName" className={styles.input} />
+                    <ErrorMessage name="lastName" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="phoneNumber">Телефон</label>
+                    <Field
+                      type="tel"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      className={styles.input}
+                      placeholder="+380 (XX) XXX-XX-XX"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const formatted = formatPhoneNumber(e.target.value);
+                        setFieldValue("phoneNumber", formatted);
+                      }}
+                      value={values.phoneNumber || "+380"}
+                    />
+                    <ErrorMessage name="phoneNumber" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="deliveryAddress">Адреса доставки</label>
+                    <Field
+                      as="textarea"
+                      id="deliveryAddress"
+                      name="deliveryAddress"
+                      className={styles.textarea}
+                      rows={3}
+                    />
+                    <ErrorMessage name="deliveryAddress" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="photo">Посилання на фото</label>
+                    <Field
+                      type="text"
+                      id="photo"
+                      name="photo"
+                      className={styles.input}
+                      placeholder="Вставте URL фото"
+                    />
+                    <ErrorMessage name="photo" component="div" className={styles.errorText} />
+                  </div>
+  
+                  <div className={styles.buttonGroup}>
+                    <button
+                      type="submit"
+                      className={styles.saveButton}
+                      disabled={isSubmitting || !dirty}
+                    >
+                      {isSubmitting ? "Збереження..." : "Зберегти"}
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.cancelButton}
+                      onClick={() => setIsEditing(false)}
+                      disabled={isSubmitting}
+                    >
+                      Скасувати
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+  
+            {/* Форма зміни пароля */}
+            <div className={styles.passwordCard}>
+              <h2>Змінити пароль</h2>
+              {passwordSuccess && <div className={styles.success}>Пароль успішно змінено!</div>}
+              {passwordError && <div className={styles.error}>{passwordError}</div>}
+  
+              <Formik
+                initialValues={{ currentPassword: "", newPassword: "", confirmPassword: "" }}
+                validationSchema={passwordValidationSchema}
+                onSubmit={handlePasswordChange}
+              >
+                {({ isSubmitting }) => (
+                  <Form className={styles.form}>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="currentPassword">Поточний пароль</label>
+                      <Field type="password" id="currentPassword" name="currentPassword" className={styles.input} />
+                      <ErrorMessage name="currentPassword" component="div" className={styles.errorText} />
+                    </div>
+  
+                    <div className={styles.formGroup}>
+                      <label htmlFor="newPassword">Новий пароль</label>
+                      <Field type="password" id="newPassword" name="newPassword" className={styles.input} />
+                      <ErrorMessage name="newPassword" component="div" className={styles.errorText} />
+                    </div>
+  
+                    <div className={styles.formGroup}>
+                      <label htmlFor="confirmPassword">Підтвердіть пароль</label>
+                      <Field type="password" id="confirmPassword" name="confirmPassword" className={styles.input} />
+                      <ErrorMessage name="confirmPassword" component="div" className={styles.errorText} />
+                    </div>
+  
+                    <button type="submit" className={styles.saveButton} disabled={isSubmitting}>
+                      {isSubmitting ? "Збереження..." : "Змінити пароль"}
+                    </button>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </>
         )}
       </div>
+  
+      {/* Історія користувача */}
       <UserHistory userId={user.id} />
     </div>
   );
+  
 }

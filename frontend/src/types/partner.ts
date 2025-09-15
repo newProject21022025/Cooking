@@ -46,6 +46,7 @@ export type UpdatePartnerDishDto = Partial<CreatePartnerDishDto>;
 
 // Дані для оновлення профілю партнера
 export interface UpdatePartnerProfileData {
+  id?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;

@@ -1,9 +1,11 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PartnersService } from '../partners/partners.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { MailerService } from '../mailer/mailer.service';
+
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,7 @@ export class AuthService {
     private usersService: UsersService,
     private partnersService: PartnersService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
   ) {}
 
   async login(email: string, password: string) {
@@ -50,6 +53,37 @@ export class AuthService {
         role: entity.role, // ⚡ реальна роль з бази
       },
     };
+  }
+  async resetPassword(email: string) {
+    let entity = await this.usersService.findOneByEmail(email);
+    let type: 'user' | 'partner' = 'user';
+
+    if (!entity) {
+      entity = await this.partnersService.findOneByEmail(email);
+      type = 'partner';
+    }
+
+    if (!entity) {
+      throw new NotFoundException('Користувача з таким email не знайдено');
+    }
+
+    // Генеруємо новий пароль
+    const newPassword = Math.random().toString(36).slice(-8);
+
+    // Хешуємо
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Оновлюємо у відповідному сервісі
+    if (type === 'user') {
+      await this.usersService.updatePassword(entity.id, hashedPassword);
+    } else {
+      await this.partnersService.updatePassword(entity.id, hashedPassword);
+    }
+
+    // Надсилаємо поштою
+    await this.mailerService.sendNewPassword(email, newPassword);
+
+    return { message: 'Новий пароль надіслано на пошту' };
   }
 }
   

@@ -28,4 +28,5 @@ export interface UpdateUserProfileData {
   phoneNumber?: string | null;
   deliveryAddress?: string | null;
   photo?: string | null; // додано поле для URL фото
+  password?: string; // додано поле для пароля
 }

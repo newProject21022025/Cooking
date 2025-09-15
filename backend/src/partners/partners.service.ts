@@ -6,6 +6,7 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 import * as bcrypt from 'bcrypt';
 import { Partner } from './interfaces/partner.interface'; // <--- Переконайтеся, що ви імпортуєте інтерфейс Partner
 import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
 
 @Injectable()
 export class PartnersService {
@@ -125,5 +126,36 @@ export class PartnersService {
   
     return data[0];
   }
+  async updatePassword(id: string, hashedPassword: string) {
+    const { data, error } = await this.client
+      .from('partners')
+      .update({ password: hashedPassword })
+      .eq('id', id)
+      .select()
+      .single();
   
+    if (error) throw new BadRequestException(error.message);
+  
+    return data;
+  }
+  async changePassword(id: string, currentPassword: string, newPassword: string) {
+    const partner = await this.findOneById(id);
+    if (!partner) throw new BadRequestException('Партнер не знайдений');
+  
+    const isMatch = await bcrypt.compare(currentPassword, partner.password);
+    if (!isMatch) throw new BadRequestException('Поточний пароль невірний');
+  
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+    const { data, error } = await this.client
+      .from('partners')
+      .update({ password: hashedPassword })  // тільки пароль
+      .eq('id', id)
+      .select()
+      .single();
+  
+    if (error) throw new BadRequestException(error.message);
+  
+    return data;
+  }
 }

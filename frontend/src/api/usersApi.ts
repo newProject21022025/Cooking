@@ -51,6 +51,10 @@ export interface CreateUserData {
 // Оновлення користувача — тип через Partial
 export type UpdateUserData = Partial<UpdateUserProfileData>;
 
+export interface ResetPasswordData {
+  email: string;
+}
+
 // 🔹 Отримати всіх користувачів
 export const getAllUsers = async (): Promise<User[]> => {
   const { data } = await apiClient.get<User[]>("/");
@@ -137,6 +141,16 @@ export const registerUser = async (userData: CreateUserData): Promise<User> => {
   );
   return data;
 };
+
+// 🔹 Відновлення пароля (отримати новий пароль на email)
+export const resetPassword = async (data: ResetPasswordData): Promise<{ message: string }> => {
+  const response = await axios.post<{ message: string }>(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
+    data
+  );
+  return response.data;
+};
+
 
 
 
