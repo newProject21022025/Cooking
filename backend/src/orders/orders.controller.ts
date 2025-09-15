@@ -3,15 +3,17 @@
 import { Controller, Post, Body, Get, Param, Delete, Patch, HttpException, HttpStatus } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Query } from '@nestjs/common';
+import { MailerService } from '../mailer/mailer.service';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService, private readonly mailerService: MailerService) {}
 
   @Post()
   async create(@Body() orderData: any) {
     try {
       const order = await this.ordersService.createOrder(orderData);
+      await this.mailerService.sendOrderConfirmation(order);
       return {
         success: true,
         orderNumber: order.orderNumber,
