@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { ReactNode } from "react";
 import Header from "@/components/header/Header";
 import "../styles/globals.scss"; // Your global styles file (ensure the path is correct)
-
 import { ReduxProvider } from "@/providers/ReduxProvider"; // Import the new ReduxProvider wrapper
 
 type Props = {
