@@ -15,7 +15,7 @@ export class DishesService {
 
   async createDish(dish: CreateDishDto) {
     const { data, error } = await this.client
-      .from('dishes') // Назва таблиці у Supabase
+      .from('dishes') 
       .insert([dish]);
 
     if (error) {
