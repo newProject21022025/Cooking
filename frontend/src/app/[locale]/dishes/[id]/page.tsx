@@ -1,4 +1,4 @@
-// src/api/ingredientsApi.ts
+// src/app/[locale]/dishes/[id]/page.tsx
 
 "use client";
 
@@ -13,6 +13,8 @@ import PartnersList from "@/components/partners/PartnersList";
 import { Ingredient as FullIngredient } from "@/types/ingredients";
 import { fetchIngredientByName } from "@/api/ingredientsApi";
 import IngredientModal from "@/components/IngredientModal/IngredientModal";
+import { useDispatch } from "react-redux";
+import { openModal, closeModal } from "@/redux/slices/modalSlice";
 
 export default function DishDetailPage() {
   const params = useParams();
@@ -28,41 +30,26 @@ export default function DishDetailPage() {
   } | null>(null); // Стан для перерахованих інгредієнтів
   const [selectedIngredient, setSelectedIngredient] =
     useState<FullIngredient | null>(null);
+  const dispatch = useDispatch();
 
-    // ✅ Додаємо useEffect для управління скролінгом
-    useEffect(() => {
-      // Зберігаємо початкове значення overflow
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      
-      if (selectedIngredient) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = originalStyle;
-      }
-  
-      // Очисна функція, яка повертає початковий стиль
-      return () => {
-        document.body.style.overflow = originalStyle;
-      };
-    }, [selectedIngredient]);
-
-  // const [selectedIngredient, setSelectedIngredient] =
-  //   useState<FullIngredient | null>(null);
-  // ✅ Обробник натискання на кнопку інгредієнта
+    // ✅ Обробник натискання на кнопку інгредієнта
   const handleIngredientClick = async (ingredientName: string) => {
     try {
       const fullIngredient = await fetchIngredientByName(ingredientName);
       if (fullIngredient) {
         setSelectedIngredient(fullIngredient);
+        dispatch(openModal()); // ✅ Відправляємо дію для відкриття модального вікна
       }
     } catch (err) {
       console.error("Failed to fetch full ingredient details:", err);
     }
   };
 
+
   // ✅ Обробник для закриття модального вікна
   const handleCloseModal = () => {
     setSelectedIngredient(null);
+    dispatch(closeModal()); // ✅ Відправляємо дію для закриття модального вікна
   };
 
   // // ✅ Функція для підготовки даних для IngredientCircle
@@ -303,14 +290,14 @@ export default function DishDetailPage() {
                 )
               )}
           </div>
-        </div>     
+        </div>
         {selectedIngredient && (
           <IngredientModal
             ingredient={selectedIngredient}
             onClose={handleCloseModal}
           />
         )}
-                <div className={styles.section}>
+        <div className={styles.section}>
           <h3>{locale === "uk" ? "Рецепт" : "Recipe"}</h3>
           <p className={styles.recipeText}>
             {locale === "uk" ? dish.recipe_ua : dish.recipe_en}

@@ -8,6 +8,7 @@ import partnersReducer from "./slices/partnersSlice"; // Імпортуємо pa
 import basketReducer from "./slices/basketSlice"; // Імпортуємо basketSlice
 import userHistoryReducer from "./slices/userHistorySlice"; // Імпортуємо partnerHistorySlice
 import ordersReducer from "./slices/ordersSlice"; // Імпортуємо ordersSlice
+import modalReducer from './slices/modalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     basket: basketReducer,
     userHistory: userHistoryReducer,
     orders: ordersReducer, 
+    modal: modalReducer, 
   },
 });
 

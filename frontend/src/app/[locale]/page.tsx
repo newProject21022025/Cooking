@@ -8,7 +8,7 @@ import { fetchDishesApi } from "@/api/dishesApi";
 import { Dish } from "@/types/dish";
 import PartnersList from "@/components/partners/PartnersList";
 import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
-import IngredientCircle from "@/components/ingredientCircle/IngredientCircle";
+
 
 export default function Home() {
   const t = useTranslations("Home");
@@ -39,20 +39,7 @@ export default function Home() {
           {t("text")}
         </p> */}
         <IngredientFilter />
-      </main>
-      <IngredientCircle
-        name="Vitamin A"
-        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjEQ_MZwwJHZ8FP-GPP6gfjSf6YFp-PblJWw&s"
-        benefits={[
-          { text: "Promotes skin health" },
-          { text: "Boosts immune health" },
-          { text: "Supports eye health" },
-          { text: "Vital for organ function" },
-          { text: "Strengthens bones" },
-          { text: "Improves metabolism" },
-          { text: "Improves metabolism" },
-        ]}
-      />
+      </main>      
     </div>
   );
 }

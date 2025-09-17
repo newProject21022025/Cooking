@@ -9,16 +9,39 @@ import { Ingredient } from './interfaces/ingredient.interface'; // ✅ Прип�
 export class IngredientsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
-  async create(createIngredientDto: CreateIngredientDto) {
+  async create(createIngredientDto: CreateIngredientDto): Promise<Ingredient> {
     const { data, error } = await this.supabaseService.client
       .from('ingredients')
-      .insert([createIngredientDto]);
+      .insert([createIngredientDto])
+      .select() // ✅ Додаємо .select() для отримання даних
+      .single(); // ✅ Повертаємо єдиний об'єкт
 
     if (error) {
-      throw new Error(error.message);
+      console.error('Supabase create error:', error);
+      throw new Error(`Failed to create ingredient: ${error.message}`);
     }
+    
+    // Перевіряємо, чи дані існують перед поверненням
+    if (!data) {
+        throw new Error('Supabase did not return the created ingredient.');
+    }
+
     return data;
   }
+
+// export class IngredientsService {
+//   constructor(private readonly supabaseService: SupabaseService) {}
+
+//   async create(createIngredientDto: CreateIngredientDto) {
+//     const { data, error } = await this.supabaseService.client
+//       .from('ingredients')
+//       .insert([createIngredientDto]);
+
+//     if (error) {
+//       throw new Error(error.message);
+//     }
+//     return data;
+//   }
 
   // ✅ Новий метод для пошуку за назвою
   async findOneByName(name_en: string): Promise<Ingredient | null> {
