@@ -1,6 +1,6 @@
 // src/ingredients/ingredients.service.ts
 import { Injectable } from '@nestjs/common';
-import { SupabaseService } from 'src/supabase/supabase.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { Ingredient } from './interfaces/ingredient.interface'; // ✅ Припускаємо, що у вас є цей інтерфейс
