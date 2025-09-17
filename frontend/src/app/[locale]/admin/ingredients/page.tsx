@@ -3,11 +3,12 @@
 
 import React, { useState } from 'react';
 import styles from './page.module.scss';
-import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
+import { Formik, Form, Field, FieldArray, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { createIngredient } from '@/api/ingredientsApi';
 import { CreateIngredientPayload, Benefit } from '@/types/ingredients';
 import { uploadToCloudinary } from '@/api/cloudinaryApi';
+
 
 // Component for the ingredient creation form
 const CreateIngredientForm = () => {
@@ -30,7 +31,8 @@ const CreateIngredientForm = () => {
   // Handler for image upload to Cloudinary
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+    // ✅ Використовуємо правильний тип для setFieldValue
+    setFieldValue: FormikHelpers<CreateIngredientPayload>['setFieldValue']
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -38,7 +40,7 @@ const CreateIngredientForm = () => {
       try {
         const response = await uploadToCloudinary(file);
         setFieldValue("image", response.secure_url);
-        setUploadedImageUrl(response.secure_url); // ✅ Store the URL for preview
+        setUploadedImageUrl(response.secure_url);
         alert("Зображення успішно завантажено!");
       } catch (error) {
         alert("Помилка при завантаженні зображення.");
