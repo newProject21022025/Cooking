@@ -1,0 +1,51 @@
+// src/components/IngredientModal/IngredientModal.module.scss
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items:end; // ✅ Центрує вміст по вертикалі
+    z-index: 1000;
+    overflow-y: auto; // ✅ Дозволяє скролити, якщо вміст занадто великий
+  }
+  
+  .modalContent {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    
+    // ✅ Додаємо ці властивості для правильного відображення на різних екранах
+    max-height: 90vh; // ✅ Обмежуємо висоту модального вікна 90% від висоти вікна перегляду
+    overflow-y: auto; // ✅ Дозволяє скролити, якщо вміст перевищує 90vh
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #888;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+  
+    &:hover {
+      color: #333;
+    }
+  }
