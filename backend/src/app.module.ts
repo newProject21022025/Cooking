@@ -10,12 +10,12 @@ import { PartnerDishesModule } from './partner-dishes/partner-dishes.module';
 import { OrdersModule } from './orders/orders.module';
 import { MailerModule } from './mailer/mailer.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     SupabaseModule,
     UsersModule,
     AuthModule,
@@ -26,5 +26,27 @@ import { IngredientsModule } from './ingredients/ingredients.module';
     MailerModule,
     IngredientsModule,
   ],
+  controllers: [AppController], // ✔ тут підключаємо контролер
+  providers: [AppService],      // ✔ тут сервіс
 })
 export class AppModule {}
+
+
+// @Module({
+//   imports: [
+//     ConfigModule.forRoot({
+//       isGlobal: true,
+//     }),
+//     SupabaseModule,
+//     UsersModule,
+//     AuthModule,
+//     DishesModule,
+//     PartnersModule,
+//     PartnerDishesModule,
+//     OrdersModule,
+//     MailerModule,
+//     IngredientsModule,
+//     AppService,
+//   ],
+// })
+// export class AppModule {}
