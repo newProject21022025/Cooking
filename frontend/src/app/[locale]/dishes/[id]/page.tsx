@@ -1,3 +1,5 @@
+// src/api/ingredientsApi.ts
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -8,6 +10,9 @@ import styles from "./page.module.scss";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import PartnersList from "@/components/partners/PartnersList";
+import { Ingredient as FullIngredient } from "@/types/ingredients";
+import { fetchIngredientByName } from "@/api/ingredientsApi";
+import IngredientModal from "@/components/IngredientModal/IngredientModal";
 
 export default function DishDetailPage() {
   const params = useParams();
@@ -21,6 +26,55 @@ export default function DishDetailPage() {
     important: Ingredient[];
     optional: Ingredient[];
   } | null>(null); // Стан для перерахованих інгредієнтів
+  const [selectedIngredient, setSelectedIngredient] =
+    useState<FullIngredient | null>(null);
+
+    // ✅ Додаємо useEffect для управління скролінгом
+    useEffect(() => {
+      // Зберігаємо початкове значення overflow
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      
+      if (selectedIngredient) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = originalStyle;
+      }
+  
+      // Очисна функція, яка повертає початковий стиль
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }, [selectedIngredient]);
+
+  // const [selectedIngredient, setSelectedIngredient] =
+  //   useState<FullIngredient | null>(null);
+  // ✅ Обробник натискання на кнопку інгредієнта
+  const handleIngredientClick = async (ingredientName: string) => {
+    try {
+      const fullIngredient = await fetchIngredientByName(ingredientName);
+      if (fullIngredient) {
+        setSelectedIngredient(fullIngredient);
+      }
+    } catch (err) {
+      console.error("Failed to fetch full ingredient details:", err);
+    }
+  };
+
+  // ✅ Обробник для закриття модального вікна
+  const handleCloseModal = () => {
+    setSelectedIngredient(null);
+  };
+
+  // // ✅ Функція для підготовки даних для IngredientCircle
+  // const getCircleProps = (ingredient: FullIngredient) => {
+  //   return {
+  //     name: locale === "uk" ? ingredient.name_uk : ingredient.name_en,
+  //     image: ingredient.image,
+  //     benefits: ingredient.benefits.map((b: Benefit) => ({
+  //       text: locale === "uk" ? b.text_uk : b.text_en,
+  //     })),
+  //   };
+  // };
 
   const locale = useLocale();
 
@@ -38,7 +92,9 @@ export default function DishDetailPage() {
         setCalculatedServings(fetchedDish.standard_servings || 1); // Ініціалізуємо порції зі стандартних або 1
       } catch (err) {
         console.error("Помилка при завантаженні деталей страви:", err);
-        setError("Не вдалося завантажити деталі страви. Будь ласка, спробуйте пізніше.");
+        setError(
+          "Не вдалося завантажити деталі страви. Будь ласка, спробуйте пізніше."
+        );
       } finally {
         setLoading(false);
       }
@@ -55,12 +111,16 @@ export default function DishDetailPage() {
 
       const scaledImportant = dish.important_ingredients.map((ing) => ({
         ...ing,
-        quantity: ing.quantity ? parseFloat((ing.quantity * scalingFactor).toFixed(2)) : ing.quantity, // Обмеження до 2 знаків після коми
+        quantity: ing.quantity
+          ? parseFloat((ing.quantity * scalingFactor).toFixed(2))
+          : ing.quantity, // Обмеження до 2 знаків після коми
       }));
 
       const scaledOptional = dish.optional_ingredients.map((ing) => ({
         ...ing,
-        quantity: ing.quantity ? parseFloat((ing.quantity * scalingFactor).toFixed(2)) : ing.quantity, // Обмеження до 2 знаків після коми
+        quantity: ing.quantity
+          ? parseFloat((ing.quantity * scalingFactor).toFixed(2))
+          : ing.quantity, // Обмеження до 2 знаків після коми
       }));
 
       setCalculatedIngredients({
@@ -84,14 +144,16 @@ export default function DishDetailPage() {
   if (loading) {
     return (
       <div className={styles.page}>
-        <div className={styles.loadingMessage}>Завантаження деталей страви...</div>
+        <div className={styles.loadingMessage}>
+          Завантаження деталей страви...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.page}>        
+      <div className={styles.page}>
         <div className={styles.errorMessage}>{error}</div>
         <Link href="/" className={styles.backButton}>
           Повернутися на головну
@@ -163,7 +225,8 @@ export default function DishDetailPage() {
               +
             </button>
             <span className={styles.standardServingsText}>
-              ({locale === "uk" ? "за замовчуванням" : "default"}: {dish.standard_servings})
+              ({locale === "uk" ? "за замовчуванням" : "default"}:{" "}
+              {dish.standard_servings})
             </span>
           </div>
         </div>
@@ -172,35 +235,82 @@ export default function DishDetailPage() {
           {calculatedIngredients && (
             <>
               <div className={styles.ingredientsList}>
-                <h3>{locale === "uk" ? "Основні інгредієнти" : "Important Ingredients"}</h3>
+                <h3>
+                  {locale === "uk"
+                    ? "Основні інгредієнти"
+                    : "Important Ingredients"}
+                </h3>
                 <ul>
-                  {calculatedIngredients.important.map((ing: Ingredient, index: number) => (
-                    <li key={index}>
-                      {locale === "uk" ? ing.name_ua : ing.name_en}
-                      {ing.quantity !== undefined ? `: ${ing.quantity} ${ing.unit}` : ing.unit ? ` (${ing.unit})` : ''}
-                    </li>
-                  ))}
+                  {calculatedIngredients.important.map(
+                    (ing: Ingredient, index: number) => (
+                      <li key={index}>
+                        {locale === "uk" ? ing.name_ua : ing.name_en}
+                        {ing.quantity !== undefined
+                          ? `: ${ing.quantity} ${ing.unit}`
+                          : ing.unit
+                          ? ` (${ing.unit})`
+                          : ""}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
 
               {calculatedIngredients.optional.length > 0 && (
                 <div className={styles.ingredientsList}>
-                  <h3>{locale === "uk" ? "Необов'язкові інгредієнти" : "Optional Ingredients"}</h3>
+                  <h3>
+                    {locale === "uk"
+                      ? "Необов'язкові інгредієнти"
+                      : "Optional Ingredients"}
+                  </h3>
                   <ul>
-                    {calculatedIngredients.optional.map((ing: Ingredient, index: number) => (
-                      <li key={index}>
-                        {locale === "uk" ? ing.name_ua : ing.name_en}
-                        {ing.quantity !== undefined ? `: ${ing.quantity} ${ing.unit}` : ing.unit ? ` (${ing.unit})` : ''}
-                      </li>
-                    ))}
+                    {calculatedIngredients.optional.map(
+                      (ing: Ingredient, index: number) => (
+                        <li key={index}>
+                          {locale === "uk" ? ing.name_ua : ing.name_en}
+                          {ing.quantity !== undefined
+                            ? `: ${ing.quantity} ${ing.unit}`
+                            : ing.unit
+                            ? ` (${ing.unit})`
+                            : ""}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               )}
             </>
           )}
         </div>
-
-        <div className={styles.section}>
+        <div className={styles.ingredientsBtnSection}>
+          <h3 className={styles.ingredientsBtnTitle}>
+            {locale === "uk"
+              ? "Ключові інгредієнти страви:"
+              : "Key ingredients of the dish:"}
+          </h3>
+          <div className={styles.ingredientsBtnContainer}>
+            {calculatedIngredients &&
+              calculatedIngredients.important.map(
+                (ing: Ingredient, index: number) => (
+                  <button
+                    key={index}
+                    className={styles.ingredientsBtn}
+                    // ✅ Викликаємо обробник, передаючи name_en
+                    onClick={() => handleIngredientClick(ing.name_en)}
+                  >
+                    {locale === "uk" ? ing.name_ua : ing.name_en}
+                  </button>
+                )
+              )}
+          </div>
+        </div>     
+        {selectedIngredient && (
+          <IngredientModal
+            ingredient={selectedIngredient}
+            onClose={handleCloseModal}
+          />
+        )}
+                <div className={styles.section}>
           <h3>{locale === "uk" ? "Рецепт" : "Recipe"}</h3>
           <p className={styles.recipeText}>
             {locale === "uk" ? dish.recipe_ua : dish.recipe_en}
