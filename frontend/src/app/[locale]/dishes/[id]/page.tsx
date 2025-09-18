@@ -32,7 +32,7 @@ export default function DishDetailPage() {
     useState<FullIngredient | null>(null);
   const dispatch = useDispatch();
 
-    // ✅ Обробник натискання на кнопку інгредієнта
+  // ✅ Обробник натискання на кнопку інгредієнта
   const handleIngredientClick = async (ingredientName: string) => {
     try {
       const fullIngredient = await fetchIngredientByName(ingredientName);
@@ -44,7 +44,6 @@ export default function DishDetailPage() {
       console.error("Failed to fetch full ingredient details:", err);
     }
   };
-
 
   // ✅ Обробник для закриття модального вікна
   const handleCloseModal = () => {
@@ -162,8 +161,11 @@ export default function DishDetailPage() {
 
   return (
     <div className={styles.page}>
+      <div className={selectedIngredient ? styles.hiddenSection : styles.modalSection}>
       <PartnersList />
+      </div>
       <main className={styles.main}>
+      <div className={selectedIngredient ? styles.hiddenSection : styles.modalSection}>
         <Link href="/" className={styles.backButton}>
           ← Назад до списку страв
         </Link>
@@ -269,6 +271,9 @@ export default function DishDetailPage() {
             </>
           )}
         </div>
+</div>
+        {/* ------------------------------------------------------------------------------------------------------- */}
+
         <div className={styles.ingredientsBtnSection}>
           <h3 className={styles.ingredientsBtnTitle}>
             {locale === "uk"
@@ -291,19 +296,24 @@ export default function DishDetailPage() {
               )}
           </div>
         </div>
+
         {selectedIngredient && (
           <IngredientModal
             ingredient={selectedIngredient}
             onClose={handleCloseModal}
           />
         )}
+        <div className={selectedIngredient ? styles.hiddenSection : styles.modalSection}>
         <div className={styles.section}>
           <h3>{locale === "uk" ? "Рецепт" : "Recipe"}</h3>
           <p className={styles.recipeText}>
             {locale === "uk" ? dish.recipe_ua : dish.recipe_en}
           </p>
         </div>
+        </div>
+        
       </main>
+      
     </div>
   );
 }

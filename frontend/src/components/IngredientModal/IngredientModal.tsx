@@ -2,8 +2,6 @@
 import React from "react";
 import IngredientCircle from "../ingredientCircle/IngredientCircle";
 import styles from "./IngredientModal.module.scss";
-
-// Імпортуємо інтерфейс FullIngredient, щоб типізувати дані
 import { Ingredient as FullIngredient } from "@/types/ingredients";
 import { useLocale } from "next-intl";
 
@@ -16,10 +14,9 @@ const IngredientModal: React.FC<IngredientModalProps> = ({ ingredient, onClose }
   const locale = useLocale();
 
   if (!ingredient) {
-    return null; // Не рендеримо нічого, якщо інгредієнт не передано
+    return null;
   }
 
-  // Функція для підготовки даних для IngredientCircle
   const getCircleProps = (ing: FullIngredient) => ({
     name: locale === "uk" ? ing.name_uk : ing.name_en,
     image: ing.image,
@@ -31,10 +28,11 @@ const IngredientModal: React.FC<IngredientModalProps> = ({ ingredient, onClose }
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
-          &times;
-        </button>
-        <IngredientCircle {...getCircleProps(ingredient)} />
+        {/* 🔥 Кнопка закриття тепер передається як пропс і буде рендеритися всередині IngredientCircle */}
+        <IngredientCircle
+          {...getCircleProps(ingredient)}
+          onClose={onClose} // 🔥 Передаємо функцію onClose
+        />
       </div>
     </div>
   );

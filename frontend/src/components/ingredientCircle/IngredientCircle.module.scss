@@ -28,10 +28,10 @@
   .benefit {
     position: absolute;
     top: 47%;
-    left: 38%;
+    left: 36%;
     transform-origin: center center;
   
-    width: 120px;  // можна підрегулювати
+    width: 140px;  // можна підрегулювати
     text-align: center;
     padding: 10px;
     border: 1px solid #ccc;
@@ -43,3 +43,20 @@
     }
   }
   
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #888;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+  
+    &:hover {
+      color: #333;
+    }
+  }
