@@ -9,15 +9,22 @@ interface IngredientCircleProps {
   image: string;
   name: string;
   benefits: Benefit[];
+  onClose: () => void; // 🔥 Додаємо пропс onClose
 }
 
 const IngredientCircle: React.FC<IngredientCircleProps> = ({
   image,
   name,
   benefits,
+  onClose, // 🔥 Приймаємо пропс onClose
 }) => {
   return (
     <div className={styles.circleCard}>
+      {/* 🔥 Додаємо кнопку закриття */}
+      <button className={styles.closeButton} onClick={onClose}>
+        &times;
+      </button>
+      
       <h2 className={styles.title}>{name}</h2>
       <div className={styles.centerImage}>
         <img src={image} alt={name} />
@@ -25,7 +32,7 @@ const IngredientCircle: React.FC<IngredientCircleProps> = ({
 
       {benefits.map((b, i) => {
         const angle = (360 / benefits.length) * i;
-        const radius = 200; // ✅ тут регулюєш відстань від центру
+        const radius = 200;
         return (
           <div
             key={i}
