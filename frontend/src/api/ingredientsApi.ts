@@ -68,15 +68,23 @@ export async function createIngredient(payload: CreateIngredientPayload): Promis
 export async function updateIngredient(id: string, payload: UpdateIngredientPayload): Promise<Ingredient> {
   try {
     const response = await fetch(`${API_URL}/${id}`, {
-      method: 'PATCH', // Використовуємо PATCH для часткового оновлення
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
     });
+    
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      let errorBody = {};
+      try {
+        errorBody = await response.json();
+      } catch (e) {
+        console.error('Failed to parse error response body:', e);
+      }
+      throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(errorBody)}`);
     }
+
     const data: Ingredient = await response.json();
     return data;
   } catch (error) {
