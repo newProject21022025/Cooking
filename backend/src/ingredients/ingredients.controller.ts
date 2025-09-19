@@ -28,4 +28,8 @@ export class IngredientsController {
   remove(@Param('id') id: string) {
     return this.ingredientsService.remove(id);
   }
+  @Get()
+  findAll() {
+    return this.ingredientsService.findAll();
+  }
 }

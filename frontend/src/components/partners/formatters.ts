@@ -1,3 +1,5 @@
+// src/components/partners/formatters.ts
+
 export const formatPhoneNumber = (input: string): string => {
     const cleaned = input.replace(/\D/g, "");
   

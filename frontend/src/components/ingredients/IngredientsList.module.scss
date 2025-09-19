@@ -1,0 +1,58 @@
+.container {
+    padding: 1rem;
+  }
+  
+  .list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .info {
+    flex: 1;
+  }
+  
+  .image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .deleteBtn {
+    background: #d9534f;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  
+    &:hover {
+      background: #c9302c;
+    }
+  }
+  
+  .error {
+    color: red;
+  }
+
+  .benefits {
+    list-style: disc;
+    padding-left: 1rem;
+    margin-top: 4px;
+  
+    li {
+      font-size: 0.9rem;
+      color: #555;
+    }
+  }
+  

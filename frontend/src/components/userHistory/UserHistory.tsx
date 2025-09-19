@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
 import { fetchUserHistory } from "@/redux/slices/userHistorySlice";
 import styles from "./UserHistory.module.scss";
-import Image from "next/image";
 
 interface UserHistoryProps {
   userId?: string | null;
@@ -24,8 +23,13 @@ export default function UserHistory({ userId }: UserHistoryProps) {
   }, [dispatch, userId]);
 
   if (loading) return <p>Завантаження історії...</p>;
-  if (error) return <p>Помилка: {error}</p>;
-  if (!history.length) return <p>Історія порожня</p>;
+  if (error) {
+    // Якщо 500 (історія відсутня) → показуємо дружнє повідомлення
+    if (error.includes("500")) {
+      return <p>Історія замовлень порожня</p>;
+    }
+    return <p>Помилка: {error}</p>;
+  }
 
   return (
     <div className={styles.container}>
