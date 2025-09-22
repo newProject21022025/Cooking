@@ -5,7 +5,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./IngredientFilter.module.scss";
 import { useLocale } from "next-intl";
 import { mainCategories, ingredientsByCategory } from "@/components/createDishForm/constants/ingredientsData";
-import { fetchDishesApi } from "@/api/dishesApi";
+// ✅ Імпортуємо обидва методи з API
+import { fetchDishesApi, searchDishesApi } from "@/api/dishesApi";
 import { Dish, Ingredient } from "@/types/dish";
 import DishCard from "@/components/dishCard/DishCard";
 
@@ -20,15 +21,22 @@ export default function IngredientFilter() {
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
 
-  // ✅ Додаємо стан для видимості фільтра
   const [isFilterVisible, setIsFilterVisible] = useState(true);
+  // ✅ Додаємо стан для пошуку за назвою
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // ... (логіка useEffect залишається без змін)
     const getDishes = async () => {
       setLoading(true);
       try {
-        const allDishes = await fetchDishesApi();
+        let allDishes = [];
+        // ✅ Виконуємо запит залежно від того, чи є пошуковий рядок
+        if (searchQuery) {
+          allDishes = await searchDishesApi(searchQuery);
+        } else {
+          allDishes = await fetchDishesApi();
+        }
+
         if (selectedIngredients.length > 0) {
           const filtered = allDishes.filter((dish) =>
             selectedIngredients.every((ing) =>
@@ -45,8 +53,9 @@ export default function IngredientFilter() {
         setLoading(false);
       }
     };
+    // ✅ Додаємо searchQuery в залежності useEffect, щоб він реагував на зміну запиту
     getDishes();
-  }, [selectedIngredients]);
+  }, [selectedIngredients, searchQuery]);
 
   const handleCheckboxChange = (ingredientName: string) => {
     setSelectedIngredients((prev) =>
@@ -56,14 +65,23 @@ export default function IngredientFilter() {
     );
   };
   
-  // ✅ Динамічно формуємо класи для анімації
   const filterClasses = `${styles.filterWrapper} ${isFilterVisible ? styles.visible : ''}`;
 
   return (
     <div className={styles.page}>
+      <h2 className={styles.filterName}>Пошук страв</h2>
+      
+      {/* ✅ Поле для пошуку */}
+      <input
+        type="text"
+        placeholder="Пошук за назвою страви..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className={styles.searchBar}
+      />
+      
       <div className={styles.filterHeader}>
         <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
-        {/* ✅ Кнопка для перемикання видимості */}
         <button
           onClick={() => setIsFilterVisible(!isFilterVisible)}
           className={styles.toggleButton}
@@ -72,7 +90,6 @@ export default function IngredientFilter() {
         </button>
       </div>
 
-      {/* ✅ Обгортаємо блок фільтра div-ом з динамічними класами */}
       <div className={filterClasses}>
         <div className={styles.filterContainer}>
           {mainCategories.map((category) => (
@@ -96,7 +113,7 @@ export default function IngredientFilter() {
         </div>
       </div>
 
-      {/* <h3>Результати фільтрації</h3> */}
+      <h3 className={styles.resultsHeader}>Результати фільтрації</h3>
       {loading ? (
         <p className={styles.filterText}>Завантаження страв...</p>
       ) : dishes.length > 0 ? (
@@ -106,7 +123,7 @@ export default function IngredientFilter() {
           ))}
         </div>
       ) : (
-        <p>Не знайдено страв за обраними інгредієнтами</p>
+        <p className={styles.noResults}>Не знайдено страв за обраними критеріями</p>
       )}
     </div>
   );

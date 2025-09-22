@@ -1,6 +1,15 @@
 // src/dishes/dishes.controller.ts
 
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
@@ -14,6 +23,15 @@ export class DishesController {
     return this.dishesService.createDish(createDishDto);
   }
 
+  // ✅ Додаємо новий маршрут для пошуку
+  @Get('search')
+  async search(@Query('query') query: string) {
+    if (!query) {
+      return this.dishesService.getAllDishes();
+    }
+    return this.dishesService.searchDishes(query);
+  }
+
   @Get()
   async findAll() {
     return this.dishesService.getAllDishes();
@@ -25,15 +43,12 @@ export class DishesController {
   }
 
   @Patch(':id')
-async update(
-  @Param('id') id: number,
-  @Body() updateDishDto: UpdateDishDto
-) {
-  return this.dishesService.updateDish(id, updateDishDto);
-}
+  async update(@Param('id') id: number, @Body() updateDishDto: UpdateDishDto) {
+    return this.dishesService.updateDish(id, updateDishDto);
+  }
 
-@Delete(':id')
-async remove(@Param('id') id: number) {
-  return this.dishesService.deleteDish(id);
-}
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return this.dishesService.deleteDish(id);
+  }
 }
