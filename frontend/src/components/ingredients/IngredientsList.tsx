@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { fetchIngredients, deleteIngredient } from "@/api/ingredientsApi";
 import { Ingredient } from "@/types/ingredients";
 import styles from "./IngredientsList.module.scss";
@@ -15,12 +15,13 @@ export default function IngredientsList({ onEdit }: IngredientsListProps) {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // ✅ Додаємо стан для пошукового запиту
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const loadIngredients = async () => {
       try {
         const data = await fetchIngredients();
-        // ✅ Сортуємо дані одразу після завантаження
         const sortedData = data.sort((a, b) => a.name_uk.localeCompare(b.name_uk, 'uk', { sensitivity: 'base' }));
         setIngredients(sortedData);
       } catch (err) {
@@ -42,23 +43,48 @@ export default function IngredientsList({ onEdit }: IngredientsListProps) {
     }
   };
 
+  // ✅ Використовуємо useMemo для ефективної фільтрації
+  const filteredIngredients = useMemo(() => {
+    if (!searchTerm) {
+      return ingredients;
+    }
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    return ingredients.filter(ingredient => 
+      ingredient.name_uk.toLowerCase().includes(lowercasedSearchTerm) ||
+      ingredient.name_en.toLowerCase().includes(lowercasedSearchTerm)
+    );
+  }, [ingredients, searchTerm]);
+
   if (loading) return <p>Завантаження...</p>;
   if (error) return <p className={styles.error}>{error}</p>;
-  if (ingredients.length === 0) return <p>Інгредієнтів ще немає</p>;
 
   return (
     <div className={styles.container}>
-      <h2>Список інгредієнтів</h2>
+      <h2 className={styles.heading}>Список інгредієнтів</h2>
+      
+      {/* ✅ Поле для пошуку */}
+      <input
+        type="text"
+        placeholder="Пошук за назвою..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className={styles.searchBar}
+      />
+      
+      {filteredIngredients.length === 0 && (
+        <p className={styles.noResults}>Не знайдено інгредієнтів, що відповідають вашому запиту.</p>
+      )}
+
       <ul className={styles.list}>
-        {/* Список вже відсортовано, тож рендеримо як зазвичай */}
-        {ingredients.map((ingredient) => (
+        {/* Рендеримо відфільтрований список */}
+        {filteredIngredients.map((ingredient) => (
           <li key={ingredient.id} className={styles.item}>
             <div className={styles.info}>
               <strong>{ingredient.name_uk}</strong> ({ingredient.name_en})
               {ingredient.benefits.length > 0 && (
                 <ul className={styles.benefits}>
                   {ingredient.benefits.map((b, idx) => (
-                    <li key={idx}>{b.text_uk} ({b.text_en})</li>
+                    <li className={styles.benefitsLi} key={idx}>{b.text_uk} ({b.text_en})</li>
                   ))}
                 </ul>
               )}

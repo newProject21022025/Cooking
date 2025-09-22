@@ -78,4 +78,23 @@ export class DishesService {
   
     return data ? data[0] : null;
   }
+
+  /**
+   * Шукає страви за назвою (українською або англійською).
+   * @param query Рядок для пошуку.
+   */
+  async searchDishes(query: string) {
+    // ✅ Використовуємо .ilike() для пошуку без урахування регістру
+    // Пошук проводиться в обох полях: name_ua та name_en
+    const { data, error } = await this.client
+      .from('dishes')
+      .select('*')
+      .or(`name_ua.ilike.%${query}%,name_en.ilike.%${query}%`);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  }
 }

@@ -1,58 +1,116 @@
-.container {
-    padding: 1rem;
-  }
-  
-  .list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 12px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
-  
-  .info {
-    flex: 1;
-  }
-  
-  .image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-  
-  .deleteBtn {
-    background: #d9534f;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-  
-    &:hover {
-      background: #c9302c;
-    }
-  }
-  
-  .error {
-    color: red;
-  }
+// src/components/ingredients/IngredientsList.module.scss
 
-  .benefits {
-    list-style: disc;
-    padding-left: 1rem;
-    margin-top: 4px;
-  
-    li {
-      font-size: 0.9rem;
-      color: #555;
-    }
+.container {
+  padding: 1rem;
+}
+
+.heading {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.searchBar {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box; // Важливо для коректного відображення padding та border
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
   }
-  
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info {
+  flex: 1;
+}
+
+.image {
+  width: 60px; // Збільшили розмір для кращої видимості
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.editBtn, .deleteBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  white-space: nowrap; // Запобігає переносу тексту кнопки
+}
+
+.editBtn {
+  background: #007bff;
+  color: white;
+
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.deleteBtn {
+  background: #d9534f;
+  color: white;
+
+  &:hover {
+    background: #c9302c;
+  }
+}
+
+.error {
+  color: #dc3545;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.noResults {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+.benefits {
+  list-style: disc;
+  padding-left: 1rem;
+  margin-top: 4px;  
+}
+.benefitsLi {
+    font-size: 0.9rem;
+    color: #555;
+  }

@@ -11,6 +11,13 @@ export const fetchDishesApi = async (): Promise<Dish[]> => {
   return data;
 };
 
+// ✅ Новий метод для пошуку страв за назвою
+export const searchDishesApi = async (query: string): Promise<Dish[]> => {
+  // Використовуємо `encodeURIComponent` для безпечного формування URL
+  const { data } = await axios.get<Dish[]>(`${API_URL}/search?query=${encodeURIComponent(query)}`);
+  return data;
+};
+
 // 🔹 Отримати страву по id
 export const fetchDishByIdApi = async (id: number): Promise<Dish> => {
   const { data } = await axios.get<Dish>(`${API_URL}/${id}`);
