@@ -1,76 +1,113 @@
-// src/components/IngredientFilter/IngredientFilterPage.module.scss
+// src/components/IngredientFilter/IngredientFilter.module.scss
 
 .page {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.filterName {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.toggleButton {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #4caf50; // Зелений колір
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #43a047;
   }
-  
-  .filterName {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #333;
-  }
-  
-  .filterContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-  
-  .categoryBlock {
-    flex: 1 1 200px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  
-  .categoryBlock h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    color: #555;
-  }
-  
-  .ingredientsList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  
-  .ingredientLabel {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
+}
+
+// ✅ Обгортка для анімації згортання/розгортання
+.filterWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.filterWrapper.visible {
+  /* ✅ Збільшуємо max-height, щоб вмістити весь контент */
+  max-height: 9999px; 
+}
+
+.filterWrapper:not(.visible) {
+  max-height: 0;
+}
+
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.categoryBlock {
+  flex: 1 1 200px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.categoryBlock h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.ingredientsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ingredientLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4caf50;
     cursor: pointer;
-    user-select: none;
-  
-    input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: #4caf50; // зелений колір для галочки
-      cursor: pointer;
-    }
   }
-  
-  .dishList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .loadingMessage,
-  .errorMessage {
-    font-size: 1rem;
-    color: #777;
-  }
-  
-  .filterText {
-    margin-top: 1rem;
-    font-size: 1rem;
-    color: #555;
-  }
-  
+}
+
+.dishList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.loadingMessage,
+.errorMessage {
+  font-size: 1rem;
+  color: #777;
+}
+
+.filterText {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #555;
+}

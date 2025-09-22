@@ -1,4 +1,5 @@
 // src/components/ingredients/IngredientsList.tsx
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -6,12 +7,10 @@ import { fetchIngredients, deleteIngredient } from "@/api/ingredientsApi";
 import { Ingredient } from "@/types/ingredients";
 import styles from "./IngredientsList.module.scss";
 
-// ✅ Додаємо пропс onEdit
 interface IngredientsListProps {
   onEdit: (ingredient: Ingredient) => void;
 }
 
-// ✅ Приймаємо onEdit як пропс
 export default function IngredientsList({ onEdit }: IngredientsListProps) {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +20,9 @@ export default function IngredientsList({ onEdit }: IngredientsListProps) {
     const loadIngredients = async () => {
       try {
         const data = await fetchIngredients();
-        setIngredients(data);
+        // ✅ Сортуємо дані одразу після завантаження
+        const sortedData = data.sort((a, b) => a.name_uk.localeCompare(b.name_uk, 'uk', { sensitivity: 'base' }));
+        setIngredients(sortedData);
       } catch (err) {
         setError("Не вдалося завантажити інгредієнти");
       } finally {
@@ -49,6 +50,7 @@ export default function IngredientsList({ onEdit }: IngredientsListProps) {
     <div className={styles.container}>
       <h2>Список інгредієнтів</h2>
       <ul className={styles.list}>
+        {/* Список вже відсортовано, тож рендеримо як зазвичай */}
         {ingredients.map((ingredient) => (
           <li key={ingredient.id} className={styles.item}>
             <div className={styles.info}>
@@ -70,7 +72,7 @@ export default function IngredientsList({ onEdit }: IngredientsListProps) {
             )}
             <div className={styles.buttons}>
               <button
-                onClick={() => onEdit(ingredient)} // ✅ Додаємо кнопку редагування
+                onClick={() => onEdit(ingredient)}
                 className={styles.editBtn}
               >
                 Редагувати

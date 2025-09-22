@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import styles from "./IngredientFilter.module.scss"; // перейменували файл
+import styles from "./IngredientFilter.module.scss";
 import { useLocale } from "next-intl";
 import { mainCategories, ingredientsByCategory } from "@/components/createDishForm/constants/ingredientsData";
 import { fetchDishesApi } from "@/api/dishesApi";
@@ -20,7 +20,11 @@ export default function IngredientFilter() {
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
 
+  // ✅ Додаємо стан для видимості фільтра
+  const [isFilterVisible, setIsFilterVisible] = useState(true);
+
   useEffect(() => {
+    // ... (логіка useEffect залишається без змін)
     const getDishes = async () => {
       setLoading(true);
       try {
@@ -51,33 +55,48 @@ export default function IngredientFilter() {
         : [...prev, ingredientName]
     );
   };
+  
+  // ✅ Динамічно формуємо класи для анімації
+  const filterClasses = `${styles.filterWrapper} ${isFilterVisible ? styles.visible : ''}`;
 
   return (
     <div className={styles.page}>
-      <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
-
-      <div className={styles.filterContainer}>
-        {mainCategories.map((category) => (
-          <div key={category} className={styles.categoryBlock}>
-            <h4>{category}</h4>
-            <div className={styles.ingredientsList}>
-              {ingredientsByCategory[category].map((ingredient: IngredientOption) => (
-                <label key={ingredient.name_ua} className={styles.ingredientLabel}>
-                  <input
-                    type="checkbox"
-                    value={ingredient.name_ua}
-                    checked={selectedIngredients.includes(ingredient.name_ua)}
-                    onChange={() => handleCheckboxChange(ingredient.name_ua)}
-                  />
-                  {locale === "uk" ? ingredient.name_ua : ingredient.name_en}
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className={styles.filterHeader}>
+        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
+        {/* ✅ Кнопка для перемикання видимості */}
+        <button
+          onClick={() => setIsFilterVisible(!isFilterVisible)}
+          className={styles.toggleButton}
+        >
+          {isFilterVisible ? 'Згорнути' : 'Розгорнути'}
+        </button>
       </div>
 
-      <h3>Результати фільтрації</h3>
+      {/* ✅ Обгортаємо блок фільтра div-ом з динамічними класами */}
+      <div className={filterClasses}>
+        <div className={styles.filterContainer}>
+          {mainCategories.map((category) => (
+            <div key={category} className={styles.categoryBlock}>
+              <h4>{category}</h4>
+              <div className={styles.ingredientsList}>
+                {ingredientsByCategory[category].map((ingredient: IngredientOption) => (
+                  <label key={ingredient.name_ua} className={styles.ingredientLabel}>
+                    <input
+                      type="checkbox"
+                      value={ingredient.name_ua}
+                      checked={selectedIngredients.includes(ingredient.name_ua)}
+                      onChange={() => handleCheckboxChange(ingredient.name_ua)}
+                    />
+                    {locale === "uk" ? ingredient.name_ua : ingredient.name_en}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* <h3>Результати фільтрації</h3> */}
       {loading ? (
         <p className={styles.filterText}>Завантаження страв...</p>
       ) : dishes.length > 0 ? (
