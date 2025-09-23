@@ -84,3 +84,13 @@
       background-color: #43a047;
   }
 }
+
+// ✅ Новий стиль для кнопки "Товар доданий"
+.addedButton {
+  background-color: #6c757d; /* сірий колір */
+  cursor: not-allowed;
+  
+  &:hover {
+    background-color: #6c757d;
+  }
+}

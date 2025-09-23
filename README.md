@@ -1,152 +1,218 @@
 # Cooking
 
-// src/app/[locale]/buyDishes/dishes/page.tsx
+// src/components/IngredientFilter/IngredientFilter.tsx
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
-import { RootState, AppDispatch } from "@/redux/store";
+import React, { useState, useEffect } from "react";
+import styles from "./IngredientFilter.module.scss";
+import { useLocale } from "next-intl";
 import {
-  fetchPartnerMenu,
-  setSelectedPartner,
-} from "@/redux/slices/partnersSlice";
-import { fetchDishes } from "@/redux/slices/dishesSlice";
-import { addToBasket } from "@/redux/slices/basketSlice";
-import styles from "./page.module.scss";
+  mainCategories,
+  ingredientsByCategory,
+} from "@/components/createDishForm/constants/ingredientsData";
+import { fetchDishesApi, searchDishesApi } from "@/api/dishesApi";
+import { Dish, Ingredient } from "@/types/dish";
+import DishCard from "@/components/dishCard/DishCard";
 
-// ✅ Імпортуємо новий API метод
-import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
-import { PartnerDish } from "@/types/partner";
+interface IngredientOption {
+  name_ua: string;
+  name_en: string;
+}
 
-export default function DishesPage() {
-  const dispatch = useDispatch<AppDispatch>();
-  const searchParams = useSearchParams();
+const dishTypes = [
+  { value: "all", label: "🍽️ Всі страви / All dishes" },
+  { value: "first_course", label: "🥘 Перше блюдо / First course" },
+  { value: "side_dish", label: "🍚 Гарнір / Side dish" },
+  { value: "salad", label: "🥗 Салат / Salad" },
+  { value: "appetizer", label: "🍢 Закуска / Appetizer" },
+];
 
-  const partnerIdFromQuery = searchParams.get("partnerId");
-  const selectedPartnerId = useSelector(
-    (state: RootState) => state.partners.selectedPartnerId
-  );
-  const partnerId = partnerIdFromQuery || selectedPartnerId;
+export default function IngredientFilter() {
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const locale = useLocale();
 
-  // ✅ Додаємо стан для пошукового запиту
   const [searchQuery, setSearchQuery] = useState("");
-  // ✅ Додаємо стан для результатів пошуку
-  const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
-  const [loadingSearch, setLoadingSearch] = useState(false);
+  // ✅ Новий стан для пошукового запиту, який надсилається
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    if (partnerIdFromQuery) {
-      dispatch(setSelectedPartner(partnerIdFromQuery));
-    }
-  }, [partnerIdFromQuery, dispatch]);
-
-  // ✅ Завантаження меню або пошук
-  useEffect(() => {
-    const loadData = async () => {
-      if (!partnerId) return;
-
-      setLoadingSearch(true);
+    const getDishes = async () => {
+      setLoading(true);
       try {
-        if (searchQuery) {
-          // Якщо є пошуковий запит, виконуємо пошук через API
-          const data = await searchPartnerDishesApi(partnerId, searchQuery);
-          setSearchResults(data);
+        let allDishes = [];
+        // ✅ Використовуємо submittedSearchQuery для пошуку
+        if (submittedSearchQuery) {
+          allDishes = await searchDishesApi(submittedSearchQuery);
         } else {
-          // Інакше, завантажуємо все меню
-          dispatch(fetchPartnerMenu(partnerId));
+          allDishes = await fetchDishesApi();
         }
-      } catch (error) {
-        console.error("Failed to fetch dishes:", error);
-        setSearchResults([]); // Очищуємо результати в разі помилки
+
+        let filteredDishes = allDishes;
+
+        if (selectedCategory !== "all") {
+          filteredDishes = filteredDishes.filter(
+            (dish) => dish.type === selectedCategory
+          );
+        }
+
+        if (selectedIngredients.length > 0) {
+          const filteredByIngredients = filteredDishes.filter((dish) =>
+            selectedIngredients.every((ing) =>
+              dish.important_ingredients.some(
+                (dishIng: Ingredient) => dishIng.name_ua === ing
+              )
+            )
+          );
+          setDishes(filteredByIngredients);
+        } else {
+          setDishes(filteredDishes);
+        }
+      } catch (err) {
+        console.error(err);
       } finally {
-        setLoadingSearch(false);
+        setLoading(false);
       }
-
-      // Цей запит краще залишити окремо, оскільки він завантажує загальні дані про страви
-      dispatch(fetchDishes());
     };
+    // ✅ useEffect тепер залежить від submittedSearchQuery
+    getDishes();
+  }, [selectedIngredients, submittedSearchQuery, selectedCategory]);
 
-    loadData();
-  }, [partnerId, searchQuery, dispatch]); // ✅ Додаємо searchQuery у залежності
+  const handleCheckboxChange = (ingredientName: string) => {
+    setSelectedIngredients((prev) =>
+      prev.includes(ingredientName)
+        ? prev.filter((i) => i !== ingredientName)
+        : [...prev, ingredientName]
+    );
+  };
 
-  // Дані з Redux
-  const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
-    (state: RootState) => state.partners
-  );
-  const { items: dishes, loading: loadingDishes } = useSelector(
-    (state: RootState) => state.dishes
-  );
+  const handleCategoryToggle = (category: string) => {
+    setOpenCategory(openCategory === category ? null : category);
+  };
 
-  if (!partnerId) return <p>Партнера не вибрано</p>;
-  if (loadingPartnerDishes || loadingDishes || loadingSearch) {
-    return <p>Завантаження меню...</p>;
-  }
+  const handleCategoryChange = (categoryValue: string) => {
+    setSelectedCategory(categoryValue);
+  };
 
-  // ✅ Використовуємо відфільтрований список для відображення
-  const displayedPartnerDishes = searchQuery ? searchResults : partnerDishes;
+  // ✅ Нова функція, яка спрацьовує при натисканні на кнопку
+  const handleSearch = () => {
+    setSubmittedSearchQuery(searchQuery);
+  };
 
-  const mergedDishes = displayedPartnerDishes
-    .map((pd) => {
-      const dish = dishes.find((d) => d.id === pd.dish_id);
-      if (!dish) return null;
-      const finalPrice = pd.discount
-        ? pd.price - pd.price * (pd.discount / 100)
-        : pd.price;
-      return { partnerDish: pd, dish, finalPrice };
-    })
-    .filter(Boolean) as {
-    partnerDish: typeof partnerDishes[0];
-    dish: typeof dishes[0];
-    finalPrice: number;
-  }[];
+  const filterClasses = styles.filterWrapper;
 
   return (
-    <div className={styles.container}>
-      <h2>Меню партнера {partnerId}</h2>
-      {/* ✅ Wrap the input in a form and add an onSubmit handler */}
-      <form onSubmit={(e) => e.preventDefault()}>
+    <div className={styles.page}>
+      <h2 className={styles.filterName}>Пошук страв</h2>
+
+      {/* ✅ Додаємо контейнер для поля введення та кнопки */}
+      <div className={styles.searchContainer}>
         <input
           type="text"
-          placeholder="Пошук страви..."
+          placeholder="Пошук за назвою страви..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className={styles.searchBar}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
-      </form>
-      
-      {mergedDishes.length === 0 ? (
-        <p>Меню пусте або не знайдено страв за вашим запитом.</p>
-      ) : (
-        <div className={styles.cards}>
-          {mergedDishes.map(({ partnerDish, dish, finalPrice }) => (
-            <div key={partnerDish.id} className={styles.card}>
-              <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
-              <h3>{dish.name_ua}</h3>
-              <p>{dish.description_ua}</p>
-              <p>
-                Ціна: {partnerDish.price} грн{" "}
-                {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
-              </p>
-              <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
+        {/* ✅ Кнопка, яка ініціює пошук */}
+        <button onClick={handleSearch} className={styles.searchButton}>
+          Пошук
+        </button>
+      </div>
+
+      <div className={styles.categoryButtonsContainer}>
+        {dishTypes.map((type) => (
+          <button
+            key={type.value}
+            onClick={() => handleCategoryChange(type.value)}
+            className={`${styles.categoryButton} ${
+              selectedCategory === type.value ? styles.active : ""
+            }`}
+          >
+            {locale === "uk"
+              ? type.label.split("/")[0].trim()
+              : type.label.split("/")[1].trim()}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.filterHeader}>
+        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
+      </div>
+
+      <div className={filterClasses}>
+        <div className={styles.dropdownContainer}>
+          {mainCategories.map((category) => (
+            <div key={category} className={styles.dropdownWrapper}>
               <button
-                className={styles.buyButton}
-                onClick={() =>
-                  dispatch(
-                    addToBasket({
-                      partnerDish: partnerDish,
-                      dish,
-                      quantity: 1,
-                    })
-                  )
-                }
+                className={styles.dropdownHeader}
+                onClick={() => handleCategoryToggle(category)}
               >
-                Купити
+                {category}
+                <span
+                  className={`${styles.arrow} ${
+                    openCategory === category ? styles.arrowUp : ""
+                  }`}
+                >
+                  ▼
+                </span>
               </button>
+              <div
+                className={`${styles.dropdownContent} ${
+                  openCategory === category ? styles.open : ""
+                }`}
+              >
+                {ingredientsByCategory[category].map(
+                  (ingredient: IngredientOption) => (
+                    <label
+                      key={ingredient.name_ua}
+                      className={styles.ingredientLabel}
+                    >
+                      <input
+                        type="checkbox"
+                        value={ingredient.name_ua}
+                        checked={selectedIngredients.includes(
+                          ingredient.name_ua
+                        )}
+                        onChange={() =>
+                          handleCheckboxChange(ingredient.name_ua)
+                        }
+                      />
+                      {locale === "uk"
+                        ? ingredient.name_ua
+                        : ingredient.name_en}
+                    </label>
+                  )
+                )}
+              </div>
             </div>
           ))}
         </div>
+      </div>
+
+      <h3 className={styles.resultsHeader}>Результати фільтрації</h3>
+      {loading ? (
+        <p className={styles.filterText}>Завантаження страв...</p>
+      ) : dishes.length > 0 ? (
+        <div className={styles.dishList}>
+          {dishes.map((dish) => (
+            <DishCard key={dish.id} dish={dish} />
+          ))}
+        </div>
+      ) : (
+        <p className={styles.noResults}>
+          Не знайдено страв за обраними критеріями
+        </p>
       )}
     </div>
   );

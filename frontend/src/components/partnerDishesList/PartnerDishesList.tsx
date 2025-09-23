@@ -22,7 +22,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false); // Нова змінна стану для відстеження натискання кнопки
+  const [hasSearched, setHasSearched] = useState(false);
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
@@ -30,31 +30,29 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
   const { items: dishes, loading: loadingDishes } = useSelector(
     (state: RootState) => state.dishes
   );
+  // ✅ Додаємо useSelector для доступу до стану кошика
+  const basketItems = useSelector((state: RootState) => state.basket.items);
 
   useEffect(() => {
     dispatch(fetchDishes());
   }, [dispatch]);
 
-  // Завантажуємо меню партнера при першому рендері, або коли змінюється partnerId,
-  // але тільки якщо користувач ще не виконував пошук
   useEffect(() => {
     if (!hasSearched && partnerId) {
       dispatch(fetchPartnerMenu(partnerId));
     }
   }, [partnerId, dispatch, hasSearched]);
 
-  // Функція для виконання пошуку
   const handleSearch = async () => {
     setLoadingSearch(true);
-    setHasSearched(true); // Встановлюємо, що пошук було ініційовано
+    setHasSearched(true);
     try {
       if (searchQuery) {
         const data = await searchPartnerDishesApi(partnerId, searchQuery);
         setSearchResults(data);
       } else {
-        // Якщо поле пошуку порожнє, повертаємося до початкового меню
         dispatch(fetchPartnerMenu(partnerId));
-        setHasSearched(false); // Скидаємо прапор, щоб повернутися до початкового стану
+        setHasSearched(false);
         setSearchResults([]);
       }
     } catch (error) {
@@ -107,32 +105,41 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
         <p>Меню пусте або не знайдено страв за вашим запитом.</p>
       ) : (
         <div className={styles.cards}>
-          {mergedDishes.map(({ partnerDish, dish, finalPrice }) => (
-            <div key={partnerDish.id} className={styles.card}>
-              <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
-              <h3>{dish.name_ua}</h3>
-              <p>{dish.description_ua}</p>
-              <p>
-                Ціна: {partnerDish.price} грн{" "}
-                {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
-              </p>
-              <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
-              <button
-                className={styles.buyButton}
-                onClick={() =>
-                  dispatch(
-                    addToBasket({
-                      partnerDish: partnerDish,
-                      dish,
-                      quantity: 1,
-                    })
-                  )
-                }
-              >
-                Купити
-              </button>
-            </div>
-          ))}
+          {mergedDishes.map(({ partnerDish, dish, finalPrice }) => {
+            // ✅ Перевіряємо, чи є товар у кошику
+            const isAdded = basketItems.some(
+              (item) => item.partnerDish.id === partnerDish.id
+            );
+
+            return (
+              <div key={partnerDish.id} className={styles.card}>
+                <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
+                <h3>{dish.name_ua}</h3>
+                <p>{dish.description_ua}</p>
+                <p>
+                  Ціна: {partnerDish.price} грн{" "}
+                  {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
+                </p>
+                <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
+                <button
+                  className={`${styles.buyButton} ${isAdded ? styles.addedButton : ""}`}
+                  onClick={() =>
+                    !isAdded && // ✅ Викликаємо екшн тільки якщо товару немає в кошику
+                    dispatch(
+                      addToBasket({
+                        partnerDish: partnerDish,
+                        dish,
+                        quantity: 1,
+                      })
+                    )
+                  }
+                  disabled={isAdded} // ✅ Вимикаємо кнопку, якщо товар додано
+                >
+                  {isAdded ? "Товар доданий до кошика" : "Купити"}
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
