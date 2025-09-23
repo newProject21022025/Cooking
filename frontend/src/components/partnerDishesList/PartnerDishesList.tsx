@@ -10,7 +10,6 @@ import { fetchDishes } from "@/redux/slices/dishesSlice";
 import { addToBasket } from "@/redux/slices/basketSlice";
 import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
 import { PartnerDish } from "@/types/partner";
-import { useDebounce } from "@/hooks/useDebounce";
 import styles from "./PartnerDishesList.module.scss";
 
 interface PartnerDishesListProps {
@@ -23,7 +22,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [hasSearched, setHasSearched] = useState(false); // Нова змінна стану для відстеження натискання кнопки
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
@@ -32,42 +31,45 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
     (state: RootState) => state.dishes
   );
 
-  // ✅ Підтягуємо страви один раз при завантаженні
   useEffect(() => {
     dispatch(fetchDishes());
   }, [dispatch]);
 
-  // ✅ Пошук та меню партнера
+  // Завантажуємо меню партнера при першому рендері, або коли змінюється partnerId,
+  // але тільки якщо користувач ще не виконував пошук
   useEffect(() => {
-    const loadData = async () => {
-      setLoadingSearch(true);
-      try {
-        if (debouncedSearchQuery) {
-          const data = await searchPartnerDishesApi(partnerId, debouncedSearchQuery);
-          setSearchResults(data);
-        } else {
-          dispatch(fetchPartnerMenu(partnerId));
-        }
-      } catch (error) {
-        console.error("Failed to fetch dishes:", error);
-        setSearchResults([]);
-      } finally {
-        setLoadingSearch(false);
-      }
-    };
-
-    if (partnerId) {
-      loadData();
+    if (!hasSearched && partnerId) {
+      dispatch(fetchPartnerMenu(partnerId));
     }
-  }, [partnerId, debouncedSearchQuery, dispatch]);
+  }, [partnerId, dispatch, hasSearched]);
+
+  // Функція для виконання пошуку
+  const handleSearch = async () => {
+    setLoadingSearch(true);
+    setHasSearched(true); // Встановлюємо, що пошук було ініційовано
+    try {
+      if (searchQuery) {
+        const data = await searchPartnerDishesApi(partnerId, searchQuery);
+        setSearchResults(data);
+      } else {
+        // Якщо поле пошуку порожнє, повертаємося до початкового меню
+        dispatch(fetchPartnerMenu(partnerId));
+        setHasSearched(false); // Скидаємо прапор, щоб повернутися до початкового стану
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch dishes:", error);
+      setSearchResults([]);
+    } finally {
+      setLoadingSearch(false);
+    }
+  };
 
   if (loadingPartnerDishes || loadingDishes || loadingSearch) {
     return <p>Завантаження меню...</p>;
   }
 
-  const displayedPartnerDishes = debouncedSearchQuery
-    ? searchResults
-    : partnerDishes;
+  const displayedPartnerDishes = hasSearched && searchQuery ? searchResults : partnerDishes;
 
   const mergedDishes = displayedPartnerDishes
     .map((pd) => {
@@ -88,14 +90,18 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
     <div className={styles.container}>
       <h2>Меню партнера</h2>
 
-      {/* ✅ Поле пошуку тепер не втрачає фокус */}
-      <input
-        type="text"
-        placeholder="Пошук страви..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className={styles.searchBar}
-      />
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Пошук страви..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchBar}
+        />
+        <button onClick={handleSearch} className={styles.searchButton}>
+          Пошук
+        </button>
+      </div>
 
       {mergedDishes.length === 0 ? (
         <p>Меню пусте або не знайдено страв за вашим запитом.</p>

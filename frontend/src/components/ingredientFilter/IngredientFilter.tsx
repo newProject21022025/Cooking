@@ -18,12 +18,9 @@ export default function IngredientFilter() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
-
-  // ❌ Видаляємо стан isFilterVisible, він більше не потрібен
-  // const [isFilterVisible, setIsFilterVisible] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+ 
+  const [searchQuery, setSearchQuery] = useState('');  
   
-  // ✅ Залишаємо стан для управління видимістю випадаючих списків
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   useEffect(() => {
@@ -68,9 +65,7 @@ export default function IngredientFilter() {
     setOpenCategory(openCategory === category ? null : category);
   };
 
-  // ❌ Видаляємо умовний клас
-  // const filterClasses = `${styles.filterWrapper} ${isFilterVisible ? styles.visible : ''}`;
-  const filterClasses = styles.filterWrapper; // Залишаємо тільки основний клас
+  const filterClasses = styles.filterWrapper; 
 
   return (
     <div className={styles.page}>
@@ -85,14 +80,7 @@ export default function IngredientFilter() {
       />
       
       <div className={styles.filterHeader}>
-        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
-        {/* ❌ Видаляємо кнопку для згортання/розгортання */}
-        {/* <button
-          onClick={() => setIsFilterVisible(!isFilterVisible)}
-          className={styles.toggleButton}
-        >
-          {isFilterVisible ? 'Згорнути' : 'Розгорнути'}
-        </button> */}
+        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>    
       </div>
 
       <div className={filterClasses}>
