@@ -50,6 +50,7 @@ export default function Header({ locale }: HeaderProps) {
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.logo}>
         <Link href="/">Ваш Логотип</Link>
+        <Link className={styles.menu} href="/menu">Меню</Link>
       </div>
 
       <nav className={styles.navigation}>

@@ -14,9 +14,7 @@ export class DishesService {
   }
 
   async createDish(dish: CreateDishDto) {
-    const { data, error } = await this.client
-      .from('dishes') 
-      .insert([dish]);
+    const { data, error } = await this.client.from('dishes').insert([dish]);
 
     if (error) {
       throw new Error(error.message);
@@ -25,10 +23,15 @@ export class DishesService {
     return data;
   }
 
-  async getAllDishes() {
-    const { data, error } = await this.client
-      .from('dishes')
-      .select('*');
+  async getAllDishes(isSelected?: boolean) {
+    let query = this.client.from('dishes').select('*');
+
+    // ✅ Додаємо умову для фільтрації, якщо параметр isSelected передано
+    if (isSelected !== undefined) {
+      query = query.eq('is_selected', isSelected);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       throw new Error(error.message);
@@ -57,25 +60,25 @@ export class DishesService {
       .update(dto)
       .eq('id', id)
       .select();
-  
+
     if (error) {
       throw new Error(error.message);
     }
-  
+
     return data ? data[0] : null;
   }
-  
+
   async deleteDish(id: number) {
     const { data, error } = await this.client
       .from('dishes')
       .delete()
       .eq('id', id)
       .select();
-  
+
     if (error) {
       throw new Error(error.message);
     }
-  
+
     return data ? data[0] : null;
   }
 
@@ -97,4 +100,14 @@ export class DishesService {
 
     return data;
   }
+
+  async selectDish(id: number) {
+    return this.updateDish(id, { is_selected: true });
+  }
+
+  async unselectDish(id: number) {
+    return this.updateDish(id, { is_selected: false });
+  }
+
+  
 }

@@ -1,6 +1,6 @@
 // src/dishes/dto/create-dish.dto.ts
 
-import { IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, ValidateNested, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class IngredientDto {
@@ -55,5 +55,8 @@ export class CreateDishDto {
   
     @IsString()
     recipe_en: string;
+
+    @IsBoolean()
+    is_selected: boolean;
   }
   

@@ -96,6 +96,7 @@ export default function CreateDishForm({ initialData, onSubmit }: CreateDishForm
           recipe_ua: initialData?.recipe_ua || "",
           recipe_en: initialData?.recipe_en || "",
           standard_servings: initialData?.standard_servings || 1,
+          is_selected: initialData?.is_selected || false,
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
