@@ -1,11 +1,9 @@
-// src/components/IngredientFilter/IngredientFilter.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import styles from "./IngredientFilter.module.scss";
 import { useLocale } from "next-intl";
 import { mainCategories, ingredientsByCategory } from "@/components/createDishForm/constants/ingredientsData";
-// ✅ Імпортуємо обидва методи з API
 import { fetchDishesApi, searchDishesApi } from "@/api/dishesApi";
 import { Dish, Ingredient } from "@/types/dish";
 import DishCard from "@/components/dishCard/DishCard";
@@ -20,17 +18,16 @@ export default function IngredientFilter() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
-
-  const [isFilterVisible, setIsFilterVisible] = useState(true);
-  // ✅ Додаємо стан для пошуку за назвою
-  const [searchQuery, setSearchQuery] = useState('');
+ 
+  const [searchQuery, setSearchQuery] = useState('');  
+  
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const getDishes = async () => {
       setLoading(true);
       try {
         let allDishes = [];
-        // ✅ Виконуємо запит залежно від того, чи є пошуковий рядок
         if (searchQuery) {
           allDishes = await searchDishesApi(searchQuery);
         } else {
@@ -53,7 +50,6 @@ export default function IngredientFilter() {
         setLoading(false);
       }
     };
-    // ✅ Додаємо searchQuery в залежності useEffect, щоб він реагував на зміну запиту
     getDishes();
   }, [selectedIngredients, searchQuery]);
 
@@ -65,13 +61,16 @@ export default function IngredientFilter() {
     );
   };
   
-  const filterClasses = `${styles.filterWrapper} ${isFilterVisible ? styles.visible : ''}`;
+  const handleCategoryToggle = (category: string) => {
+    setOpenCategory(openCategory === category ? null : category);
+  };
+
+  const filterClasses = styles.filterWrapper; 
 
   return (
     <div className={styles.page}>
       <h2 className={styles.filterName}>Пошук страв</h2>
       
-      {/* ✅ Поле для пошуку */}
       <input
         type="text"
         placeholder="Пошук за назвою страви..."
@@ -81,21 +80,23 @@ export default function IngredientFilter() {
       />
       
       <div className={styles.filterHeader}>
-        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
-        <button
-          onClick={() => setIsFilterVisible(!isFilterVisible)}
-          className={styles.toggleButton}
-        >
-          {isFilterVisible ? 'Згорнути' : 'Розгорнути'}
-        </button>
+        <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>    
       </div>
 
       <div className={filterClasses}>
-        <div className={styles.filterContainer}>
+        <div className={styles.dropdownContainer}>
           {mainCategories.map((category) => (
-            <div key={category} className={styles.categoryBlock}>
-              <h4>{category}</h4>
-              <div className={styles.ingredientsList}>
+            <div key={category} className={styles.dropdownWrapper}>
+              <button 
+                className={styles.dropdownHeader} 
+                onClick={() => handleCategoryToggle(category)}
+              >
+                {category}
+                <span className={`${styles.arrow} ${openCategory === category ? styles.arrowUp : ''}`}>▼</span>
+              </button>
+              <div 
+                className={`${styles.dropdownContent} ${openCategory === category ? styles.open : ''}`}
+              >
                 {ingredientsByCategory[category].map((ingredient: IngredientOption) => (
                   <label key={ingredient.name_ua} className={styles.ingredientLabel}>
                     <input

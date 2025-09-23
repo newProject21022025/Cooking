@@ -5,9 +5,17 @@ import { PartnerDish, CreatePartnerDishDto, UpdatePartnerDishDto } from "@/types
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/partner-dishes`;
 
-export const fetchPartnerDishesApi = async (): Promise<PartnerDish[]> => {
-  const response = await axios.get<PartnerDish[]>(BASE_URL);
-  return response.data;
+// ✅ Новий метод для пошуку страв партнера за назвою
+export const searchPartnerDishesApi = async (partnerId: string, query: string): Promise<PartnerDish[]> => {
+  // Використовуємо `encodeURIComponent` для безпечного формування URL
+  const { data } = await axios.get<PartnerDish[]>(`${BASE_URL}/menu/search/${partnerId}?query=${encodeURIComponent(query)}`);
+  return data;
+};
+
+// 🔹 Отримати всі страви партнера (або меню)
+export const fetchPartnerMenuApi = async (partnerId: string): Promise<PartnerDish[]> => {
+  const { data } = await axios.get<PartnerDish[]>(`${BASE_URL}/menu/${partnerId}`);
+  return data;
 };
 
 // ⚡ create приймає DTO без id
@@ -28,8 +36,8 @@ export const deletePartnerDishApi = async (id: string): Promise<string> => {
 };
 
 export interface PartnerOrderHistoryItem {
-  orderNumber: string; // раніше orderId
-  createdAt: string;   // або Date, якщо конвертуєте
+  orderNumber: string;
+  createdAt: string;
   userId?: string;
   partnerId: string;
   firstName: string;
@@ -46,67 +54,6 @@ export interface PartnerOrderHistoryItem {
     discount?: number;
     quantity: number;
   }[];
-  totalSum: number; // раніше totalPrice
+  totalSum: number;
   status: string;
 }
-
-
-// export const fetchPartnerOrderHistoryApi = async (
-//   partnerId: string,
-//   userId: string
-// ): Promise<PartnerOrderHistoryItem[]> => {
-//   const res = await axios.get(
-//     `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/history`,
-//     { params: { partnerId, userId } }
-//   );
-
-//   // Перевірка на success
-//   if (!res.data || (res.data as any).success === false) {
-//     return [];
-//   }
-
-//   return res.data.map((order: any) => ({
-//     orderNumber: order.order_number, // ⚡ збігається з бекендом і типом
-//     createdAt: order.created_at,
-//     status: order.status,
-//     items: typeof order.items === "string" ? JSON.parse(order.items) : order.items,
-//     totalSum: parseFloat(order.total_sum), // ⚡ збігається з бекендом і типом
-//     userId: order.user_id,
-//     partnerId: order.partner_id,
-//     firstName: order.first_name,
-//     lastName: order.last_name,
-//     email: order.email,
-//     phone: order.phone,
-//     address: order.address,
-//   }));
-// };
-
-
-
-// export interface PartnerOrderHistoryItem {
-//   orderId: string;
-//   userId: string;
-//   partnerId: string;
-//   items: {
-//     dishId: number;
-//     name: string;
-//     price: number;
-//     quantity: number;
-//     discount?: number;
-//   }[];
-//   totalPrice: number;
-//   createdAt: string;
-//   status: string;
-// }
-
-// // Отримати історію замовлень конкретного партнера для конкретного користувача
-// export const fetchPartnerOrderHistoryApi = async (
-//   partnerId: string,
-//   userId: string
-// ): Promise<PartnerOrderHistoryItem[]> => {
-//   const response = await axios.get<PartnerOrderHistoryItem[]>(
-//     `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/history`,
-//     { params: { partnerId, userId } }
-//   );
-//   return response.data;
-// };

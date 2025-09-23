@@ -19,65 +19,6 @@
   color: #333;
   margin: 0;
 }
-
-.toggleButton {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: #fff;
-  background-color: #4caf50; // Зелений колір
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #43a047;
-  }
-}
-
-// ✅ Обгортка для анімації згортання/розгортання
-.filterWrapper {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
-}
-
-.filterWrapper.visible {
-  /* ✅ Збільшуємо max-height, щоб вмістити весь контент */
-  max-height: 9999px; 
-}
-
-.filterWrapper:not(.visible) {
-  max-height: 0;
-}
-
-.filterContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.categoryBlock {
-  flex: 1 1 200px;
-  background-color: #f8f8f8;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.categoryBlock h4 {
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  color: #555;
-}
-
-.ingredientsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
 .ingredientLabel {
   display: flex;
   align-items: center;
@@ -85,13 +26,13 @@
   font-size: 0.95rem;
   cursor: pointer;
   user-select: none;
+}
 
-  input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: #4caf50;
-    cursor: pointer;
-  }
+.ingredientLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4caf50;
+  cursor: pointer;
 }
 
 .dishList {
@@ -141,4 +82,67 @@
   color: #777;
   font-style: italic;
   margin-top: 1rem;
+}
+
+.dropdownContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.dropdownWrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: visible; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  width: 150px;  
+  position: relative; 
+}
+
+.dropdownHeader {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #f7f7f7;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.dropdownHeader:hover {
+  background-color: #eee;
+}
+
+.arrow {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.dropdownContent {
+  max-height: 0;
+  padding: 0 15px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  background-color: #fff; 
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;  
+  z-index: 10;
+}
+
+.dropdownContent.open {
+  max-height: 500px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-top: none; 
 }

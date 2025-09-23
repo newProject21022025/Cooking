@@ -4,7 +4,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { PartnerDish, CreatePartnerDishDto, UpdatePartnerDishDto } from "@/types/partner";
 import {
   createPartnerDishApi,
-  fetchPartnerDishesApi,
   updatePartnerDishApi,
   deletePartnerDishApi,
 } from "@/api/partnerDishesApi";

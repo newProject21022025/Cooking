@@ -70,4 +70,32 @@ export class PartnerDishesService {
     if (error) throw new BadRequestException(error.message);
     return data;
   }
+
+  /**
+   * Шукає страви партнера за назвою.
+   * @param partnerId ID партнера.
+   * @param query Рядок для пошуку.
+   */
+  async searchPartnerDishes(partnerId: string, query: string) {
+    const { data, error } = await this.client
+      .from('partner_dishes')
+      .select('*, dishes(*)')
+      .eq('partner_id', partnerId)
+      .ilike('dishes.name_ua', `%${query}%`);
+
+    if (error) {
+      throw new BadRequestException(error.message);
+    }
+    
+    // ✅ Додаємо перевірку на існування об'єкта `dishes` перед фільтрацією
+    const filteredData = data.filter(item => 
+      // Переконуємося, що `item.dishes` не null або undefined
+      item.dishes && (
+        (item.dishes as any).name_ua.toLowerCase().includes(query.toLowerCase()) || 
+        (item.dishes as any).name_en.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+
+    return filteredData;
+  }
 }
