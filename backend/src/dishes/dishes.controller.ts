@@ -33,8 +33,12 @@ export class DishesController {
   }
 
   @Get()
-  async findAll() {
-    return this.dishesService.getAllDishes();
+  async findAll(@Query('is_selected') isSelected?: string) {
+    // ✅ Перевіряємо, чи передано параметр is_selected
+    // Значення 'true' перетворюється на булевий тип true, інакше - undefined
+    const isSelectedBool = isSelected === 'true' ? true : undefined;
+
+    return this.dishesService.getAllDishes(isSelectedBool);
   }
 
   @Get(':id')
@@ -50,5 +54,15 @@ export class DishesController {
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return this.dishesService.deleteDish(id);
+  }
+
+  @Patch(':id/select')
+  async select(@Param('id') id: number) {
+    return this.dishesService.selectDish(id);
+  }
+
+  @Patch(':id/unselect')
+  async unselect(@Param('id') id: number) {
+    return this.dishesService.unselectDish(id);
   }
 }

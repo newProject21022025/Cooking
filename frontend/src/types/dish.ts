@@ -24,6 +24,7 @@ export interface Dish {
   optional_ingredients: Ingredient[];
   recipe_ua: string;
   recipe_en: string;
+  is_selected: boolean;
 }
 
 export type CreateDishDto = Omit<Dish, "id">;
