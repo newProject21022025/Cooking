@@ -1,77 +1,30 @@
-# Cooking
-
-// src/app/[locale]/buyDishes/dishes/page.tsx
+// src/components/PartnerDishesList/PartnerDishesList.tsx
 
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
-import {
-  fetchPartnerMenu,
-  setSelectedPartner,
-} from "@/redux/slices/partnersSlice";
+import { fetchPartnerMenu } from "@/redux/slices/partnersSlice";
 import { fetchDishes } from "@/redux/slices/dishesSlice";
 import { addToBasket } from "@/redux/slices/basketSlice";
-import styles from "./page.module.scss";
-
-// ✅ Імпортуємо новий API метод
 import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
 import { PartnerDish } from "@/types/partner";
+import { useDebounce } from "@/hooks/useDebounce";
+import styles from "./PartnerDishesList.module.scss";
 
-export default function DishesPage() {
+interface PartnerDishesListProps {
+  partnerId: string;
+}
+
+export default function PartnerDishesList({ partnerId }: PartnerDishesListProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const searchParams = useSearchParams();
 
-  const partnerIdFromQuery = searchParams.get("partnerId");
-  const selectedPartnerId = useSelector(
-    (state: RootState) => state.partners.selectedPartnerId
-  );
-  const partnerId = partnerIdFromQuery || selectedPartnerId;
-
-  // ✅ Додаємо стан для пошукового запиту
   const [searchQuery, setSearchQuery] = useState("");
-  // ✅ Додаємо стан для результатів пошуку
   const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  useEffect(() => {
-    if (partnerIdFromQuery) {
-      dispatch(setSelectedPartner(partnerIdFromQuery));
-    }
-  }, [partnerIdFromQuery, dispatch]);
-
-  // ✅ Завантаження меню або пошук
-  useEffect(() => {
-    const loadData = async () => {
-      if (!partnerId) return;
-
-      setLoadingSearch(true);
-      try {
-        if (searchQuery) {
-          // Якщо є пошуковий запит, виконуємо пошук через API
-          const data = await searchPartnerDishesApi(partnerId, searchQuery);
-          setSearchResults(data);
-        } else {
-          // Інакше, завантажуємо все меню
-          dispatch(fetchPartnerMenu(partnerId));
-        }
-      } catch (error) {
-        console.error("Failed to fetch dishes:", error);
-        setSearchResults([]); // Очищуємо результати в разі помилки
-      } finally {
-        setLoadingSearch(false);
-      }
-
-      // Цей запит краще залишити окремо, оскільки він завантажує загальні дані про страви
-      dispatch(fetchDishes());
-    };
-
-    loadData();
-  }, [partnerId, searchQuery, dispatch]); // ✅ Додаємо searchQuery у залежності
-
-  // Дані з Redux
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
   );
@@ -79,13 +32,42 @@ export default function DishesPage() {
     (state: RootState) => state.dishes
   );
 
-  if (!partnerId) return <p>Партнера не вибрано</p>;
+  // ✅ Підтягуємо страви один раз при завантаженні
+  useEffect(() => {
+    dispatch(fetchDishes());
+  }, [dispatch]);
+
+  // ✅ Пошук та меню партнера
+  useEffect(() => {
+    const loadData = async () => {
+      setLoadingSearch(true);
+      try {
+        if (debouncedSearchQuery) {
+          const data = await searchPartnerDishesApi(partnerId, debouncedSearchQuery);
+          setSearchResults(data);
+        } else {
+          dispatch(fetchPartnerMenu(partnerId));
+        }
+      } catch (error) {
+        console.error("Failed to fetch dishes:", error);
+        setSearchResults([]);
+      } finally {
+        setLoadingSearch(false);
+      }
+    };
+
+    if (partnerId) {
+      loadData();
+    }
+  }, [partnerId, debouncedSearchQuery, dispatch]);
+
   if (loadingPartnerDishes || loadingDishes || loadingSearch) {
     return <p>Завантаження меню...</p>;
   }
 
-  // ✅ Використовуємо відфільтрований список для відображення
-  const displayedPartnerDishes = searchQuery ? searchResults : partnerDishes;
+  const displayedPartnerDishes = debouncedSearchQuery
+    ? searchResults
+    : partnerDishes;
 
   const mergedDishes = displayedPartnerDishes
     .map((pd) => {
@@ -104,18 +86,17 @@ export default function DishesPage() {
 
   return (
     <div className={styles.container}>
-      <h2>Меню партнера {partnerId}</h2>
-      {/* ✅ Wrap the input in a form and add an onSubmit handler */}
-      <form onSubmit={(e) => e.preventDefault()}>
-        <input
-          type="text"
-          placeholder="Пошук страви..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={styles.searchBar}
-        />
-      </form>
-      
+      <h2>Меню партнера</h2>
+
+      {/* ✅ Поле пошуку тепер не втрачає фокус */}
+      <input
+        type="text"
+        placeholder="Пошук страви..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className={styles.searchBar}
+      />
+
       {mergedDishes.length === 0 ? (
         <p>Меню пусте або не знайдено страв за вашим запитом.</p>
       ) : (

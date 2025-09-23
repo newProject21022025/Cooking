@@ -62,7 +62,7 @@ export interface IngredientOption {
       { name_ua: "Авокадо", name_en: "Avocado" },
       { name_ua: "Ківі", name_en: "Kiwi" },
     ],
-    "Молочні продукти": [
+    "Молочка": [
       { name_ua: "Молоко", name_en: "Milk" },
       { name_ua: "Сир", name_en: "Cheese" },
       { name_ua: "Сметана", name_en: "Sour cream" },
@@ -106,7 +106,7 @@ export interface IngredientOption {
   };
   
   export const mainCategories = [
-    "Мʼясо", "Риба", "Крупи", "Овочі", "Фрукти", "Молочні продукти" 
+    "Мʼясо", "Риба", "Крупи", "Овочі", "Фрукти", "Молочка" 
   ];
   
   export const optionalCategories = ["Зелень", "Спеції", "Інше"];
