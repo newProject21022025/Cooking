@@ -23,6 +23,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
   const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [showIngredients, setShowIngredients] = useState<Record<string, boolean>>({}); // ✅ Новий стан для відображення інгредієнтів
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
@@ -30,7 +31,6 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
   const { items: dishes, loading: loadingDishes } = useSelector(
     (state: RootState) => state.dishes
   );
-  // ✅ Додаємо useSelector для доступу до стану кошика
   const basketItems = useSelector((state: RootState) => state.basket.items);
 
   useEffect(() => {
@@ -63,6 +63,14 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
     }
   };
 
+  // ✅ Нова функція-обробник для перемикання інгредієнтів
+  const handleIngredientsToggle = (dishId: number) => {
+    setShowIngredients((prev) => ({
+      ...prev,
+      [dishId]: !prev[dishId],
+    }));
+  };
+
   if (loadingPartnerDishes || loadingDishes || loadingSearch) {
     return <p>Завантаження меню...</p>;
   }
@@ -86,7 +94,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
 
   return (
     <div className={styles.container}>
-      <h2>Меню партнера</h2>
+      <h2 className={styles.container}>Меню партнера</h2>
 
       <div className={styles.searchContainer}>
         <input
@@ -106,7 +114,6 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
       ) : (
         <div className={styles.cards}>
           {mergedDishes.map(({ partnerDish, dish, finalPrice }) => {
-            // ✅ Перевіряємо, чи є товар у кошику
             const isAdded = basketItems.some(
               (item) => item.partnerDish.id === partnerDish.id
             );
@@ -124,7 +131,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
                 <button
                   className={`${styles.buyButton} ${isAdded ? styles.addedButton : ""}`}
                   onClick={() =>
-                    !isAdded && // ✅ Викликаємо екшн тільки якщо товару немає в кошику
+                    !isAdded &&
                     dispatch(
                       addToBasket({
                         partnerDish: partnerDish,
@@ -133,10 +140,31 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
                       })
                     )
                   }
-                  disabled={isAdded} // ✅ Вимикаємо кнопку, якщо товар додано
+                  disabled={isAdded}
                 >
                   {isAdded ? "Товар доданий до кошика" : "Купити"}
                 </button>
+                {/* ✅ Кнопка для відображення інгредієнтів */}
+                <button
+                  onClick={() => handleIngredientsToggle(dish.id)} // ✅ Викликаємо функцію з ID страви
+                  className={styles.ingredientsButton}
+                >
+                  {showIngredients[dish.id] ? "Приховати інгредієнти" : "Інгредієнти"}
+                </button>
+
+                {/* ✅ Умовне відображення списку інгредієнтів */}
+                {showIngredients[dish.id] && ( // ✅ Перевіряємо стан для конкретної страви
+                  <div className={styles.ingredientsList}>
+                    <h4>Основні інгредієнти:</h4>
+                    <ul>
+                      {dish.important_ingredients.map((ingredient, index) => (
+                        <li key={index}>
+                          {ingredient.name_ua}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             );
           })}
