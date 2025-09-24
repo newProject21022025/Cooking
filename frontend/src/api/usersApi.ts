@@ -61,6 +61,14 @@ export const getAllUsers = async (): Promise<User[]> => {
   return data;
 };
 
+// ✅ Новий метод для пошуку користувачів за email
+export const searchUsersByEmail = async (email: string): Promise<User[]> => {
+  const { data } = await apiClient.get<User[]>(
+    `/?email=${encodeURIComponent(email)}`
+  );
+  return data;
+};
+
 // 🔹 Отримати профіль поточного користувача
 export const getCurrentUserProfile = async (): Promise<User> => {
   const { data } = await apiClient.get<User>("/profile");
@@ -143,14 +151,12 @@ export const registerUser = async (userData: CreateUserData): Promise<User> => {
 };
 
 // 🔹 Відновлення пароля (отримати новий пароль на email)
-export const resetPassword = async (data: ResetPasswordData): Promise<{ message: string }> => {
+export const resetPassword = async (
+  data: ResetPasswordData
+): Promise<{ message: string }> => {
   const response = await axios.post<{ message: string }>(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
     data
   );
   return response.data;
 };
-
-
-
-

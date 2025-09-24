@@ -2,13 +2,19 @@
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Request,
+  UseGuards,
+  Query, // ✅ Додаємо імпорт Query
+  BadRequestException, // ✅ Додаємо імпорт BadRequestException
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Param, Patch, Body, Delete, Post } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
-
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
@@ -31,31 +37,45 @@ export class UsersController {
   create(@Body() dto: CreateUserDto) {
     return this.usersService.createUser(dto);
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
+
   @Patch(':id')
   async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }
+
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUser(id);
   }
-  @Patch(':id/block')
-async blockUser(@Param('id') id: string) { // Видалено @Body() dto
-  return this.usersService.setBlockStatus(id, true);
-}
 
-@Patch(':id/unblock')
-async unblockUser(@Param('id') id: string) { // Видалено @Body() dto
-  return this.usersService.setBlockStatus(id, false);
-}
+  @Patch(':id/block')
+  async blockUser(@Param('id') id: string) {
+    return this.usersService.setBlockStatus(id, true);
+  }
+
+  @Patch(':id/unblock')
+  async unblockUser(@Param('id') id: string) {
+    return this.usersService.setBlockStatus(id, false);
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAllUsers() {
+  async getAllUsers(@Query('email') email?: string) { // ✅ Додано параметр email з декоратором @Query
+    if (email) {
+      // Якщо в запиті є email, виконуємо пошук
+      const user = await this.usersService.findOneByEmail(email);
+      if (!user) {
+        throw new BadRequestException('Користувача не знайдено');
+      }
+      return [user]; // Повертаємо масив, щоб відповідати типу повернення getAllUsers
+    }
+    // Якщо email немає, повертаємо всіх користувачів
     return this.usersService.findAll();
   }
 
@@ -70,4 +90,3 @@ async unblockUser(@Param('id') id: string) { // Видалено @Body() dto
     return this.usersService.uploadUserAvatar(userId, file);
   }
 }
-

@@ -4,7 +4,13 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.scss";
 import { User } from "@/types/user";
-import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
+import {
+  getAllUsers,
+  blockUser,
+  unblockUser,
+  deleteUser as deleteUserApi,
+  searchUsersByEmail, // ✅ Імпортуємо новий API-метод
+} from "@/api/usersApi";
 import { useTranslations, useLocale } from "next-intl";
 
 export default function UsersPage() {
@@ -12,12 +18,15 @@ export default function UsersPage() {
   const locale = useLocale();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // ✅ Стан для пошукового запиту
 
-  // 🔹 Отримати всіх користувачів
-  const fetchUsers = async () => {
+  // ✅ Оновлена функція для завантаження користувачів з можливістю пошуку
+  const loadUsers = async (query = "") => {
     try {
       setLoading(true);
-      const data = await getAllUsers();
+      const data = query
+        ? await searchUsersByEmail(query) // Викликаємо пошук, якщо є запит
+        : await getAllUsers(); // Інакше завантажуємо всіх користувачів
       setUsers(data);
     } catch (error) {
       console.error(t("fetchError"), error);
@@ -35,7 +44,7 @@ export default function UsersPage() {
       } else {
         await blockUser(user.id);
       }
-      await fetchUsers();
+      await loadUsers(searchQuery); // ✅ Оновлюємо список після дії
     } catch (error) {
       console.error(t("statusChangeError"), error);
     }
@@ -49,169 +58,100 @@ export default function UsersPage() {
     try {
       await deleteUserApi(userId);
       setUsers((prev) => prev.filter((u) => u.id !== userId));
+      // ✅ Не викликаємо loadUsers, оскільки ми вже оновили стан
     } catch (error) {
       console.error(t("deleteError"), error);
     }
   };
 
+  // ✅ Функція для обробки пошуку
+  const handleSearch = () => {
+    loadUsers(searchQuery);
+  };
+
+  // ✅ Функція для скидання пошуку
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    loadUsers();
+  };
+
   useEffect(() => {
-    fetchUsers();
+    loadUsers();
   }, []);
 
-  if (loading) return <div>{t("loading")}</div>;
-  if (!users.length) return <div>{t("noUsers")}</div>;
+  if (loading) return <div className={styles.loading}>{t("loading")}</div>;
 
   return (
     <div className={styles.container}>
       <h1>{t("title")}</h1>
-      <table className={styles.usersTable}>
-        <thead>
-          <tr>
-            <th>{t("email")}</th>
-            <th>{t("firstName")}</th>
-            <th>{t("lastName")}</th>
-            <th>{t("role")}</th>
-            <th>{t("block")}</th>
-            <th>{t("actions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id || user.email}>
-              <td>{user.email}</td>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
-              <td>{user.role}</td>
-              <td>
-                <button
-                  onClick={() => handleBlockToggle(user)}
-                  className={user.isBlocked ? styles.unblockBtn : styles.blockBtn}
-                  disabled={!user.id}
-                >
-                  {user.isBlocked ? t("unblock") : t("block")}
-                </button>
-              </td>
-              <td>
-                <button
-                  onClick={() => handleDeleteUser(user.id)}
-                  className={styles.deleteBtn}
-                  disabled={!user.id}
-                >
-                  {t("delete")}
-                </button>
-              </td>
+      
+      {/* ✅ Блок пошуку */}
+      <div className={styles.searchContainer}>
+        <input
+          type="email"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t("searchPlaceholder")}
+          className={styles.searchInput}
+        />
+        <button onClick={handleSearch} className={styles.searchBtn}>
+          🔍 {t("search")}
+        </button>
+        {searchQuery && (
+          <button onClick={handleClearSearch} className={styles.clearBtn}>
+            ❌
+          </button>
+        )}
+      </div>
+      
+      {!users.length && !searchQuery ? (
+        <div className={styles.emptyMessage}>{t("noUsers")}</div>
+      ) : !users.length && searchQuery ? (
+        <div className={styles.emptyMessage}>{t("noUsersFound")}</div>
+      ) : (
+        <table className={styles.usersTable}>
+          <thead>
+            <tr>
+              <th>{t("email")}</th>
+              <th>{t("firstName")}</th>
+              <th>{t("lastName")}</th>
+              <th>{t("role")}</th>
+              <th>{t("block")}</th>
+              <th>{t("actions")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id || user.email}>
+                <td>{user.email}</td>
+                <td>{user.firstName}</td>
+                <td>{user.lastName}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button
+                    onClick={() => handleBlockToggle(user)}
+                    className={
+                      user.isBlocked ? styles.unblockBtn : styles.blockBtn
+                    }
+                    disabled={!user.id}
+                  >
+                    {user.isBlocked ? t("unblock") : t("block")}
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleDeleteUser(user.id)}
+                    className={styles.deleteBtn}
+                    disabled={!user.id}
+                  >
+                    {t("delete")}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
-
-
-
-
-// // src/app/[locale]/admin/users/page.tsx
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import styles from "./page.module.scss";
-// import { User } from "@/types/user";
-// import { getAllUsers, blockUser, unblockUser, deleteUser as deleteUserApi } from "@/api/usersApi";
-// import { useTranslations, useLocale } from "next-intl";
-
-// interface UsersPageProps {
-//   params: { locale: string };
-// }
-
-// export default function UsersPage({ params }: UsersPageProps) {
-//   const [users, setUsers] = useState<User[]>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
-//   const locale = useLocale();
-
-//   const fetchUsers = async () => {
-//     try {
-//       setLoading(true);
-//       const data = await getAllUsers();
-//       setUsers(data);
-//     } catch (error) {
-//       console.error("Помилка при отриманні користувачів:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleBlockToggle = async (user: User) => {
-//     try {
-//       if (user.isBlocked) {
-//         await unblockUser(user.id!);
-//       } else {
-//         await blockUser(user.id!);
-//       }
-//       await fetchUsers();
-//     } catch (error) {
-//       console.error("Помилка при зміні статусу:", error);
-//     }
-//   };
-
-//   const handleDeleteUser = async (userId: string) => {
-//     if (!confirm("Ви впевнені, що хочете видалити цього користувача?")) return;
-
-//     try {
-//       await deleteUserApi(userId);
-//       setUsers((prev) => prev.filter((u) => u.id !== userId));
-//     } catch (error) {
-//       console.error("Помилка при видаленні користувача:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchUsers();
-//   }, []);
-
-//   if (loading) return <div>Завантаження користувачів...</div>;
-
-//   return (
-//     <div className={styles.container}>
-//       <h1>Користувачі</h1>
-//       <table className={styles.usersTable}>
-//         <thead>
-//           <tr>
-//             <th>Email</th>
-//             <th>Ім’я</th>
-//             <th>Прізвище</th>
-//             <th>Роль</th>
-//             <th>Блокування</th>
-//             <th>Дії</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {users.map((user) => (
-//             <tr key={user.id}>
-//               <td>{user.email}</td>
-//               <td>{user.firstName}</td>
-//               <td>{user.lastName}</td>
-//               <td>{user.role}</td>
-//               <td>
-//                 <button
-//                   onClick={() => handleBlockToggle(user)}
-//                   className={user.isBlocked ? styles.unblockBtn : styles.blockBtn}
-//                 >
-//                   {user.isBlocked ? "Розблокувати" : "Заблокувати"}
-//                 </button>
-//               </td>
-//               <td>
-//                 <button
-//                   onClick={() => handleDeleteUser(user.id!)}
-//                   className={styles.deleteBtn}
-//                 >
-//                   Видалити
-//                 </button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }

@@ -27,7 +27,9 @@
         "confirmDelete": "Are you sure you want to delete this user?",
         "fetchError": "Error fetching users:",
         "statusChangeError": "Error changing user status:",
-        "deleteError": "Error deleting user:"
+        "deleteError": "Error deleting user:",
+        "searchPlaceholder": "Search by email",
+        "search": "Search"
       }
       
 }
