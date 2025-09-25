@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { fetchDishByIdApi } from "@/api/dishesApi";
-import { Dish, Ingredient } from "@/types/dish";
+import { Dish, Ingredient, Comment } from "@/types/dish";
 import styles from "./page.module.scss";
 import Link from "next/link";
 import { useLocale } from "next-intl";
@@ -16,7 +16,7 @@ import IngredientModal from "@/components/IngredientModal/IngredientModal";
 import { useDispatch } from "react-redux";
 import { openModal, closeModal } from "@/redux/slices/modalSlice";
 import CommentForm from "@/components/commentForm/CommentForm"; // ✅ Імпортуємо компонент форми
-import { deleteComment } from "@/api/commentsApi"; // ✅ Імпортуємо функцію видалення
+// import { deleteComment } from "@/api/commentsApi"; // ✅ Імпортуємо функцію видалення
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store"; // ✅ Імпортуємо тип RootState
 import { User } from "@/types/user";
@@ -382,7 +382,7 @@ export default function DishDetailPage() {
         <h3>{locale === "uk" ? "Коментарі" : "Comments"}</h3>
         {dish.comments && dish.comments.length > 0 ? (
           <ul className={styles.commentsList}>
-            {dish.comments.map((comment: any) => (
+            {dish.comments.map((comment: Comment) => (
               <li key={comment.id} className={styles.commentItem}>
                 <p className={styles.commentText}>{comment.comment_text}</p>
                 <p className={styles.commentMeta}>

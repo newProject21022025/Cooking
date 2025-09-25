@@ -20,7 +20,8 @@ export interface Comment {
   created_at: string;
   user: {
     id: string;
-    full_name?: string;
+    firstName: string;
+    lastName: string;
     email?: string;
     avatar_url?: string;
   };
