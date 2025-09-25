@@ -3,6 +3,7 @@
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
+    height: auto;
   }
   
   .formContainer {
@@ -95,4 +96,7 @@
     &:hover:enabled {
       background-color: #0056b3;
     }
+  }
+  .previewImage{    
+    max-width: 200px;     
   }

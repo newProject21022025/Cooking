@@ -4,6 +4,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  
 }
 
 .toggleButton {
@@ -36,8 +37,9 @@
 
   &.visible {
     /* Стилі для форми, коли вона видима */
-    max-height: 500px; /* Достатньо велике значення, щоб вмістити вміст форми */
+    max-height: 5000px; /* Достатньо велике значення, щоб вмістити вміст форми */
     opacity: 1;
     transform: translateY(0);
   }
 }
+

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./page.module.scss";
 import { useTranslations, useLocale } from "next-intl"; // ✅ Додано useLocale
 import { fetchDishesApi } from "@/api/dishesApi";
-import { Dish } from "@/types/dish";
+import { Dish, Ingredient } from "@/types/dish";
 import PartnersList from "@/components/partners/PartnersList";
 import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
 
