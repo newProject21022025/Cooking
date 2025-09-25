@@ -1,0 +1,97 @@
+/* Container for the entire page content */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  /* Page title */
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* List of comments */
+  .commentsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Style for each individual comment item */
+  .commentItem {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .commentItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Comment content and metadata */
+  .commentContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .commentContent p {
+    margin: 0;
+    line-height: 1.4;
+  }
+  
+  .commentContent strong {
+    color: #555;
+    font-weight: 600;
+  }
+  
+  /* Link to the dish page */
+  .dishLink {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  .dishLink:hover {
+    text-decoration: underline;
+    color: #2980b9;
+  }
+  
+  /* Delete button */
+  .deleteButton {
+    align-self: flex-start;
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .deleteButton:hover {
+    background-color: #c0392b;
+  }
+  
+  .deleteButton:active {
+    background-color: #a93226;
+  }
