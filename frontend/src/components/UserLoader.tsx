@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, clearUser } from "@/redux/userSlice";
 import { RootState, AppDispatch } from "@/redux/store";
+import { setAuthToken } from "@/api/commentsApi"; // 👈 Імпортуємо функцію setAuthToken
 
 const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`;
 
@@ -18,6 +19,7 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
   const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    setAuthToken(token);
     if (!token) {
       dispatch(clearUser());
       return;

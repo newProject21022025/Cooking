@@ -11,6 +11,21 @@ export interface IngredientForm extends Ingredient {
   category: string; // 👈 додатково тільки для форми
 }
 
+export interface Comment {
+  id: number;
+  dish_id: number;
+  user_id: string;
+  comment_text: string;
+  rating?: number;
+  created_at: string;
+  user: {
+    id: string;
+    full_name?: string;
+    email?: string;
+    avatar_url?: string;
+  };
+}
+
 export interface Dish {
   id: number;
   name_ua: string;
@@ -25,6 +40,7 @@ export interface Dish {
   recipe_ua: string;
   recipe_en: string;
   is_selected: boolean;
+  comments?: Comment[];
 }
 
 export type CreateDishDto = Omit<Dish, "id">;
