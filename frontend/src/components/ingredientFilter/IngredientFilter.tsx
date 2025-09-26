@@ -20,10 +20,14 @@ interface IngredientOption {
 
 const dishTypes = [
   { value: "all", label: "🍽️ Всі страви / All dishes" },
-  { value: "first_course", label: "🥘 Перше блюдо / First course" },
-  { value: "side_dish", label: "🍚 Гарнір / Side dish" },
-  { value: "salad", label: "🥗 Салат / Salad" },
+  { value: "soup", label: "🍲 Суп / Soup" },   
+  { value: "main_course", label: "🥩 Основне блюдо / Main course" },   
+  { value: "side_dish", label: "🍚 Гарнір / Side dish" },  
+  { value: "salad", label: "🥗 Салат / Salad" },  
   { value: "appetizer", label: "🍢 Закуска / Appetizer" },
+  // Додатково: Десерти, Напої, тощо, якщо потрібні
+  // { value: "dessert", label: "🍰 Десерт / Dessert" },
+  // { value: "drink", label: "🍹 Напій / Drink" },
 ];
 
 export default function IngredientFilter() {
