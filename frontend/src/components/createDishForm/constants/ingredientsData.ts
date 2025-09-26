@@ -101,6 +101,7 @@ export const ingredientsByCategory: Record<string, IngredientOption[]> = {
     { name_ua: "Баклажан", name_en: "Eggplant" },
     { name_ua: "Спаржа", name_en: "Asparagus" },
     { name_ua: "Шпинат", name_en: "Spinach" },
+    { name_ua: "Щавель", name_en: "Sorrel" },
     { name_ua: "Листовий салат", name_en: "Lettuce" },
     { name_ua: "Перець чилі", name_en: "Chili pepper" },
     { name_ua: "Горох", name_en: "Peas" },

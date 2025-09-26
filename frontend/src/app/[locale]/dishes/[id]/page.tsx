@@ -29,11 +29,12 @@ export default function DishDetailPage() {
 
   // ✅ Явно вказуємо тип RootState для state
   const token = useSelector((state: RootState) => state.auth.token);
-  const user = useSelector((state: RootState) => state.user.data as User | null);
+  const user = useSelector(
+    (state: RootState) => state.user.data as User | null
+  );
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
-  
 
   const [dish, setDish] = useState<Dish | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -212,6 +213,10 @@ export default function DishDetailPage() {
     );
   }
 
+  const splitRecipeIntoSteps = (text: string) => {
+    return text.split(/\d+\.\s+/).filter((step) => step.trim() !== "");
+  };
+
   return (
     <div className={styles.page}>
       <div
@@ -234,13 +239,13 @@ export default function DishDetailPage() {
           <h1 className={styles.title}>
             {locale === "uk" ? dish.name_ua : dish.name_en}
           </h1>
-
-          <img
-            src={dish.photo}
-            alt={locale === "uk" ? dish.name_ua : dish.name_en}
-            className={styles.dishImage}
-          />
-
+          <div className={styles.blockImage}>
+            <img
+              src={dish.photo}
+              alt={locale === "uk" ? dish.name_ua : dish.name_en}
+              className={styles.dishImage}
+            />
+          </div>
           <div className={styles.section}>
             <h3>{locale === "uk" ? "Опис" : "Description"}</h3>
             <p className={styles.description}>
@@ -373,32 +378,38 @@ export default function DishDetailPage() {
         >
           <div className={styles.section}>
             <h3>{locale === "uk" ? "Рецепт" : "Recipe"}</h3>
-            <p className={styles.recipeText}>
-              {locale === "uk" ? dish.recipe_ua : dish.recipe_en}
-            </p>
+            <ol className={styles.recipeList}>
+              {splitRecipeIntoSteps(
+                locale === "uk" ? dish.recipe_ua : dish.recipe_en
+              ).map((step, index) => (
+                <li key={index} className={styles.recipeStep}>
+                  {step}
+                </li>
+              ))}
+            </ol>
           </div>
           {/* ✅ Новий розділ для коментарів */}
           <div className={styles.commentsSection}>
-        <h3>{locale === "uk" ? "Коментарі" : "Comments"}</h3>
-        {dish.comments && dish.comments.length > 0 ? (
-          <ul className={styles.commentsList}>
-            {dish.comments.map((comment: Comment) => (
-              <li key={comment.id} className={styles.commentItem}>
-                <p className={styles.commentText}>{comment.comment_text}</p>
-                <p className={styles.commentMeta}>
-                  <span className={styles.commentAuthor}>
-                    <span className={styles.authorName}>
-                      {comment.user?.firstName || "Анонімний"}{" "}
-                      {comment.user?.lastName || ""}
-                    </span>
-                    <span className={styles.authorEmail}>
-                      ({comment.user?.email || ""})
-                    </span>
-                  </span>
-                  <span className={styles.commentDate}>
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </span>
-                  {/* ✅ Перевірка для відображення кнопки видалення
+            <h3>{locale === "uk" ? "Коментарі" : "Comments"}</h3>
+            {dish.comments && dish.comments.length > 0 ? (
+              <ul className={styles.commentsList}>
+                {dish.comments.map((comment: Comment) => (
+                  <li key={comment.id} className={styles.commentItem}>
+                    <p className={styles.commentText}>{comment.comment_text}</p>
+                    <p className={styles.commentMeta}>
+                      <span className={styles.commentAuthor}>
+                        <span className={styles.authorName}>
+                          {comment.user?.firstName || "Анонімний"}{" "}
+                          {comment.user?.lastName || ""}
+                        </span>
+                        <span className={styles.authorEmail}>
+                          ({comment.user?.email || ""})
+                        </span>
+                      </span>
+                      <span className={styles.commentDate}>
+                        {new Date(comment.created_at).toLocaleDateString()}
+                      </span>
+                      {/* ✅ Перевірка для відображення кнопки видалення
                   {user && comment.user_id === user.id && !user.isBlocked && (
                     <button
                       className={styles.deleteButton}
@@ -407,25 +418,25 @@ export default function DishDetailPage() {
                       Видалити
                     </button>
                   )} */}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>
-            {locale === "uk"
-              ? "Коментарів поки що немає. Будьте першим!"
-              : "No comments yet. Be the first to comment!"}
-          </p>
-        )}
-        {/* ✅ Умовне відображення форми коментаря */}
-        {isAuthenticated && !user?.isBlocked && (
-          <CommentForm
-            dishId={Number(dishId)}
-            onCommentAdded={fetchDishDetails}
-          />
-        )}
-      </div>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                {locale === "uk"
+                  ? "Коментарів поки що немає. Будьте першим!"
+                  : "No comments yet. Be the first to comment!"}
+              </p>
+            )}
+            {/* ✅ Умовне відображення форми коментаря */}
+            {isAuthenticated && !user?.isBlocked && (
+              <CommentForm
+                dishId={Number(dishId)}
+                onCommentAdded={fetchDishDetails}
+              />
+            )}
+          </div>
         </div>
       </main>
       {selectedIngredient && (

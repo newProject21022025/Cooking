@@ -66,8 +66,13 @@ $transition-speed: 0.3s;
   }
 }
 
+.blockImage{
+  display: flex;
+  justify-content: center;  
+}
+
 .dishImage {
-  width: 100%;
+  width: 600px;
   height: auto;
   border-radius: 8px;
   object-fit: cover;
@@ -262,3 +267,4 @@ $transition-speed: 0.3s;
   font-weight: 400;
   color: #777;
 }
+

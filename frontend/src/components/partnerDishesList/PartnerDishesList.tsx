@@ -16,14 +16,18 @@ interface PartnerDishesListProps {
   partnerId: string;
 }
 
-export default function PartnerDishesList({ partnerId }: PartnerDishesListProps) {
+export default function PartnerDishesList({
+  partnerId,
+}: PartnerDishesListProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [showIngredients, setShowIngredients] = useState<Record<string, boolean>>({}); // ✅ Новий стан для відображення інгредієнтів
+  const [showIngredients, setShowIngredients] = useState<
+    Record<string, boolean>
+  >({}); // ✅ Новий стан для відображення інгредієнтів
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
@@ -75,7 +79,8 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
     return <p>Завантаження меню...</p>;
   }
 
-  const displayedPartnerDishes = hasSearched && searchQuery ? searchResults : partnerDishes;
+  const displayedPartnerDishes =
+    hasSearched && searchQuery ? searchResults : partnerDishes;
 
   const mergedDishes = displayedPartnerDishes
     .map((pd) => {
@@ -87,8 +92,8 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
       return { partnerDish: pd, dish, finalPrice };
     })
     .filter(Boolean) as {
-    partnerDish: typeof partnerDishes[0];
-    dish: typeof dishes[0];
+    partnerDish: (typeof partnerDishes)[0];
+    dish: (typeof dishes)[0];
     finalPrice: number;
   }[];
 
@@ -120,16 +125,23 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
 
             return (
               <div key={partnerDish.id} className={styles.card}>
-                <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
+                <img
+                  src={dish.photo}
+                  alt={dish.name_ua}
+                  className={styles.image}
+                />
                 <h3>{dish.name_ua}</h3>
                 <p>{dish.description_ua}</p>
                 <p>
-                  Ціна: {partnerDish.price} грн{" "}
-                  {partnerDish.discount && `(Знижка ${partnerDish.discount}%)`}
+                  Ціна: {partnerDish.price} грн
+                  {(partnerDish.discount ?? 0) > 0 &&
+                    `(Знижка ${partnerDish.discount}%)`}
                 </p>
                 <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
                 <button
-                  className={`${styles.buyButton} ${isAdded ? styles.addedButton : ""}`}
+                  className={`${styles.buyButton} ${
+                    isAdded ? styles.addedButton : ""
+                  }`}
                   onClick={() =>
                     !isAdded &&
                     dispatch(
@@ -149,7 +161,9 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
                   onClick={() => handleIngredientsToggle(dish.id)} // ✅ Викликаємо функцію з ID страви
                   className={styles.ingredientsButton}
                 >
-                  {showIngredients[dish.id] ? "Приховати інгредієнти" : "Інгредієнти"}
+                  {showIngredients[dish.id]
+                    ? "Приховати інгредієнти"
+                    : "Інгредієнти"}
                 </button>
 
                 {/* ✅ Умовне відображення списку інгредієнтів */}
@@ -158,9 +172,7 @@ export default function PartnerDishesList({ partnerId }: PartnerDishesListProps)
                     <h4>Основні інгредієнти:</h4>
                     <ul>
                       {dish.important_ingredients.map((ingredient, index) => (
-                        <li key={index}>
-                          {ingredient.name_ua}
-                        </li>
+                        <li key={index}>{ingredient.name_ua}</li>
                       ))}
                     </ul>
                   </div>
