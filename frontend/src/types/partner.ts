@@ -7,9 +7,10 @@ export interface Partner {
   id: string;
   firstName: string;
   lastName: string;
-  photo?: string;
+  avatar?: string| null; 
+  photo?: string| null;
   email: string;
-  phoneNumber?: string;
+  phoneNumber?: string | null;
   deliveryAddress?: string;
   description?: string;
   role?: string;
@@ -49,9 +50,10 @@ export interface UpdatePartnerProfileData {
   id?: string;
   firstName?: string;
   lastName?: string;
-  phoneNumber?: string;
+  phoneNumber?: string | null;
   deliveryAddress?: string;
-  photo?: string;
+  avatar?: string| null;
+  photo?: string| null;
   description?: string;
   socials?: {
     facebook?: string;

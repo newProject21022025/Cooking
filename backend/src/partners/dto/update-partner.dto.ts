@@ -12,6 +12,10 @@ export class UpdatePartnerDto {
 
   @IsOptional()
   @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsString()
   photo?: string;
 
   @IsOptional()

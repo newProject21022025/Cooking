@@ -6,7 +6,7 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 import * as bcrypt from 'bcrypt';
 import { Partner } from './interfaces/partner.interface'; // <--- Переконайтеся, що ви імпортуєте інтерфейс Partner
 import { UpdatePartnerDto } from './dto/update-partner.dto';
-import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
+// import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
 
 @Injectable()
 export class PartnersService {

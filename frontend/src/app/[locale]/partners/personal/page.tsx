@@ -49,43 +49,78 @@ export default function PartnerAdminPage() {
   };
 
   const handleUpdateProfile = async (
-    values: UpdatePartnerProfileData,
-    { setSubmitting }: FormikHelpers<UpdatePartnerProfileData>
-  ) => {
-    try {
-      setError(null);
-      setUpdateSuccess(false);
-      if (!partner) throw new Error("Дані партнера відсутні");
+        values: UpdatePartnerProfileData,
+        { setSubmitting }: FormikHelpers<UpdatePartnerProfileData>
+      ) => {
+        try {
+          setError(null);
+          setUpdateSuccess(false);
+          if (!partner) throw new Error("Дані партнера відсутні");
+    
+          const cleanPhoneNumber = values.phoneNumber?.replace(/\D/g, "") || null;
+    
+          // 1. Формуємо об'єкт для відправки
+          const updatePayload: UpdatePartnerProfileData = {
+            ...values,
+            // Очищаємо, щоб відправити null, якщо поля пусті
+            phoneNumber: cleanPhoneNumber,
+            avatar: values.avatar || null, // Вже містить URL Cloudinary або null
+            photo: values.photo || null, // Вже містить URL Cloudinary або null
+            socials: values.socials,
+          };
+    
+          // 2. !!! КЛЮЧОВЕ ВИПРАВЛЕННЯ: ВИДАЛЕННЯ ID !!!
+          // Бекенд не очікує ID в тілі запиту (Body), оскільки ID є в URL.
+          // Це виправляє помилку 400: "property id should not exist".
+          if (updatePayload.id) {
+            delete updatePayload.id;
+          }
+    
+          // 3. Надсилаємо оновлені дані. ID партнера беремо з 'partner.id'
+          const response = await api.updatePartner(partner.id, updatePayload);
+          
+          setPartner(response.data);
+          setIsEditing(false);
+          setUpdateSuccess(true);
+          setTimeout(() => setUpdateSuccess(false), 3000);
+        } catch (err: unknown) {
+          console.error("Помилка оновлення профілю:", err);
+          
+          // Розширена обробка помилки 400
+          const axiosError = err as import("axios").AxiosError;
+          const serverMessage = (axiosError.response?.data as { message?: string | string[] })
+            ?.message;
+            
+          // Форматуємо повідомлення, якщо воно є масивом
+          const formattedMessage = Array.isArray(serverMessage) 
+              ? serverMessage.join('; ') 
+              : serverMessage;
+              
+         setError(
+           `Не вдалося оновити профіль. ${
+             formattedMessage ? "Деталі: " + formattedMessage : "Перевірте консоль."
+           }`
+         );
+       } finally {
+         setSubmitting(false);
+       }
+     };
 
-      const cleanPhoneNumber = values.phoneNumber?.replace(/\D/g, "");
-      const updateData: UpdatePartnerProfileData = {
-        ...values,
-        phoneNumber: cleanPhoneNumber,
-      };
-
-      const response = await api.updatePartner(partner.id, updateData);
-      setPartner(response.data);
-      setIsEditing(false);
-      setUpdateSuccess(true);
-      setTimeout(() => setUpdateSuccess(false), 3000);
-    } catch (err) {
-      console.error("Помилка оновлення профілю:", err);
-      setError("Не вдалося оновити профіль");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  if (loading) return <div className={styles.loading}>Завантаження профілю...</div>;
+  if (loading)
+    return <div className={styles.loading}>Завантаження профілю...</div>;
   if (error && !partner) return <div className={styles.error}>{error}</div>;
-  if (!partner) return <div className={styles.error}>Дані партнера відсутні</div>;
+  if (!partner)
+    return <div className={styles.error}>Дані партнера відсутні</div>;
 
   const initialValues = {
     id: partner.id,
     firstName: partner.firstName || "",
     lastName: partner.lastName || "",
-    phoneNumber: partner.phoneNumber ? formatPhoneNumber(partner.phoneNumber) : "",
+    phoneNumber: partner.phoneNumber
+      ? formatPhoneNumber(partner.phoneNumber)
+      : "",
     deliveryAddress: partner.deliveryAddress || "",
+    avatar: partner.avatar || "",
     photo: partner.photo || "",
     description: partner.description || "",
     socials: {
@@ -106,7 +141,10 @@ export default function PartnerAdminPage() {
 
       <div className={styles.card}>
         {!isEditing ? (
-          <PartnerProfileView partner={partner} onEdit={() => setIsEditing(true)} />
+          <PartnerProfileView
+            partner={partner}
+            onEdit={() => setIsEditing(true)}
+          />
         ) : (
           <PartnerProfileForm
             initialValues={initialValues}
@@ -118,5 +156,3 @@ export default function PartnerAdminPage() {
     </div>
   );
 }
-
-

@@ -18,6 +18,10 @@ export class CreatePartnerDto {
 
   @IsOptional()
   @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsString()
   photo?: string;
 
   @IsEmail()

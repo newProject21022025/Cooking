@@ -49,6 +49,7 @@ const PartnersList = () => {
             <span className={styles.avatar}>
               {partner.photo ? (
                 <img
+                className={styles.partnerPhoto}
                   src={partner.photo}
                   alt={`${partner.firstName} ${partner.lastName}`}
                 />
