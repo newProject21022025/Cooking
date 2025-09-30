@@ -4,6 +4,7 @@ export interface Partner {
   id: string;
   firstName: string;
   lastName: string;
+  avatar?: string;
   photo?: string;
   email: string;
   password?: string; // Пароль зазвичай не повертається на фронтенд, але може бути в моделі для бекенду

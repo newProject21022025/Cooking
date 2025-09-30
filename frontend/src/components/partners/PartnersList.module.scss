@@ -1,72 +1,117 @@
-/* src/components/partners/PartnersList.module.scss */
+/* Змінні (за потреби, якщо використовуєте глобальні змінні) */
+$primary-color: #ff6b6b; // Основний колір (наприклад, червоний/корал)
+$text-color: #333;
+$secondary-text: #666;
+$background-light: #f9f9f9;
+$border-color: #eee;
+$shadow-light: rgba(0, 0, 0, 0.05);
 
 .container {
-    background-color: #fff;
-    padding: 15px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.tittle {
+  text-align: center;
+  color: $primary-color;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.text {
+  text-align: center;
+  color: $secondary-text;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  // Створюємо адаптивну сітку: 1 колонка за замовчуванням, 
+  // до 4 колонок на великих екранах.
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.item {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 12px $shadow-light;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: $primary-color;
   }
-  
+}
+
+.avatar {
+  flex-shrink: 0; // Забороняємо зменшувати розмір
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: $background-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid $primary-color;
+}
+
+.partnerPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: $primary-color;
+}
+
+.name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-color;
+  // Якщо ім'я занадто довге, обрізаємо його
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Адаптивність для менших екранів */
+@media (max-width: 768px) {
   .tittle {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 2rem;
   }
-  
+  .text {
+    font-size: 1rem;
+  }
   .list {
-    list-style: none;
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding: 0;
-    margin: 0;
+    // На планшетах може бути 2 колонки
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
-  
-  .list::-webkit-scrollbar {
-    height: 6px;
-  }
-  
-  .list::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-  }
-  
   .item {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 6px;
-    transition: background 0.2s, transform 0.2s;
+    padding: 15px;
   }
-  
-  .item:hover {
-    background-color: #f0f0f0;
-    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .list {
+    // На мобільних пристроях 1 колонка, повна ширина
+    grid-template-columns: 1fr;
   }
-  
-  .avatar {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 5px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #ddd;
-  }
-  
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .name {
-    color: #333;
-    font-weight: 500;
-    font-size: 0.9rem;
-    white-space: nowrap;
-  }
-  
+}

@@ -9,6 +9,7 @@ import { useTranslations, useLocale } from "next-intl"; // ✅ Додано useL
 import PartnersList from "@/components/partners/PartnersList";
 // import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
 import SelectedDishes from "@/components/selectedDishes/SelectedDishes";
+import PartnersCard from "@/components/partnersCard/PartnersCard";
 
 
 export default function Home() {
@@ -33,13 +34,14 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      <PartnersList />
+      {/* <PartnersList /> */}
       <main className={styles.main}>        
         <h1 className={styles.title}>{t("title")}</h1>
         <SelectedDishes/> 
         {/* <p className={styles.description}>
           {t("text")}
-        </p> */}      
+        </p> */}  
+        <div> <PartnersCard/></div>    
       </main>      
     </div>
   );

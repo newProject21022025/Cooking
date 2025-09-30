@@ -11,7 +11,7 @@ import {
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
-import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
+// import { ChangePartnerPasswordDto } from './dto/change-partner-password.dto';
 
 @Controller('partners')
 export class PartnersController {
