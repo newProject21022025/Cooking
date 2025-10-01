@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./IngredientFilter.module.scss";
 import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation"; 
 import {
   mainCategories,
   ingredientsByCategory,
@@ -18,16 +19,14 @@ interface IngredientOption {
   name_en: string;
 }
 
+// dishTypes для внутрішніх кнопок
 const dishTypes = [
   { value: "all", label: "🍽️ Всі страви / All dishes" },
-  { value: "soup", label: "🍲 Суп / Soup" },   
-  { value: "main_course", label: "🥩 Основне блюдо / Main course" },   
-  { value: "side_dish", label: "🍚 Гарнір / Side dish" },  
-  { value: "salad", label: "🥗 Салат / Salad" },  
+  { value: "soup", label: "🍲 Суп / Soup" },
+  { value: "main_course", label: "🥩 Основне блюдо / Main course" },
+  { value: "side_dish", label: "🍚 Гарнір / Side dish" },
+  { value: "salad", label: "🥗 Салат / Salad" },
   { value: "appetizer", label: "🍢 Закуска / Appetizer" },
-  // Додатково: Десерти, Напої, тощо, якщо потрібні
-  // { value: "dessert", label: "🍰 Десерт / Dessert" },
-  // { value: "drink", label: "🍹 Напій / Drink" },
 ];
 
 export default function IngredientFilter() {
@@ -36,12 +35,27 @@ export default function IngredientFilter() {
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
 
+  const searchParams = useSearchParams(); 
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all"); 
 
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
+  // ✅ Ефект для синхронізації стану категорії з URL (від CategoryNavButtons)
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category") || "all";
+    // Встановлюємо стан, отриманий з URL
+    setSelectedCategory(categoryFromUrl);
+
+    // Скидаємо інші фільтри, щоб застосувати лише категорію з URL
+    setSelectedIngredients([]);
+    setSubmittedSearchQuery("");
+    setSearchQuery("");
+  }, [searchParams]); // Залежність від searchParams
+
+  // Основний useEffect для отримання та фільтрації страв (без змін)
   useEffect(() => {
     const getDishes = async () => {
       setLoading(true);
@@ -55,6 +69,7 @@ export default function IngredientFilter() {
 
         let filteredDishes = allDishes;
 
+        // Фільтрація за станом
         if (selectedCategory !== "all") {
           filteredDishes = filteredDishes.filter(
             (dish) => dish.type === selectedCategory
@@ -82,14 +97,13 @@ export default function IngredientFilter() {
     getDishes();
   }, [selectedIngredients, submittedSearchQuery, selectedCategory]);
 
-  // ✅ Оновлена функція, яка скидає пошук
+  // Функція для зміни інгредієнтів (без змін)
   const handleCheckboxChange = (ingredientName: string) => {
     setSelectedIngredients((prev) =>
       prev.includes(ingredientName)
         ? prev.filter((i) => i !== ingredientName)
         : [...prev, ingredientName]
     );
-    // Скидаємо пошук при зміні фільтра інгредієнтів
     setSubmittedSearchQuery("");
     setSearchQuery("");
   };
@@ -97,16 +111,15 @@ export default function IngredientFilter() {
   const handleCategoryToggle = (category: string) => {
     setOpenCategory(openCategory === category ? null : category);
   };
-
-  // ✅ Оновлена функція, яка скидає пошук
+  
+  // ✅ Відновлена функція, яка змінює внутрішній стан
   const handleCategoryChange = (categoryValue: string) => {
-    setSelectedCategory(categoryValue);
-    // Скидаємо пошук при зміні категорії
+    setSelectedCategory(categoryValue); 
     setSubmittedSearchQuery("");
     setSearchQuery("");
   };
 
-  // ✅ Функція для пошуку
+  // Функція для пошуку (без змін)
   const handleSearch = () => {
     setSubmittedSearchQuery(searchQuery);
     // Скидаємо інші фільтри при пошуку
@@ -138,10 +151,12 @@ export default function IngredientFilter() {
         </button>
       </div>
 
+      {/* ✅ БЛОК КНОПОК КАТЕГОРІЙ ВІДНОВЛЕНО */}
       <div className={styles.categoryButtonsContainer}>
         {dishTypes.map((type) => (
           <button
             key={type.value}
+            // Викликаємо внутрішню функцію зміни стану
             onClick={() => handleCategoryChange(type.value)}
             className={`${styles.categoryButton} ${
               selectedCategory === type.value ? styles.active : ""
@@ -157,7 +172,7 @@ export default function IngredientFilter() {
       <div className={styles.filterHeader}>
         <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
       </div>
-
+      {/* ... Решта компонента без змін */}
       <div className={filterClasses}>
         <div className={styles.dropdownContainer}>
           {mainCategories.map((category) => (
