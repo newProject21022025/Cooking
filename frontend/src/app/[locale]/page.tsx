@@ -10,7 +10,7 @@ import PartnersList from "@/components/partners/PartnersList";
 // import IngredientFilter from "@/components/ingredientFilter/IngredientFilter";
 import SelectedDishes from "@/components/selectedDishes/SelectedDishes";
 import PartnersCard from "@/components/partnersCard/PartnersCard";
-
+import CategoryNavButtons from "@/components/categoryNavButtons/CategoryNavButtons";
 
 export default function Home() {
   const t = useTranslations("Home");
@@ -35,14 +35,18 @@ export default function Home() {
   return (
     <div className={styles.page}>
       {/* <PartnersList /> */}
-      <main className={styles.main}>        
+      <main className={styles.main}>
         <h1 className={styles.title}>{t("title")}</h1>
-        <SelectedDishes/> 
+        <SelectedDishes />
         {/* <p className={styles.description}>
           {t("text")}
-        </p> */}  
-        <div> <PartnersCard/></div>    
-      </main>      
+        </p> */}
+        <CategoryNavButtons />
+        <div>
+          {" "}
+          <PartnersCard />
+        </div>
+      </main>
     </div>
   );
 }

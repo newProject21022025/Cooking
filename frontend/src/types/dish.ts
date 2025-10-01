@@ -1,5 +1,13 @@
 // src/types/dish.ts
 
+export interface PaginatedDishesResponse {
+  data: Dish[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface Ingredient {
   name_ua: string;
   name_en: string;
