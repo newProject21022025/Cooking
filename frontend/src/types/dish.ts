@@ -1,11 +1,21 @@
 // src/types/dish.ts
 
+// ✅ Новий інтерфейс для пагінованої відповіді
 export interface PaginatedDishesResponse {
-  data: Dish[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  data: Dish[];     // Масив страв на поточній сторінці
+  count: number;    // Загальна кількість страв, що відповідають фільтрам/пошуку
+  page: number;     // Поточний номер сторінки
+  limit: number;    // Кількість страв на сторінці
+}
+
+// ✅ Інтерфейс для параметрів запиту пагінації/фільтрації
+export interface DishesQueryParams {
+  page?: number;        // Номер сторінки
+  limit?: number;       // Кількість елементів на сторінці
+  is_selected?: boolean; // Фільтр за вибраними стравами
+  query?: string;       // Пошуковий запит
+  category?: string;    // Фільтр за категорією страви (наприклад, 'soup', 'salad')
+  ingredients?: string[]; // Фільтр за інгредієнтами (масив назв інгредієнтів)  
 }
 
 export interface Ingredient {

@@ -20,7 +20,7 @@ export class UsersService {
   
     const hashedPassword = await bcrypt.hash(dto.password, 10);
   
-    console.log('Попытка вставки в таблицу:', 'users'); 
+    // console.log('Попытка вставки в таблицу:', 'users'); 
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users') 
@@ -37,12 +37,12 @@ export class UsersService {
       throw new BadRequestException(error.message);
     }
   
-    console.log('Пользователь успешно создан:', data); 
+    // console.log('Пользователь успешно создан:', data); 
     return data ? data[0] : null;
   }
 
   async findOneByEmail(email: string): Promise<any | undefined> {
-    console.log('Попытка поиска пользователя по email в таблице:', 'users'); 
+    // console.log('Попытка поиска пользователя по email в таблице:', 'users'); 
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users') 
@@ -125,7 +125,7 @@ export class UsersService {
   }
 
    async findOneById(id: string): Promise<any | undefined> {
-    console.log('Попытка поиска пользователя по ID в таблице:', 'users');
+    // console.log('Попытка поиска пользователя по ID в таблице:', 'users');
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users')

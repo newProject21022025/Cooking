@@ -52,7 +52,7 @@ export class PartnersService {
 
   // --- Виправлений метод findOneById ---
   async findOneById(id: string): Promise<any | undefined> {
-    console.log(`==> PartnersService: Пошук партнера за ID: ${id}`);
+    // console.log(`==> PartnersService: Пошук партнера за ID: ${id}`);
     const { data, error } = await this.client
       .from('partners')
       .select('*')
@@ -63,7 +63,7 @@ export class PartnersService {
       console.error('==> PartnersService: Помилка Supabase:', error);
       throw new BadRequestException(error.message);
     }
-    console.log('==> PartnersService: Результат пошуку:', data);
+    // console.log('==> PartnersService: Результат пошуку:', data);
     return data;
   }
 

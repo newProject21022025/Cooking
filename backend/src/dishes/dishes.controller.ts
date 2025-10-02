@@ -17,6 +17,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from '../users/dto/create-user.dto';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
 
 @Controller('dishes')
 export class DishesController {
@@ -29,18 +30,20 @@ export class DishesController {
   async findAllComments(@Req() req) {
     const user = req.user as { role: UserRole };
     if (user.role !== 'admin') {
-      throw new ForbiddenException('Тільки адміністратори можуть отримати доступ до цієї інформації.');
+      throw new ForbiddenException(
+        'Тільки адміністратори можуть отримати доступ до цієї інформації.',
+      );
     }
     return this.dishesService.getAllComments();
   }
 
-  @Get('search')
-  async search(@Query('query') query: string) {
-    if (!query) {
-      return this.dishesService.getAllDishes();
-    }
-    return this.dishesService.searchDishes(query);
-  }
+  // @Get('search')
+  // async search(@Query('query') query: string) {
+  //   if (!query) {
+  //     return this.dishesService.getAllDishes();
+  //   }
+  //   return this.dishesService.searchDishes(query);
+  // }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete('comment/:id')
@@ -62,10 +65,50 @@ export class DishesController {
   }
 
   @Get()
-  async findAll(@Query('is_selected') isSelected?: string) {
-    const isSelectedBool = isSelected === 'true' ? true : undefined;
-    return this.dishesService.getAllDishes(isSelectedBool);
+  async findAll(@Query() query: PaginationQueryDto) {
+    const {
+      page,
+      limit,
+      is_selected,
+      query: searchQuery,
+      category,
+      ingredients,
+    } = query; // Перетворення is_selected
+    const isSelectedBool =
+      is_selected === 'true'
+        ? true
+        : is_selected === 'false'
+          ? false
+          : undefined;
+
+    // ✅ КРИТИЧНЕ ВИПРАВЛЕННЯ: Гарантуємо, що ingredients є масивом string[]
+    let processedIngredients: string[] | undefined;
+
+    if (ingredients) {
+      if (Array.isArray(ingredients)) {
+        // Якщо прийшов масив (наприклад, два інгредієнти), використовуємо його
+        processedIngredients = ingredients;
+      } else if (typeof ingredients === 'string') {
+        // Якщо прийшов рядок (один інгредієнт), обгортаємо його в масив
+        processedIngredients = [ingredients];
+      }
+      // Інакше (якщо null/undefined/порожній), залишається undefined
+    } // ✅ Викликаємо універсальний метод
+
+    return this.dishesService.getPaginatedDishes(
+      page,
+      limit,
+      searchQuery,
+      category,
+      processedIngredients, // Передаємо гарантований масив
+      isSelectedBool,
+    );
   }
+  // @Get()
+  // async findAll(@Query('is_selected') isSelected?: string) {
+  //   const isSelectedBool = isSelected === 'true' ? true : undefined;
+  //   return this.dishesService.getAllDishes(isSelectedBool);
+  // }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -100,5 +143,10 @@ export class DishesController {
       ...createCommentDto,
       user_id: userId,
     });
+  }
+
+  @Get('selected')
+  async getSelectedDishes() {
+    return this.dishesService.getSelectedDishes(); // Викликаємо метод сервісу
   }
 }
