@@ -12,7 +12,7 @@ export interface PaginatedDishesResponse {
 export interface DishesQueryParams {
   page?: number;        // Номер сторінки
   limit?: number;       // Кількість елементів на сторінці
-  is_selected?: boolean; // Фільтр за вибраними стравами
+  is_selected?: boolean | number | undefined;  // Фільтр за вибраними стравами
   query?: string;       // Пошуковий запит
   category?: string;    // Фільтр за категорією страви (наприклад, 'soup', 'salad')
   ingredients?: string[]; // Фільтр за інгредієнтами (масив назв інгредієнтів)  

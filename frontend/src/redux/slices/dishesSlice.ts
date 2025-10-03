@@ -11,6 +11,7 @@ import {
 } from "@/api/dishesApi";
 import { RootState } from "@/redux/store";
 import { PartnerDish } from "@/types/partner";
+import { DishesQueryParams, PaginatedDishesResponse } from "@/types/dish";
 
 export const selectMergedDishes = (
   state: RootState,
@@ -33,9 +34,14 @@ export const selectMergedDishes = (
 
 
 // 🔹 Async thunks
-export const fetchDishes = createAsyncThunk<Dish[]>(
+export const fetchDishes = createAsyncThunk<
+  PaginatedDishesResponse, // 👈 правильний тип
+  DishesQueryParams | undefined
+>(
   "dishes/fetchAll",
-  async () => await fetchDishesApi()
+  async (params) => {
+    return await fetchDishesApi(params);
+  }
 );
 
 export const fetchDishById = createAsyncThunk<Dish, number>(
@@ -58,15 +64,20 @@ export const deleteDish = createAsyncThunk<Dish, number>(
   async (id) => await deleteDishApi(id)
 );
 
-// 🔹 Slice
 interface DishesState {
   items: Dish[];
+  count: number;
+  page: number;
+  limit: number;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: DishesState = {
   items: [],
+  count: 0,
+  page: 1,
+  limit: 10,
   loading: false,
   error: null,
 };
@@ -77,15 +88,20 @@ const dishesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // fetchAll
       .addCase(fetchDishes.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDishes.fulfilled, (state, action: PayloadAction<Dish[]>) => {
-        state.loading = false;
-        state.items = action.payload;
-      })
+      .addCase(
+        fetchDishes.fulfilled,
+        (state, action: PayloadAction<PaginatedDishesResponse>) => {
+          state.loading = false;
+          state.items = action.payload.data;   // 👈 страви
+          state.count = action.payload.count;  // 👈 кількість
+          state.page = action.payload.page;    // 👈 сторінка
+          state.limit = action.payload.limit;  // 👈 ліміт
+        }
+      )
       .addCase(fetchDishes.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Не вдалося завантажити страви";

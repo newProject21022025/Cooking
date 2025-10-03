@@ -1,5 +1,3 @@
-// src/dishes/dishes.controller.ts
-
 import {
   Controller,
   Post,
@@ -9,12 +7,15 @@ import {
   Patch,
   Delete,
   Query,
+  Req,
+  UseGuards,
+  ForbiddenException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from '../users/dto/create-user.dto';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
@@ -23,8 +24,9 @@ import { PaginationQueryDto } from './dto/pagination-query.dto';
 export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
 
-  // ✅ ПЕРЕНЕСЕНІ МАРШРУТИ ВГОРУ ДЛЯ УНИКНЕННЯ КОНФЛІКТУ
-
+  // ----------------------------------------
+  // Коментарі
+  // ----------------------------------------
   @UseGuards(AuthGuard('jwt'))
   @Get('comments')
   async findAllComments(@Req() req) {
@@ -37,28 +39,44 @@ export class DishesController {
     return this.dishesService.getAllComments();
   }
 
-  // @Get('search')
-  // async search(@Query('query') query: string) {
-  //   if (!query) {
-  //     return this.dishesService.getAllDishes();
-  //   }
-  //   return this.dishesService.searchDishes(query);
-  // }
-
   @UseGuards(AuthGuard('jwt'))
   @Delete('comment/:id')
-  async deleteComment(@Param('id') id: number, @Req() req) {
+  async deleteComment(@Param('id', ParseIntPipe) id: number, @Req() req) {
     const user = req.user as { id: string; role: UserRole };
     const comment = await this.dishesService.getCommentById(id);
+
+    if (!comment) {
+      throw new ForbiddenException('Коментар не знайдено');
+    }
 
     if (comment.user_id !== user.id && user.role !== 'admin') {
       throw new ForbiddenException('Ви не можете видалити цей коментар.');
     }
+
     return this.dishesService.deleteComment(id);
   }
 
-  // ✅ ІСНУЮЧІ МАРШРУТИ ЗАЛИШИЛИСЯ НА МІСЦІ
+  @UseGuards(AuthGuard('jwt'))
+  @Post('comment')
+  async addComment(@Body() createCommentDto: CreateCommentDto, @Req() req) {
+    const userId = req.user.id;
+    return this.dishesService.addComment({
+      ...createCommentDto,
+      user_id: userId,
+    });
+  }
 
+  // ----------------------------------------
+  // Вибрані страви
+  // ----------------------------------------
+  @Get('selected')
+  async getSelectedDishes() {
+    return this.dishesService.getSelectedDishes();
+  }
+
+  // ----------------------------------------
+  // CRUD для страв
+  // ----------------------------------------
   @Post()
   async create(@Body() createDishDto: CreateDishDto) {
     return this.dishesService.createDish(createDishDto);
@@ -73,80 +91,58 @@ export class DishesController {
       query: searchQuery,
       category,
       ingredients,
-    } = query; // Перетворення is_selected
+    } = query;
+
     const isSelectedBool =
       is_selected === 'true'
         ? true
         : is_selected === 'false'
-          ? false
-          : undefined;
+        ? false
+        : undefined;
 
-    // ✅ КРИТИЧНЕ ВИПРАВЛЕННЯ: Гарантуємо, що ingredients є масивом string[]
     let processedIngredients: string[] | undefined;
 
     if (ingredients) {
       if (Array.isArray(ingredients)) {
-        // Якщо прийшов масив (наприклад, два інгредієнти), використовуємо його
         processedIngredients = ingredients;
       } else if (typeof ingredients === 'string') {
-        // Якщо прийшов рядок (один інгредієнт), обгортаємо його в масив
         processedIngredients = [ingredients];
       }
-      // Інакше (якщо null/undefined/порожній), залишається undefined
-    } // ✅ Викликаємо універсальний метод
+    }
 
     return this.dishesService.getPaginatedDishes(
       page,
       limit,
       searchQuery,
       category,
-      processedIngredients, // Передаємо гарантований масив
+      processedIngredients,
       isSelectedBool,
     );
   }
-  // @Get()
-  // async findAll(@Query('is_selected') isSelected?: string) {
-  //   const isSelectedBool = isSelected === 'true' ? true : undefined;
-  //   return this.dishesService.getAllDishes(isSelectedBool);
-  // }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.dishesService.getDishById(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateDishDto: UpdateDishDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateDishDto: UpdateDishDto) {
     return this.dishesService.updateDish(id, updateDishDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.dishesService.deleteDish(id);
   }
 
   @Patch(':id/select')
-  async select(@Param('id') id: number) {
+  async select(@Param('id', ParseIntPipe) id: number) {
     return this.dishesService.selectDish(id);
   }
 
   @Patch(':id/unselect')
-  async unselect(@Param('id') id: number) {
+  async unselect(@Param('id', ParseIntPipe) id: number) {
     return this.dishesService.unselectDish(id);
   }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post('comment')
-  async addComment(@Body() createCommentDto: CreateCommentDto, @Req() req) {
-    const userId = req.user.id;
-    return this.dishesService.addComment({
-      ...createCommentDto,
-      user_id: userId,
-    });
-  }
-
-  @Get('selected')
-  async getSelectedDishes() {
-    return this.dishesService.getSelectedDishes(); // Викликаємо метод сервісу
-  }
+  
 }
