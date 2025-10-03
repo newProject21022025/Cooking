@@ -11,6 +11,7 @@ import { addToBasket } from "@/redux/slices/basketSlice";
 import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
 import { PartnerDish } from "@/types/partner";
 import styles from "./PartnerDishesList.module.scss";
+// ... імпорти
 
 interface PartnerDishesListProps {
   partnerId: string;
@@ -32,9 +33,12 @@ export default function PartnerDishesList({
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
   );
-  const { items: dishes, loading: loadingDishes } = useSelector(
+  // ✅ ЗМІНА: Додаємо перевірку, що items - це масив, інакше встановлюємо порожній масив.
+  const { items, loading: loadingDishes } = useSelector(
     (state: RootState) => state.dishes
   );
+  const dishes = Array.isArray(items) ? items : []; 
+  
   const basketItems = useSelector((state: RootState) => state.basket.items);
 
   useEffect(() => {
@@ -67,6 +71,8 @@ export default function PartnerDishesList({
     }
   };
 
+  // ... handleIngredientsToggle
+
   // ✅ Нова функція-обробник для перемикання інгредієнтів
   const handleIngredientsToggle = (dishId: number) => {
     setShowIngredients((prev) => ({
@@ -81,10 +87,14 @@ export default function PartnerDishesList({
 
   const displayedPartnerDishes =
     hasSearched && searchQuery ? searchResults : partnerDishes;
-
+    
+  // ⚠️ Увага: переконайтеся, що dishes.find - це функція.
+  // Завдяки рядку `const dishes = Array.isArray(items) ? items : [];` вище,
+  // ми гарантуємо, що dishes є масивом.
   const mergedDishes = displayedPartnerDishes
     .map((pd) => {
-      const dish = dishes.find((d) => d.id === pd.dish_id);
+      // Рядок 98 (проблема): dishes тепер точно масив.
+      const dish = dishes.find((d) => d.id === pd.dish_id); 
       if (!dish) return null;
       const finalPrice = pd.discount
         ? pd.price - pd.price * (pd.discount / 100)
@@ -97,6 +107,7 @@ export default function PartnerDishesList({
     finalPrice: number;
   }[];
 
+  // ... return JSX
   return (
     <div className={styles.container}>
       <h2 className={styles.container}>Меню партнера</h2>

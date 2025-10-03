@@ -1,61 +1,192 @@
 // src/api/dishesApi.ts
 
 import axios from "axios";
-import { Dish, CreateDishDto, UpdateDishDto } from "@/types/dish";
+import { isAxiosError } from "axios";
+import {
+  Dish,
+  CreateDishDto,
+  UpdateDishDto,
+  PaginatedDishesResponse,
+  DishesQueryParams,
+} from "@/types/dish";
 
 const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dishes`;
 
-// 🔹 Отримати всі страви
-export const fetchDishesApi = async (): Promise<Dish[]> => {
-  const { data } = await axios.get<Dish[]>(API_URL);
-  return data;
+// // Отримуємо токен із localStorage
+// const getAuthHeaders = () => {
+//   const token = localStorage.getItem("token"); // Токен, який ти отримав при логіні
+//   if (!token) throw new Error("Не знайдено токен авторизації");
+//   return { Authorization: `Bearer ${token}` };
+// };
+
+export const fetchSelectedDishesApi = async (): Promise<Dish[]> => {
+  try {
+    const { data } = await axios.get<Dish[]>(`${API_URL}/selected`);
+    return data ?? [];
+  } catch (err) {
+    // Тип тепер unknown
+    // Звужуємо тип до AxiosError
+    if (isAxiosError(err)) {
+      console.error(
+        "Помилка запиту fetchSelectedDishesApi:",
+        err.response?.data ?? err.message
+      );
+      throw new Error(
+        // Отримуємо повідомлення, якщо воно є, або використовуємо стандартне
+        (err.response?.data as { message?: string })?.message ||
+          err.message ||
+          "Не вдалося завантажити вибрані страви."
+      );
+    }
+
+    // Якщо це не Axios помилка (наприклад, збій мережі), кидаємо її
+    throw new Error("Невідома помилка мережі або системи.");
+  }
 };
 
-// ✅ Новий метод для пошуку страв за назвою
-export const searchDishesApi = async (query: string): Promise<Dish[]> => {
-  // Використовуємо `encodeURIComponent` для безпечного формування URL
-  const { data } = await axios.get<Dish[]>(`${API_URL}/search?query=${encodeURIComponent(query)}`);
-  return data;
+const buildQueryString = (params: DishesQueryParams): string => {
+  const searchParams = new URLSearchParams(); // 1. Основні параметри пагінації/фільтрації
+
+  if (params.page !== undefined)
+    searchParams.append("page", params.page.toString());
+  if (params.limit !== undefined)
+    searchParams.append("limit", params.limit.toString());
+
+  // 2. Фільтри (Спрощуємо обробку is_selected, щоб вона не була складною)
+  if (params.is_selected !== undefined) {
+    // Якщо передається true/false/1/0, використовуємо toLocaleString, що покриє всі випадки.
+    searchParams.append("is_selected", params.is_selected.toString());
+  }
+
+  if (params.query) searchParams.append("query", params.query);
+
+  // 3. Категорія та Інгредієнти
+  if (params.category && params.category !== "all")
+    searchParams.append("category", params.category);
+  if (params.ingredients && params.ingredients.length > 0) {
+    params.ingredients.forEach((ing) =>
+      searchParams.append("ingredients", ing)
+    );
+  }
+  return searchParams.toString() ? `?${searchParams.toString()}` : "";
 };
 
-// 🔹 Отримати страву по id
+// export const fetchDishesApi = async (params: DishesQueryParams = {}): Promise<PaginatedDishesResponse> => {
+//   const { data } = await axios.get<PaginatedDishesResponse>(`${API_URL}${buildQueryString(params)}`);
+//   return data ?? { data: [], count: 0, page: params.page || 1, limit: params.limit || 10 };
+// };
+export const fetchDishesApi = async (
+  params: DishesQueryParams = {}
+): Promise<PaginatedDishesResponse> => {
+  const { data } = await axios.get<PaginatedDishesResponse>(
+    `${API_URL}${buildQueryString(params)}`
+  );
+  return (
+    data ?? {
+      data: [],
+      count: 0,
+      page: params.page || 1,
+      limit: params.limit || 10,
+    }
+  );
+};
 export const fetchDishByIdApi = async (id: number): Promise<Dish> => {
   const { data } = await axios.get<Dish>(`${API_URL}/${id}`);
+  if (!data) throw new Error("Dish not found");
   return data;
 };
 
-// 🔹 Створити страву
 export const createDishApi = async (dishData: CreateDishDto): Promise<Dish> => {
   const { data } = await axios.post<Dish>(API_URL, dishData);
+  if (!data) throw new Error("Failed to create dish");
   return data;
 };
 
-// 🔹 Оновити страву
-export const updateDishApi = async (id: number, dto: UpdateDishDto): Promise<Dish> => {
+export const updateDishApi = async (
+  id: number,
+  dto: UpdateDishDto
+): Promise<Dish> => {
   const { data } = await axios.patch<Dish>(`${API_URL}/${id}`, dto);
+  if (!data) throw new Error("Failed to update dish");
   return data;
 };
 
-// 🔹 Видалити страву
 export const deleteDishApi = async (id: number): Promise<Dish> => {
   const { data } = await axios.delete<Dish>(`${API_URL}/${id}`);
+  if (!data) throw new Error("Failed to delete dish");
   return data;
 };
 
-// ✅ Новий API-метод для вибору страви
 export const selectDishApi = async (id: number): Promise<Dish> => {
   const { data } = await axios.patch<Dish>(`${API_URL}/${id}/select`);
+  if (!data) throw new Error("Failed to select dish");
   return data;
 };
 
-// ✅ Новий API-метод для скасування вибору страви
 export const unselectDishApi = async (id: number): Promise<Dish> => {
   const { data } = await axios.patch<Dish>(`${API_URL}/${id}/unselect`);
+  if (!data) throw new Error("Failed to unselect dish");
   return data;
 };
 
-// ✅ Нова функція для отримання вибраних страв
-export const fetchSelectedDishesApi = async (): Promise<Dish[]> => {
-  const { data } = await axios.get<Dish[]>(`${API_URL}?is_selected=true`);
-  return data;
-};
+// // src/api/dishesApi.ts
+
+// import axios from "axios";
+// import { Dish, CreateDishDto, UpdateDishDto } from "@/types/dish";
+
+// const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dishes`;
+
+// // 🔹 Отримати всі страви
+// export const fetchDishesApi = async (): Promise<Dish[]> => {
+//   const { data } = await axios.get<Dish[]>(API_URL);
+//   return data;
+// };
+
+// // ✅ Новий метод для пошуку страв за назвою
+// export const searchDishesApi = async (query: string): Promise<Dish[]> => {
+//   // Використовуємо `encodeURIComponent` для безпечного формування URL
+//   const { data } = await axios.get<Dish[]>(`${API_URL}/search?query=${encodeURIComponent(query)}`);
+//   return data;
+// };
+
+// // 🔹 Отримати страву по id
+// export const fetchDishByIdApi = async (id: number): Promise<Dish> => {
+//   const { data } = await axios.get<Dish>(`${API_URL}/${id}`);
+//   return data;
+// };
+
+// // 🔹 Створити страву
+// export const createDishApi = async (dishData: CreateDishDto): Promise<Dish> => {
+//   const { data } = await axios.post<Dish>(API_URL, dishData);
+//   return data;
+// };
+
+// // 🔹 Оновити страву
+// export const updateDishApi = async (id: number, dto: UpdateDishDto): Promise<Dish> => {
+//   const { data } = await axios.patch<Dish>(`${API_URL}/${id}`, dto);
+//   return data;
+// };
+
+// // 🔹 Видалити страву
+// export const deleteDishApi = async (id: number): Promise<Dish> => {
+//   const { data } = await axios.delete<Dish>(`${API_URL}/${id}`);
+//   return data;
+// };
+
+// // ✅ Новий API-метод для вибору страви
+// export const selectDishApi = async (id: number): Promise<Dish> => {
+//   const { data } = await axios.patch<Dish>(`${API_URL}/${id}/select`);
+//   return data;
+// };
+
+// // ✅ Новий API-метод для скасування вибору страви
+// export const unselectDishApi = async (id: number): Promise<Dish> => {
+//   const { data } = await axios.patch<Dish>(`${API_URL}/${id}/unselect`);
+//   return data;
+// };
+
+// // ✅ Нова функція для отримання вибраних страв
+// export const fetchSelectedDishesApi = async (): Promise<Dish[]> => {
+//   const { data } = await axios.get<Dish[]>(`${API_URL}?is_selected=true`);
+//   return data;
+// };

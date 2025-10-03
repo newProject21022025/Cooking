@@ -1,277 +1,72 @@
-/* Основні змінні кольорів */
-$primary-color: #4CAF50; // Зелений для успіху/акцентів
-$secondary-color: #f44336; // Червоний для помилок/кнопки скасувати
-$text-color: #333;
-$background-color: #f5f5f5;
-$card-background: #ffffff;
-$border-color: #ddd;
-$shadow-light: rgba(0, 0, 0, 0.1);
+/* src/app/partners/personal/page.module.scss */
 
 .container {
   max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: $background-color;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-  font-family: sans-serif;
+  margin: 2rem auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: "Inter", sans-serif;
 }
 
 .title {
-  text-align: center;
-  color: $text-color;
-  margin-bottom: 25px;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 700;
-  border-bottom: 2px solid $primary-color;
-  padding-bottom: 10px;
-}
-
-.loading,
-.error {
-  padding: 20px;
   text-align: center;
-  font-size: 1.2rem;
-  font-weight: 500;
-  border-radius: 6px;
-  margin-bottom: 20px;
-}
-
-.loading {
-  background-color: #e3f2fd; /* Light Blue */
-  color: #1565c0;
-}
-
-.error {
-  background-color: #ffebee; /* Light Red */
-  color: $secondary-color;
-  border: 1px solid $secondary-color;
-}
-
-.success {
-  background-color: #e8f5e9; /* Light Green */
-  color: $primary-color;
-  padding: 15px;
-  text-align: center;
-  font-weight: 600;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  animation: fadeInOut 3s forwards;
+  color: #1a1a1a;
 }
 
 .card {
-  background-color: $card-background;
-  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.loading,
+.error,
+.success {
+  text-align: center;
+  padding: 1rem 2rem;
   border-radius: 8px;
-  box-shadow: 0 4px 10px $shadow-light;
+  font-weight: 500;
 }
 
-
-/* Стилі для PartnerProfileForm та його елементів (інтегровані з попередніми стилями форми) */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.loading {
+  background-color: #f0f0f0;
+  color: #333;
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
+.error {
+  background-color: #ffe5e5;
+  color: #d32f2f;
+  border: 1px solid #f5c2c2;
 }
 
-.formGroup label {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: $text-color;
+.success {
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
 }
 
-.input,
-.textarea {
-  padding: 10px 12px;
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.input:focus,
-.textarea:focus {
-  border-color: $primary-color;
-  box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-  outline: none;
-}
-
-.errorText {
-  color: $secondary-color;
-  font-size: 0.85rem;
-  margin-top: 5px;
-}
-
-/* Секція кнопок */
-.buttonGroup {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-  justify-content: flex-end;
-}
-
-.saveButton,
-.cancelButton {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s, opacity 0.2s;
-}
-
-.saveButton {
-  background-color: $primary-color;
-  color: #fff;
-}
-
-.saveButton:disabled {
-  background-color: lighten($primary-color, 15%);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.cancelButton {
-  background-color: $secondary-color;
-  color: #fff;
-}
-
-.cancelButton:hover:not(:disabled) {
-  background-color: darken($secondary-color, 5%);
-}
-
-
-/* Стилі для зображень та аватара (якщо вони не винесені в PartnerProfileForm.module.scss) */
-
-.avatarSection,
-.photoSection {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px dashed $border-color;
-    border-radius: 8px;
-}
-
-.avatarContainer,
-.photoContainer {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: $background-color;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.avatar,
-.photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.placeholderAvatar {
-    font-size: 2rem;
-    font-weight: bold;
-    color: $primary-color;
-}
-
-.avatarUpload,
-.photoUpload {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.avatarUpload input[type="file"],
-.photoUpload input[type="file"] {
-    cursor: pointer;
-}
-
-
-/* Стилі для форми зміни пароля */
-
-.passwordCard {
-    margin-top: 30px;
-    padding: 30px;
-    background-color: $card-background;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px $shadow-light;
-    
-    h2 {
-        color: $text-color;
-        border-bottom: 1px solid $border-color;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-}
-
-/* Анімація для повідомлень про успіх */
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* Адаптивність */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .container {
-    margin: 20px auto;
-    padding: 10px;
+    padding: 1rem;
+    gap: 1rem;
   }
 
   .title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
 
   .card {
-    padding: 20px;
-  }
-  
-  .avatarSection,
-  .photoSection {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .avatarContainer,
-  .photoContainer {
-    width: 80px;
-    height: 80px;
-  }
-
-  .buttonGroup {
-    flex-direction: column;
-    gap: 10px;
-    
-    .saveButton,
-    .cancelButton {
-      width: 100%;
-    }
+    padding: 1rem;
   }
 }

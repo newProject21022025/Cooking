@@ -10,7 +10,7 @@ import {
   deleteDishApi,
   selectDishApi,
   unselectDishApi,
-  searchDishesApi, // ✅ Імпортуємо новий API-метод
+  // searchDishesApi // ❌ Видалено, оскільки логіка уніфікована у fetchDishesApi
 } from "@/api/dishesApi";
 import { Dish } from "@/types/dish";
 import Link from "next/link";
@@ -75,16 +75,17 @@ const DishCard = ({
 export default function Edit() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>(""); // ✅ Стан для пошукового запиту
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // ✅ Оновлена функція для завантаження страв з можливістю пошуку
+  // ✅ ВИПРАВЛЕНО: Функція тепер коректно обробляє PaginatedDishesResponse
   const loadDishes = async (query = "") => {
     setLoading(true);
     try {
-      const fetchedDishes = query
-        ? await searchDishesApi(query) // Викликаємо пошук, якщо є запит
-        : await fetchDishesApi(); // Інакше завантажуємо всі страви
-      setDishes(fetchedDishes);
+      // Викликаємо універсальний fetchDishesApi з параметром пошуку
+      const response = await fetchDishesApi({ query }); 
+      
+      // ✅ КЛЮЧОВЕ ВИПРАВЛЕННЯ: Беремо масив страв з властивості 'data'
+      setDishes(response.data); 
     } catch (error) {
       console.error("Помилка при завантаженні страв:", error);
     } finally {
@@ -154,7 +155,7 @@ export default function Edit() {
           <button onClick={handleSearch} className={styles.searchBtn}>
             🔍 Пошук
           </button>
-           {searchQuery && (
+            {searchQuery && (
             <button onClick={handleClearSearch} className={styles.clearBtn}>
               ❌
             </button>

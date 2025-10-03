@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./IngredientFilter.module.scss";
 import { useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation"; 
@@ -10,14 +10,22 @@ import {
   mainCategories,
   ingredientsByCategory,
 } from "@/components/createDishForm/constants/ingredientsData";
-import { fetchDishesApi, searchDishesApi } from "@/api/dishesApi";
-import { Dish, Ingredient } from "@/types/dish";
+import { 
+  fetchDishesApi,
+} from "@/api/dishesApi";
+import { 
+  Dish, 
+  Ingredient, 
+  PaginatedDishesResponse 
+} from "@/types/dish"; // ✅ Імпорт нового типу відповіді
 import DishCard from "@/components/dishCard/DishCard";
 
 interface IngredientOption {
   name_ua: string;
   name_en: string;
 }
+
+const DISHES_PER_PAGE = 10; // ✅ Константа для розміру сторінки
 
 // dishTypes для внутрішніх кнопок
 const dishTypes = [
@@ -31,7 +39,21 @@ const dishTypes = [
 
 export default function IngredientFilter() {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [dishes, setDishes] = useState<Dish[]>([]);
+  
+  // ✅ Нові стани для пагінації
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // ✅ Оновлений стан для зберігання повної пагінованої відповіді
+  const [paginatedResponse, setPaginatedResponse] = useState<PaginatedDishesResponse>({
+    data: [],
+    count: 0,
+    page: 1,
+    limit: DISHES_PER_PAGE,
+  });
+
+  const dishes = paginatedResponse.data; // Витягуємо страви з відповіді
+
   const [loading, setLoading] = useState<boolean>(true);
   const locale = useLocale();
 
@@ -43,94 +65,121 @@ export default function IngredientFilter() {
 
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
-  // ✅ Ефект для синхронізації стану категорії з URL (від CategoryNavButtons)
+  // ✅ 1. Ефект для синхронізації стану категорії з URL (та скидання пагінації)
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category") || "all";
-    // Встановлюємо стан, отриманий з URL
     setSelectedCategory(categoryFromUrl);
 
-    // Скидаємо інші фільтри, щоб застосувати лише категорію з URL
+    // Скидаємо інші фільтри та пагінацію
     setSelectedIngredients([]);
     setSubmittedSearchQuery("");
     setSearchQuery("");
-  }, [searchParams]); // Залежність від searchParams
+    setCurrentPage(1); // ✅ Скидаємо пагінацію при зміні категорії з URL
+  }, [searchParams]); 
 
-  // Основний useEffect для отримання та фільтрації страв (без змін)
-  useEffect(() => {
-    const getDishes = async () => {
-      setLoading(true);
-      try {
-        let allDishes = [];
-        if (submittedSearchQuery) {
-          allDishes = await searchDishesApi(submittedSearchQuery);
-        } else {
-          allDishes = await fetchDishesApi();
-        }
-
-        let filteredDishes = allDishes;
-
-        // Фільтрація за станом
-        if (selectedCategory !== "all") {
-          filteredDishes = filteredDishes.filter(
-            (dish) => dish.type === selectedCategory
-          );
-        }
-
-        if (selectedIngredients.length > 0) {
-          const filteredByIngredients = filteredDishes.filter((dish) =>
-            selectedIngredients.every((ing) =>
-              dish.important_ingredients.some(
-                (dishIng: Ingredient) => dishIng.name_ua === ing
-              )
-            )
-          );
-          setDishes(filteredByIngredients);
-        } else {
-          setDishes(filteredDishes);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  
+  // ✅ 2. Функція для отримання та фільтрації страв (Бекенд + Клієнт)
+  const getDishes = useCallback(async () => {
+    setLoading(true);
+    
+    // ✅ НОВЕ: Додаємо Category та Ingredients до параметрів
+    const backendParams = {
+      page: currentPage,
+      limit: DISHES_PER_PAGE,
+      query: submittedSearchQuery,
+      // Фільтрація за типом страви ('all' = undefined для бекенду)
+      category: selectedCategory !== "all" ? selectedCategory : undefined, 
+      ingredients: selectedIngredients.length > 0 ? selectedIngredients : undefined, // Додаємо інгредієнти
     };
-    getDishes();
-  }, [selectedIngredients, submittedSearchQuery, selectedCategory]);
 
-  // Функція для зміни інгредієнтів (без змін)
+    try {
+      // 💡 1. Отримання даних з бекенду (з УСІМА фільтрами)
+      const response = await fetchDishesApi(backendParams);
+
+      // ❌ ВИДАЛЯЄМО: КЛІЄНТСЬКУ ФІЛЬТРАЦІЮ ЗА КАТЕГОРІЄЮ
+      /* if (selectedCategory !== "all") {
+          filteredDishes = filteredDishes.filter(
+              (dish) => dish.type === selectedCategory
+          );
+      }
+      */
+      
+      // ❌ ВИДАЛЯЄМО: КЛІЄНТСЬКУ ФІЛЬТРАЦІЮ ЗА ІНГРЕДІЄНТАМИ
+      /*
+      if (selectedIngredients.length > 0) {
+        // ... (вся логіка клієнтської фільтрації)
+        totalCount = filteredDishes.length; 
+      }
+      */
+      
+      // ✅ 2. Використовуємо дані та count, які повернув бекенд після фільтрації
+      const totalCount = response.count;
+      
+      // 💡 3. Оновлення стану пагінації
+      setPaginatedResponse(response); // Вся відповідь уже відфільтрована
+      setTotalPages(Math.ceil(totalCount / DISHES_PER_PAGE));
+
+
+    } catch (err) {
+        // ...
+    } finally {
+        setLoading(false);
+    }
+}, [currentPage, submittedSearchQuery, selectedCategory, selectedIngredients]); 
+  // ✅ Залежності: зміна будь-якого фільтра чи сторінки викликає новий запит
+
+  // 💡 3. Виклик основного ефекту
+  useEffect(() => {
+    getDishes();
+  }, [getDishes]);
+
+  // ✅ Функції-обробники для зміни сторінки
+  const goToPage = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+  
+  // Функція для зміни інгредієнтів (з скиданням пагінації)
   const handleCheckboxChange = (ingredientName: string) => {
     setSelectedIngredients((prev) =>
       prev.includes(ingredientName)
         ? prev.filter((i) => i !== ingredientName)
         : [...prev, ingredientName]
     );
+    // ✅ Скидаємо пагінацію та пошук
     setSubmittedSearchQuery("");
     setSearchQuery("");
+    setCurrentPage(1); 
   };
 
   const handleCategoryToggle = (category: string) => {
     setOpenCategory(openCategory === category ? null : category);
   };
   
-  // ✅ Відновлена функція, яка змінює внутрішній стан
+  // Відновлена функція, яка змінює внутрішній стан (з скиданням пагінації)
   const handleCategoryChange = (categoryValue: string) => {
     setSelectedCategory(categoryValue); 
+    // ✅ Скидаємо пагінацію
     setSubmittedSearchQuery("");
     setSearchQuery("");
+    setCurrentPage(1); 
   };
 
-  // Функція для пошуку (без змін)
+  // Функція для пошуку (з скиданням пагінації)
   const handleSearch = () => {
     setSubmittedSearchQuery(searchQuery);
-    // Скидаємо інші фільтри при пошуку
+    // ✅ Скидаємо пагінацію та інші фільтри
     setSelectedCategory("all");
     setSelectedIngredients([]);
+    setCurrentPage(1); 
   };
 
   const filterClasses = styles.filterWrapper;
 
   return (
     <div className={styles.page}>
+      {/* ... (ІНПУТ ПОШУКУ ТА КНОПКИ КАТЕГОРІЙ ЗАЛИШАЮТЬСЯ БЕЗ ЗМІН) ... */}
       <h2 className={styles.filterName}>Пошук страв</h2>
 
       <div className={styles.searchContainer}>
@@ -151,12 +200,10 @@ export default function IngredientFilter() {
         </button>
       </div>
 
-      {/* ✅ БЛОК КНОПОК КАТЕГОРІЙ ВІДНОВЛЕНО */}
       <div className={styles.categoryButtonsContainer}>
         {dishTypes.map((type) => (
           <button
             key={type.value}
-            // Викликаємо внутрішню функцію зміни стану
             onClick={() => handleCategoryChange(type.value)}
             className={`${styles.categoryButton} ${
               selectedCategory === type.value ? styles.active : ""
@@ -168,70 +215,104 @@ export default function IngredientFilter() {
           </button>
         ))}
       </div>
-
+      {/* ... (ФІЛЬТР ІНГРЕДІЄНТІВ ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН) ... */}
+      
       <div className={styles.filterHeader}>
         <h2 className={styles.filterName}>Фільтр за інгредієнтами</h2>
       </div>
-      {/* ... Решта компонента без змін */}
       <div className={filterClasses}>
-        <div className={styles.dropdownContainer}>
-          {mainCategories.map((category) => (
-            <div key={category} className={styles.dropdownWrapper}>
-              <button
-                className={styles.dropdownHeader}
-                onClick={() => handleCategoryToggle(category)}
-              >
-                {category}
-                <span
-                  className={`${styles.arrow} ${
-                    openCategory === category ? styles.arrowUp : ""
-                  }`}
-                >
-                  ▼
-                </span>
-              </button>
-              <div
-                className={`${styles.dropdownContent} ${
-                  openCategory === category ? styles.open : ""
-                }`}
-              >
-                {ingredientsByCategory[category].map(
-                  (ingredient: IngredientOption) => (
-                    <label
-                      key={ingredient.name_ua}
-                      className={styles.ingredientLabel}
+         <div className={styles.dropdownContainer}>
+            {mainCategories.map((category) => (
+                <div key={category} className={styles.dropdownWrapper}>
+                    <button
+                        className={styles.dropdownHeader}
+                        onClick={() => handleCategoryToggle(category)}
                     >
-                      <input
-                        type="checkbox"
-                        value={ingredient.name_ua}
-                        checked={selectedIngredients.includes(
-                          ingredient.name_ua
+                        {category}
+                        <span
+                            className={`${styles.arrow} ${
+                                openCategory === category ? styles.arrowUp : ""
+                            }`}
+                        >
+                            ▼
+                        </span>
+                    </button>
+                    <div
+                        className={`${styles.dropdownContent} ${
+                            openCategory === category ? styles.open : ""
+                        }`}
+                    >
+                        {ingredientsByCategory[category].map(
+                            (ingredient: IngredientOption) => (
+                                <label
+                                    key={ingredient.name_ua}
+                                    className={styles.ingredientLabel}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        value={ingredient.name_ua}
+                                        checked={selectedIngredients.includes(
+                                            ingredient.name_ua
+                                        )}
+                                        onChange={() =>
+                                            handleCheckboxChange(ingredient.name_ua)
+                                        }
+                                    />
+                                    {locale === "uk"
+                                        ? ingredient.name_ua
+                                        : ingredient.name_en}
+                                </label>
+                            )
                         )}
-                        onChange={() =>
-                          handleCheckboxChange(ingredient.name_ua)
-                        }
-                      />
-                      {locale === "uk"
-                        ? ingredient.name_ua
-                        : ingredient.name_en}
-                    </label>
-                  )
-                )}
-              </div>
-            </div>
-          ))}
+                    </div>
+                </div>
+            ))}
         </div>
       </div>
-
-      <h3 className={styles.resultsHeader}>Результати фільтрації</h3>
+      
+      
+      <h3 className={styles.resultsHeader}>Результати фільтрації (Знайдено: {paginatedResponse.count})</h3>
+      
       {loading ? (
         <p className={styles.filterText}>Завантаження страв...</p>
       ) : dishes.length > 0 ? (
-        <div className={styles.dishList}>
-          {dishes.map((dish) => (
-            <DishCard key={dish.id} dish={dish} />
-          ))}
-        </div>
+        <>
+          <div className={styles.dishList}>
+            {dishes.map((dish) => (
+              <DishCard key={dish.id} dish={dish} />
+            ))}
+          </div>
+
+          {/* ✅ БЛОК ПАГІНАЦІЇ */}
+          {totalPages > 1 && (
+            <div className={styles.paginationControls}>
+              <button 
+                onClick={() => goToPage(currentPage - 1)} 
+                disabled={currentPage === 1}
+              >
+                &lt; Попередня
+              </button>
+              
+              {/* Відображення номерів сторінок (простий варіант) */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                <button
+                  key={pageNumber}
+                  onClick={() => goToPage(pageNumber)}
+                  className={pageNumber === currentPage ? styles.activePage : styles.pageButton}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+              <button 
+                onClick={() => goToPage(currentPage + 1)} 
+                disabled={currentPage === totalPages}
+              >
+                Наступна &gt;
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <p className={styles.noResults}>
           Не знайдено страв за обраними критеріями
