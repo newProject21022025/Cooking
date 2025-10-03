@@ -94,7 +94,7 @@ export default function IngredientFilter() {
 
     try {
       // 💡 1. Отримання даних з бекенду (з УСІМА фільтрами)
-      let response = await fetchDishesApi(backendParams);
+      const response = await fetchDishesApi(backendParams);
 
       // ❌ ВИДАЛЯЄМО: КЛІЄНТСЬКУ ФІЛЬТРАЦІЮ ЗА КАТЕГОРІЄЮ
       /* if (selectedCategory !== "all") {
