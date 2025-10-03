@@ -1,21 +1,28 @@
 // src/app/admin/edit/page.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import styles from "./page.module.scss";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 import {
   fetchDishesApi,
   deleteDishApi,
   selectDishApi,
   unselectDishApi,
-  // searchDishesApi // ❌ Видалено, оскільки логіка уніфікована у fetchDishesApi
 } from "@/api/dishesApi";
 import { Dish } from "@/types/dish";
 import Link from "next/link";
 
-// Компонент для відображення однієї страви
+// Категорії страв
+const dishTypes = [
+  { value: "all", label: "🍽️ Всі страви / All dishes" },
+  { value: "soup", label: "🍲 Суп / Soup" },
+  { value: "main_course", label: "🥩 Основне блюдо / Main course" },
+  { value: "side_dish", label: "🍚 Гарнір / Side dish" },
+  { value: "salad", label: "🥗 Салат / Salad" },
+  { value: "appetizer", label: "🍢 Закуска / Appetizer" },
+];
+
 const DishCard = ({
   dish,
   onDelete,
@@ -44,7 +51,9 @@ const DishCard = ({
   return (
     <div className={styles.dishCard}>
       <button
-        className={`${styles.selectStar} ${dish.is_selected ? styles.selected : ""}`}
+        className={`${styles.selectStar} ${
+          dish.is_selected ? styles.selected : ""
+        }`}
         onClick={handleToggleSelect}
       >
         ★
@@ -77,15 +86,26 @@ export default function Edit() {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // ✅ ВИПРАВЛЕНО: Функція тепер коректно обробляє PaginatedDishesResponse
-  const loadDishes = async (query = "") => {
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  // Новий стан для категорії
+  const [category, setCategory] = useState<string>("all");
+
+  const loadDishes = async (query = "", pageNumber = 1, categoryValue = "all") => {
     setLoading(true);
     try {
-      // Викликаємо універсальний fetchDishesApi з параметром пошуку
-      const response = await fetchDishesApi({ query }); 
-      
-      // ✅ КЛЮЧОВЕ ВИПРАВЛЕННЯ: Беремо масив страв з властивості 'data'
-      setDishes(response.data); 
+      const response = await fetchDishesApi({
+        query,
+        page: pageNumber,
+        limit,
+        category: categoryValue !== "all" ? categoryValue : undefined,
+      });
+
+      setDishes(response.data);
+      setTotalPages(Math.ceil(response.count / limit));
+      setPage(response.page);
     } catch (error) {
       console.error("Помилка при завантаженні страв:", error);
     } finally {
@@ -94,8 +114,8 @@ export default function Edit() {
   };
 
   useEffect(() => {
-    loadDishes();
-  }, []);
+    loadDishes("", 1, category);
+  }, [category]);
 
   const handleDelete = async (id: number) => {
     try {
@@ -125,25 +145,42 @@ export default function Edit() {
     }
   };
 
-  // ✅ Функція для обробки пошуку
   const handleSearch = () => {
-    loadDishes(searchQuery);
-  };
-  
-  // ✅ Функція для скидання пошуку
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    loadDishes();
+    loadDishes(searchQuery, 1, category);
   };
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    loadDishes("", 1, category);
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) loadDishes(searchQuery, page - 1, category);
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) loadDishes(searchQuery, page + 1, category);
+  };
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1 className={styles.title}></h1>
-        <p className={styles.description}></p>
+        {/* --- Фільтр за категоріями --- */}
+        <div className={styles.filterContainer}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className={styles.categorySelect}
+          >
+            {dishTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {/* ✅ Блок пошуку */}
+        {/* --- Пошук --- */}
         <div className={styles.searchContainer}>
           <input
             type="text"
@@ -155,13 +192,13 @@ export default function Edit() {
           <button onClick={handleSearch} className={styles.searchBtn}>
             🔍 Пошук
           </button>
-            {searchQuery && (
+          {searchQuery && (
             <button onClick={handleClearSearch} className={styles.clearBtn}>
               ❌
             </button>
           )}
         </div>
-        
+
         <div className={styles.dishList}>
           {loading ? (
             <p className={styles.loadingMessage}>Завантаження страв...</p>
@@ -178,6 +215,21 @@ export default function Edit() {
             <p className={styles.errorMessage}>Немає доступних страв.</p>
           )}
         </div>
+
+        {/* --- Пагінація --- */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button onClick={handlePrevPage} disabled={page === 1}>
+              ◀️ Попередня
+            </button>
+            <span>
+              {page} / {totalPages}
+            </span>
+            <button onClick={handleNextPage} disabled={page === totalPages}>
+              Наступна ▶️
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
