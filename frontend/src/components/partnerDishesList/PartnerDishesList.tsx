@@ -1,4 +1,3 @@
-// src/components/PartnerDishesList/PartnerDishesList.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,7 +7,7 @@ import { fetchPartnerMenu } from "@/redux/slices/partnersSlice";
 import { fetchAllDishesApi } from "@/api/dishesApi";
 import { addToBasket } from "@/redux/slices/basketSlice";
 import { PartnerDish } from "@/types/partner"; // Предполагается, что этот импорт верный
-import { Dish, Ingredient } from "@/types/dish"; // ✅ ИМПОРТИРУЕМ Dish и Ingredient
+import { Dish, Ingredient } from "@/types/dish"; // ✅ Импорт для типизации
 import styles from "./PartnerDishesList.module.scss";
 
 // Интерфейс для объединенного объекта блюда, который отображается в списке
@@ -27,10 +26,9 @@ export default function PartnerDishesList({
 }: PartnerDishesListProps) {
   const dispatch = useDispatch<AppDispatch>();
 
-  // ✅ Типизируем allDishes как массив Dish
+  // ✅ Типизируем состояния
   const [allDishes, setAllDishes] = useState<Dish[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  // ✅ Типизируем searchResults как массив DisplayedDish
   const [searchResults, setSearchResults] = useState<DisplayedDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -42,10 +40,10 @@ export default function PartnerDishesList({
 
   const basketItems = useSelector((state: RootState) => state.basket.items);
 
-  // Загружаем все блюда без пагинации
+  // Загружаем все блюда
   useEffect(() => {
     fetchAllDishesApi()
-      .then((data: Dish[]) => setAllDishes(data)) // ✅ Указываем тип данных
+      .then((data: Dish[]) => setAllDishes(data))
       .catch((err) => console.error("Failed to fetch all dishes:", err));
   }, []);
 
@@ -66,13 +64,15 @@ export default function PartnerDishesList({
       setLoadingSearch(false);
       return;
     }
-
+    
+    // Результаты поиска всегда должны быть отфильтрованы по partnerId
     const results: DisplayedDish[] = partnerDishes
       .filter(pd => pd.partner_id === partnerId)
       .map(pd => {
-        // ✅ allDishes типизирован, TypeScript знает, что d имеет тип Dish
         const dish = allDishes.find(d => d.id === pd.dish_id);
         if (!dish) return null;
+        
+        // Фильтрация по поисковому запросу
         if (
           dish.name_ua.toLowerCase().includes(searchQuery.toLowerCase()) ||
           dish.name_en.toLowerCase().includes(searchQuery.toLowerCase())
@@ -101,19 +101,26 @@ export default function PartnerDishesList({
     return <p>Завантаження меню...</p>;
   }
 
-  // ✅ Типизируем displayedPartnerDishes
-  const displayedPartnerDishes: DisplayedDish[] = (hasSearched && searchQuery ? searchResults : partnerDishes)
-    .filter(pd => pd.partner_id === partnerId)
-    .map(pd => {
-      // ✅ allDishes типизирован, TypeScript знает, что d имеет тип Dish
-      const dish = allDishes.find(d => d.id === pd.dish_id);
-      if (!dish) return null;
-      const finalPrice = pd.discount
-        ? pd.price - pd.price * (pd.discount / 100)
-        : pd.price;
-      return { partnerDish: pd, dish, finalPrice } as DisplayedDish;
-    })
-    .filter(Boolean) as DisplayedDish[]; // Утверждение типа для гарантии
+  // ✅ ИСПРАВЛЕНИЕ: Разделение логики для правильного типизирования
+  let displayedPartnerDishes: DisplayedDish[] = [];
+
+  if (hasSearched && searchQuery) {
+    // Используем уже обработанные результаты поиска
+    displayedPartnerDishes = searchResults;
+  } else {
+    // Обработка всего меню: сначала фильтруем PartnerDish, потом преобразуем в DisplayedDish
+    displayedPartnerDishes = partnerDishes
+      .filter(pd => pd.partner_id === partnerId) // pd здесь гарантированно имеет тип PartnerDish
+      .map(pd => {
+        const dish = allDishes.find(d => d.id === pd.dish_id);
+        if (!dish) return null;
+        const finalPrice = pd.discount
+          ? pd.price - pd.price * (pd.discount / 100)
+          : pd.price;
+        return { partnerDish: pd, dish, finalPrice } as DisplayedDish;
+      })
+      .filter(Boolean) as DisplayedDish[];
+  }
 
   if (!displayedPartnerDishes.length) {
     return <p>Меню пусте або не знайдено страв за вашим запитом.</p>;
@@ -138,6 +145,7 @@ export default function PartnerDishesList({
 
       <div className={styles.cards}>
         {displayedPartnerDishes.map(({ partnerDish, dish, finalPrice }) => {
+          // dish гарантированно имеет тип Dish, а partnerDish — PartnerDish
           const isAdded = basketItems.some(item => item.partnerDish.id === partnerDish.id);
 
           return (
@@ -173,7 +181,7 @@ export default function PartnerDishesList({
                 <div className={styles.ingredientsList}>
                   <h4>Основні інгредієнти:</h4>
                   <ul>
-                    {/* ✅ ingredient теперь имеет тип Ingredient */}
+                    {/* ✅ ingredient теперь имеет явный тип Ingredient */}
                     {dish.important_ingredients.map((ingredient: Ingredient, index) => (
                       <li key={index}>{ingredient.name_ua}</li>
                     ))}
