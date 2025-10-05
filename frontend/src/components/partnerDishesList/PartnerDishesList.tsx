@@ -1,17 +1,22 @@
 // src/components/PartnerDishesList/PartnerDishesList.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
 import { fetchPartnerMenu } from "@/redux/slices/partnersSlice";
-import { fetchDishes } from "@/redux/slices/dishesSlice";
+import { fetchAllDishesApi } from "@/api/dishesApi";
 import { addToBasket } from "@/redux/slices/basketSlice";
-import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
-import { PartnerDish } from "@/types/partner";
+import { PartnerDish } from "@/types/partner"; // Предполагается, что этот импорт верный
+import { Dish, Ingredient } from "@/types/dish"; // ✅ ИМПОРТИРУЕМ Dish и Ingredient
 import styles from "./PartnerDishesList.module.scss";
-// ... імпорти
+
+// Интерфейс для объединенного объекта блюда, который отображается в списке
+interface DisplayedDish {
+  partnerDish: PartnerDish;
+  dish: Dish;
+  finalPrice: number;
+}
 
 interface PartnerDishesListProps {
   partnerId: string;
@@ -22,95 +27,101 @@ export default function PartnerDishesList({
 }: PartnerDishesListProps) {
   const dispatch = useDispatch<AppDispatch>();
 
+  // ✅ Типизируем allDishes как массив Dish
+  const [allDishes, setAllDishes] = useState<Dish[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<PartnerDish[]>([]);
+  // ✅ Типизируем searchResults как массив DisplayedDish
+  const [searchResults, setSearchResults] = useState<DisplayedDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [showIngredients, setShowIngredients] = useState<
-    Record<string, boolean>
-  >({}); // ✅ Новий стан для відображення інгредієнтів
+  const [showIngredients, setShowIngredients] = useState<Record<string, boolean>>({});
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
   );
-  // ✅ ЗМІНА: Додаємо перевірку, що items - це масив, інакше встановлюємо порожній масив.
-  const { items, loading: loadingDishes } = useSelector(
-    (state: RootState) => state.dishes
-  );
-  const dishes = Array.isArray(items) ? items : []; 
-  
+
   const basketItems = useSelector((state: RootState) => state.basket.items);
 
+  // Загружаем все блюда без пагинации
   useEffect(() => {
-    dispatch(fetchDishes());
-  }, [dispatch]);
+    fetchAllDishesApi()
+      .then((data: Dish[]) => setAllDishes(data)) // ✅ Указываем тип данных
+      .catch((err) => console.error("Failed to fetch all dishes:", err));
+  }, []);
 
+  // Загружаем меню партнера
   useEffect(() => {
-    if (!hasSearched && partnerId) {
+    if (partnerId) {
       dispatch(fetchPartnerMenu(partnerId));
     }
-  }, [partnerId, dispatch, hasSearched]);
+  }, [partnerId, dispatch]);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     setLoadingSearch(true);
     setHasSearched(true);
-    try {
-      if (searchQuery) {
-        const data = await searchPartnerDishesApi(partnerId, searchQuery);
-        setSearchResults(data);
-      } else {
-        dispatch(fetchPartnerMenu(partnerId));
-        setHasSearched(false);
-        setSearchResults([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch dishes:", error);
+
+    if (!searchQuery) {
       setSearchResults([]);
-    } finally {
+      setHasSearched(false);
       setLoadingSearch(false);
+      return;
     }
+
+    const results: DisplayedDish[] = partnerDishes
+      .filter(pd => pd.partner_id === partnerId)
+      .map(pd => {
+        // ✅ allDishes типизирован, TypeScript знает, что d имеет тип Dish
+        const dish = allDishes.find(d => d.id === pd.dish_id);
+        if (!dish) return null;
+        if (
+          dish.name_ua.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          dish.name_en.toLowerCase().includes(searchQuery.toLowerCase())
+        ) {
+          const finalPrice = pd.discount
+            ? pd.price - pd.price * (pd.discount / 100)
+            : pd.price;
+          return { partnerDish: pd, dish, finalPrice } as DisplayedDish;
+        }
+        return null;
+      })
+      .filter(Boolean) as DisplayedDish[];
+
+    setSearchResults(results);
+    setLoadingSearch(false);
   };
 
-  // ... handleIngredientsToggle
-
-  // ✅ Нова функція-обробник для перемикання інгредієнтів
   const handleIngredientsToggle = (dishId: number) => {
-    setShowIngredients((prev) => ({
+    setShowIngredients(prev => ({
       ...prev,
       [dishId]: !prev[dishId],
     }));
   };
 
-  if (loadingPartnerDishes || loadingDishes || loadingSearch) {
+  if (loadingPartnerDishes || loadingSearch) {
     return <p>Завантаження меню...</p>;
   }
 
-  const displayedPartnerDishes =
-    hasSearched && searchQuery ? searchResults : partnerDishes;
-    
-  // ⚠️ Увага: переконайтеся, що dishes.find - це функція.
-  // Завдяки рядку `const dishes = Array.isArray(items) ? items : [];` вище,
-  // ми гарантуємо, що dishes є масивом.
-  const mergedDishes = displayedPartnerDishes
-    .map((pd) => {
-      // Рядок 98 (проблема): dishes тепер точно масив.
-      const dish = dishes.find((d) => d.id === pd.dish_id); 
+  // ✅ Типизируем displayedPartnerDishes
+  const displayedPartnerDishes: DisplayedDish[] = (hasSearched && searchQuery ? searchResults : partnerDishes)
+    .filter(pd => pd.partner_id === partnerId)
+    .map(pd => {
+      // ✅ allDishes типизирован, TypeScript знает, что d имеет тип Dish
+      const dish = allDishes.find(d => d.id === pd.dish_id);
       if (!dish) return null;
       const finalPrice = pd.discount
         ? pd.price - pd.price * (pd.discount / 100)
         : pd.price;
-      return { partnerDish: pd, dish, finalPrice };
+      return { partnerDish: pd, dish, finalPrice } as DisplayedDish;
     })
-    .filter(Boolean) as {
-    partnerDish: (typeof partnerDishes)[0];
-    dish: (typeof dishes)[0];
-    finalPrice: number;
-  }[];
+    .filter(Boolean) as DisplayedDish[]; // Утверждение типа для гарантии
 
-  // ... return JSX
+  if (!displayedPartnerDishes.length) {
+    return <p>Меню пусте або не знайдено страв за вашим запитом.</p>;
+  }
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.container}>Меню партнера</h2>
+      <h2>Меню партнера</h2>
 
       <div className={styles.searchContainer}>
         <input
@@ -125,74 +136,54 @@ export default function PartnerDishesList({
         </button>
       </div>
 
-      {mergedDishes.length === 0 ? (
-        <p>Меню пусте або не знайдено страв за вашим запитом.</p>
-      ) : (
-        <div className={styles.cards}>
-          {mergedDishes.map(({ partnerDish, dish, finalPrice }) => {
-            const isAdded = basketItems.some(
-              (item) => item.partnerDish.id === partnerDish.id
-            );
+      <div className={styles.cards}>
+        {displayedPartnerDishes.map(({ partnerDish, dish, finalPrice }) => {
+          const isAdded = basketItems.some(item => item.partnerDish.id === partnerDish.id);
 
-            return (
-              <div key={partnerDish.id} className={styles.card}>
-                <img
-                  src={dish.photo}
-                  alt={dish.name_ua}
-                  className={styles.image}
-                />
-                <h3>{dish.name_ua}</h3>
-                <p>{dish.description_ua}</p>
-                <p>
-                  Ціна: {partnerDish.price} грн
-                  {(partnerDish.discount ?? 0) > 0 &&
-                    `(Знижка ${partnerDish.discount}%)`}
-                </p>
-                <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
-                <button
-                  className={`${styles.buyButton} ${
-                    isAdded ? styles.addedButton : ""
-                  }`}
-                  onClick={() =>
-                    !isAdded &&
-                    dispatch(
-                      addToBasket({
-                        partnerDish: partnerDish,
-                        dish,
-                        quantity: 1,
-                      })
-                    )
-                  }
-                  disabled={isAdded}
-                >
-                  {isAdded ? "Товар доданий до кошика" : "Купити"}
-                </button>
-                {/* ✅ Кнопка для відображення інгредієнтів */}
-                <button
-                  onClick={() => handleIngredientsToggle(dish.id)} // ✅ Викликаємо функцію з ID страви
-                  className={styles.ingredientsButton}
-                >
-                  {showIngredients[dish.id]
-                    ? "Приховати інгредієнти"
-                    : "Інгредієнти"}
-                </button>
+          return (
+            <div key={partnerDish.id} className={styles.card}>
+              <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
+              <h3>{dish.name_ua}</h3>
+              <p>{dish.description_ua}</p>
+              <p>
+                Ціна: {partnerDish.price} грн
+                {(partnerDish.discount ?? 0) > 0 &&
+                  `(Знижка ${partnerDish.discount}%)`}
+              </p>
+              <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
+              <button
+                className={`${styles.buyButton} ${isAdded ? styles.addedButton : ""}`}
+                onClick={() =>
+                  !isAdded &&
+                  dispatch(addToBasket({ partnerDish, dish, quantity: 1 }))
+                }
+                disabled={isAdded}
+              >
+                {isAdded ? "Товар доданий до кошика" : "Купити"}
+              </button>
 
-                {/* ✅ Умовне відображення списку інгредієнтів */}
-                {showIngredients[dish.id] && ( // ✅ Перевіряємо стан для конкретної страви
-                  <div className={styles.ingredientsList}>
-                    <h4>Основні інгредієнти:</h4>
-                    <ul>
-                      {dish.important_ingredients.map((ingredient, index) => (
-                        <li key={index}>{ingredient.name_ua}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              <button
+                onClick={() => handleIngredientsToggle(dish.id)}
+                className={styles.ingredientsButton}
+              >
+                {showIngredients[dish.id] ? "Приховати інгредієнти" : "Інгредієнти"}
+              </button>
+
+              {showIngredients[dish.id] && (
+                <div className={styles.ingredientsList}>
+                  <h4>Основні інгредієнти:</h4>
+                  <ul>
+                    {/* ✅ ingredient теперь имеет тип Ingredient */}
+                    {dish.important_ingredients.map((ingredient: Ingredient, index) => (
+                      <li key={index}>{ingredient.name_ua}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

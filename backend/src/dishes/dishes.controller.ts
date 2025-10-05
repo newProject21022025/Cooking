@@ -24,6 +24,16 @@ import { PaginationQueryDto } from './dto/pagination-query.dto';
 export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
 
+
+    @Get('all')
+async getAllDishes(
+  @Query('query') searchQuery?: string,
+  @Query('category') category?: string,
+) {
+  return this.dishesService.getAllDishes(searchQuery, category);
+}
+
+
   // ----------------------------------------
   // Коментарі
   // ----------------------------------------
@@ -145,4 +155,6 @@ export class DishesController {
     return this.dishesService.unselectDish(id);
   }
   
+
+
 }
