@@ -11,6 +11,11 @@ import PartnersList from "@/components/partners/PartnersList";
 import SelectedDishes from "@/components/selectedDishes/SelectedDishes";
 import PartnersCard from "@/components/partnersCard/PartnersCard";
 import CategoryNavButtons from "@/components/categoryNavButtons/CategoryNavButtons";
+import Link from "next/link";
+import Icon_Cup from "@/svg/Icon_Cup/Icon_Cup";
+import Icon_Time from "@/svg/Icon_Time/Icon_Time";
+import Icon_Customers from "@/svg/Icon_Smile/Icon_Smile";
+import Icon_Smile from "@/svg/Icon_Smile/Icon_Smile";
 
 export default function Home() {
   const t = useTranslations("Home");
@@ -36,11 +41,44 @@ export default function Home() {
     <div className={styles.page}>
       {/* <PartnersList /> */}
       <main className={styles.main}>
-        <h1 className={styles.title}>{t("title")}</h1>
+        {/* --------------------------------------------------------------------------- */}
+        <section className={styles.general}>
+          <div className={styles.generalInfo}>
+            <h1 className={styles.title}>{t("title")}</h1>
+            <p className={styles.generalText}>{t("text")}</p>
+            <Link className={styles.generalMenu} href="/menu">
+              {t("button")}
+            </Link>
+          </div>
+
+          <div className={styles.generalStats}>
+            <div className={styles.statBox}>
+              <h2 className={styles.statNumber}>
+                <span className={styles.iconCup}>
+                  <Icon_Cup />
+                </span>{" "}
+                500+
+              </h2>
+              <p className={styles.statLabel}>{t("recipes")}</p>
+            </div>
+            <div className={styles.statBox}>
+              <h2 className={styles.statNumber}>
+                <Icon_Time /> 50хв
+              </h2>
+              <p className={styles.statLabel}>{t("time")}</p>
+            </div>
+            <div className={styles.statBox}>
+              <h2 className={styles.statNumber}>
+                <Icon_Smile /> 50k+
+              </h2>
+              <p className={styles.statLabel}>{t("customers")}</p>
+            </div>
+          </div>
+        </section>
+        {/* --------------------------------------------------------------------------- */}
+
         <SelectedDishes />
-        {/* <p className={styles.description}>
-          {t("text")}
-        </p> */}
+
         <CategoryNavButtons />
         <div>
           {" "}

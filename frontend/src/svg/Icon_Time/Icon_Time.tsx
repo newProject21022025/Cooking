@@ -1,0 +1,25 @@
+const Icon_Time = () => {
+  return (
+    <svg
+      width="44"
+      height="44"
+      viewBox="0 0 44 44"
+      fill="none"      
+    >
+      <path
+        d="M22 37C30.2843 37 37 30.2843 37 22C37 13.7157 30.2843 7 22 7C13.7157 7 7 13.7157 7 22C7 30.2843 13.7157 37 22 37Z"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M22 11.5V22L28 28"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+};
+
+export default Icon_Time;

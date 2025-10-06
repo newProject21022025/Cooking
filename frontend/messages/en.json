@@ -1,7 +1,11 @@
 {
     "Home" : {
-        "title": "Welcome to our application!",        
-        "text": "This is the home page where you can find the latest updates and features."
+        "title": "Discover Culinary Excellence!",        
+        "text": "Inspired recipes and ready meals - for those who value taste, convenience, and the harmony of favorite dishes.",
+        "recipes": "Recipes",
+        "time": "Average delivery time",
+        "customers": "Happy customers",
+        "button": "To the menu"
     },
     "Menu" : {
         "title": "Welcome to our application!",        

@@ -1,128 +1,136 @@
 /* src/app/page.module.scss */
-
-.page { 
+.page {
+  min-height: 100vh;
+}
+.general {
+  background-image: url("/photo/Generated Image.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: relative;
+  min-height: 100vh;
+  padding: 80px 0 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  padding: 2rem;
-  box-sizing: border-box; 
-  background-color: transparent; 
+  justify-content: space-between;
 }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 1200px; 
-  padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px; 
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
-  backdrop-filter: blur(4px); 
-  -webkit-backdrop-filter: blur(4px); 
-  border: 1px solid rgba(255, 255, 255, 0.18); 
-  margin-top: 100px;
+.general::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  z-index: 1;
+}
+
+.generalInfo {
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px; /* Обмеження ширини контенту */
+  padding: 0 20px;
+  align-self: flex-start;
+  margin-top: 70px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title {
-  font-size: 3.5rem; 
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: black; 
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
-  animation: fadeIn 1s ease-out forwards;
+  color: #333;
+  font-size: 56px;
+  font-weight: bold;
+  max-width: 800px;
+  margin-bottom: 20px;
 }
 
-.description {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  color: black; 
+.generalText {
+  color: #555;
+  font-size: 20px;
   max-width: 600px;
-  animation: slideInUp 1s ease-out forwards; 
-  animation-delay: 0.3s; 
-  opacity: 0; 
+  margin-bottom: 35px;
 }
 
-/* 🆕 Стилі для відображення страв */
+.generalMenu {
+  display: inline-block;
+  text-decoration: none;
+  color: #fff;
+  background-color: #387040; /* Темно-зелений */
+  padding: 12px 80px;
+  border-radius: 4px;
+  font-weight: 400;
+  transition: background-color 0.3s ease;
+}
 
-.dishList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
+.generalMenu:hover {
+  background-color: #4c8a54;
+}
+.generalStats {
+  z-index: 2;
   width: 100%;
-}
-
-.dishCard {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 1000px; /* Обмеження ширини контейнера статистики */
   display: flex;
-  flex-direction: column;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-  }
+  justify-content: space-between;
+  gap: 30px;
+  padding: 0 20px;
+  margin: auto auto 25px auto; /* Центруємо горизонтально і фіксуємо знизу */
 }
 
-.dishPhoto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.statBox {
+  flex-grow: 1;
+  flex-basis: 0; /* Рівномірний розподіл ширини */
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.7); /* Напівпрозорий білий */
+  border-radius: 8px;
+  text-align: center;
+  /* Ефект блюру, щоб проступав фон */
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-top: 3px solid #d87b09;
 }
 
-.dishInfo {
-  padding: 1.5rem;
-  text-align: left;
+.statNumber {
+  position: relative;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 5px 0;
+  display: flex;
+  align-items: center; /* Вирівнює іконку та число по центру вертикалі */
+  justify-content: center; /* Центрує їх по горизонталі */
+  gap: 8px; /* Відстань між іконкою та числом */
 }
-
-.dishTitle {
-  font-size: 1.5rem;
-  color: black;
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+.iconCup {
+  position: absolute;
+  top: -10px;
+  left: 45px;
+  // transform: translateY(-5px); 
 }
-
-.dishDescription {
+.statLabel {
   font-size: 1rem;
-  color:black;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  color: #666;
+  margin: 0;
 }
 
-/* Анімації */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
+/* ========================================================================= */
+/* --- Media Queries (Адаптивність) --- */
+/* ========================================================================= */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .generalText {
+    font-size: 1rem;
+  }
+  .generalStats {
+    flex-direction: column; /* Картки в стовпчик на малих екранах */
+    align-items: center;
+  }
+  .statBox {
+    width: 80%;
+    margin-bottom: 15px;
   }
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

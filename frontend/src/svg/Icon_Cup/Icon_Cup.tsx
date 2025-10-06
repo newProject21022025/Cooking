@@ -1,0 +1,37 @@
+const Icon_Cup = () => {
+  return (
+    <svg
+      width="44"
+      height="44"
+      viewBox="0 0 44 44"
+      fill="none"      
+    >
+      <path
+        d="M9.75 21.7344H30.75V30.4844C30.75 35.3168 26.8324 39.2344 22 39.2344H18.5C13.6675 39.2344 9.75 35.3168 9.75 30.4844V21.7344Z"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M30.75 23.4844H34.25C36.183 23.4844 37.75 25.0513 37.75 26.9844C37.75 28.9174 36.183 30.4844 34.25 30.4844H30.75"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M16.75 16.4844C16.75 16.4844 15 15.6094 15 12.9844C15 10.3594 16.75 9.48438 16.75 9.48438"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M22 5.98438C22 5.98438 23.75 6.85938 23.75 9.48438C23.75 12.1094 22 12.9844 22 12.9844"
+        stroke="#D87B09"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+};
+
+export default Icon_Cup;
