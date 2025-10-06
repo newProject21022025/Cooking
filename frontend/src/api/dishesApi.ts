@@ -118,3 +118,8 @@ export const unselectDishApi = async (id: number): Promise<Dish> => {
   return data;
 };
 
+export const fetchAllDishesApi = async (): Promise<Dish[]> => {
+  const { data } = await axios.get<Dish[]>(`${API_URL}/all`);
+  return data;
+};
+

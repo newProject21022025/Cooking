@@ -148,6 +148,26 @@ export class DishesService {
     return data || [];
   }
 
+  async getAllDishes(searchQuery?: string, category?: string) {
+  let query = this.client.from('dishes').select('*');
+
+  if (category && category !== 'all') {
+    query = query.eq('type', category);
+  }
+
+  if (searchQuery) {
+    query = query.or(
+      `name_ua.ilike.%${searchQuery}%,name_en.ilike.%${searchQuery}%`,
+    );
+  }
+
+  const { data, error } = await query.order('id', { ascending: true });
+  if (error) throw new BadRequestException(`Помилка Supabase: ${error.message}`);
+
+  return data || [];
+}
+
+
   async getAllDishes(
     searchQuery?: string,
     category?: string,
