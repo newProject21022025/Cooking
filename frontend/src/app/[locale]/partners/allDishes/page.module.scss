@@ -1,127 +1,143 @@
-/* src/app/page.module.scss */
+// src/app/[locale]/partners/allDishes/page.module.scss
 
-.page { 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
-  box-sizing: border-box; 
-  background-color: transparent; 
+
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #333;
+  }
 }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 1200px; 
-  padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px; 
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
-  backdrop-filter: blur(4px); 
-  -webkit-backdrop-filter: blur(4px); 
-  border: 1px solid rgba(255, 255, 255, 0.18); 
-}
-
-.title {
-  font-size: 3.5rem; 
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: black; 
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
-  animation: fadeIn 1s ease-out forwards;
-}
-
-.description {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  color: black; 
-  max-width: 600px;
-  animation: slideInUp 1s ease-out forwards; 
-  animation-delay: 0.3s; 
-  opacity: 0; 
-}
-
-/* 🆕 Стилі для відображення страв */
-
-.dishList {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 .dishCard {
-  background: rgba(255, 255, 255, 0.08);
+  background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
+
+  .dishPhoto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .dishInfo {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #555;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+    }
+
+    .addButton {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #45a049;
+      }
+
+      &:disabled {
+        background-color: #a5d6a7;
+        cursor: not-allowed;
+      }
+    }
   }
 }
 
-.dishPhoto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 2rem;
+  font-weight: 600;
 }
 
-.dishInfo {
-  padding: 1.5rem;
-  text-align: left;
-}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
 
-.dishTitle {
-  font-size: 1.5rem;
-  color: black;
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
+  button {
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
 
-.dishDescription {
-  font-size: 1rem;
-  color:black;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
+    &:hover:not(:disabled) {
+      background-color: #1565c0;
+    }
 
-/* Анімації */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
+    &:disabled {
+      background-color: #90caf9;
+      cursor: not-allowed;
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  span {
+    font-weight: 600;
+    color: #333;
   }
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* Адаптивність */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .dishCard .dishPhoto {
+    height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }

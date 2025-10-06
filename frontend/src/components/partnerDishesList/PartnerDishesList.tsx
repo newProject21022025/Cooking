@@ -8,10 +8,11 @@ import { RootState, AppDispatch } from "@/redux/store";
 import { fetchPartnerMenu } from "@/redux/slices/partnersSlice";
 import { fetchDishes } from "@/redux/slices/dishesSlice";
 import { addToBasket } from "@/redux/slices/basketSlice";
-import { searchPartnerDishesApi } from "@/api/partnerDishesApi";
+import { searchPartnerDishesApi, fetchPartnerMenuApi } from "@/api/partnerDishesApi";
 import { PartnerDish } from "@/types/partner";
 import styles from "./PartnerDishesList.module.scss";
-// ... імпорти
+
+
 
 interface PartnerDishesListProps {
   partnerId: string;
@@ -46,11 +47,18 @@ export default function PartnerDishesList({
   }, [dispatch]);
 
   useEffect(() => {
-    if (!hasSearched && partnerId) {
-      dispatch(fetchPartnerMenu(partnerId));
+    if (partnerId) {
+      setLoadingSearch(true);
+      fetchPartnerMenuApi(partnerId)
+        .then((data) => {
+          setSearchResults(data); // тут зберігаємо усі страви партнера
+          setHasSearched(true);   // щоб displayedPartnerDishes використовував searchResults
+        })
+        .catch(console.error)
+        .finally(() => setLoadingSearch(false));
     }
-  }, [partnerId, dispatch, hasSearched]);
-
+  }, [partnerId]);
+  
   const handleSearch = async () => {
     setLoadingSearch(true);
     setHasSearched(true);
@@ -85,8 +93,7 @@ export default function PartnerDishesList({
     return <p>Завантаження меню...</p>;
   }
 
-  const displayedPartnerDishes =
-    hasSearched && searchQuery ? searchResults : partnerDishes;
+ const displayedPartnerDishes = searchResults;
     
   // ⚠️ Увага: переконайтеся, що dishes.find - це функція.
   // Завдяки рядку `const dishes = Array.isArray(items) ? items : [];` вище,

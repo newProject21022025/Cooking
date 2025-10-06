@@ -147,4 +147,34 @@ export class DishesService {
     if (error) throw new BadRequestException(error.message);
     return data || [];
   }
+
+  async getAllDishes(
+    searchQuery?: string,
+    category?: string,
+    ingredients?: string[],
+    isSelected?: boolean,
+  ) {
+    let query = this.client.from('dishes').select('*');
+  
+    if (isSelected !== undefined) query = query.eq('is_selected', isSelected);
+    if (category && category !== 'all') query = query.eq('type', category);
+    if (searchQuery) {
+      query = query.or(
+        `name_ua.ilike.%${searchQuery}%,name_en.ilike.%${searchQuery}%`,
+      );
+    }
+  
+    if (ingredients && ingredients.length > 0) {
+      const searchJson = JSON.stringify(ingredients.map(name_ua => ({ name_ua })));
+      query = query.filter('important_ingredients', 'cs', searchJson);
+    }
+  
+    query = query.order('id', { ascending: true });
+  
+    const { data, error } = await query;
+    if (error) throw new BadRequestException(`Помилка Supabase: ${error.message}`);
+  
+    return data || [];
+  }
+  
 }
