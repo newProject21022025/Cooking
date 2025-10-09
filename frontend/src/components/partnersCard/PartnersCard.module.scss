@@ -1,209 +1,187 @@
-// src/components/partnersCard/PartnersCard.module.scss
-
-$primary-green: #2e8b57; // Насичений зелений для кнопки/акценту
-$secondary-green: #388e3c; // Темніший зелений для hover
-$light-green: #e8f5e9; // Дуже світлий зелений для фону
-$text-dark: #333;
-$text-light: #757575;
-$border-color: #ddd;
+/* src/components/partnersCard/PartnersCard.module.scss */
 
 .container {
-  max-width: 1200px;
+  padding: 0 20px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 30px 20px;
 }
 
-.title {
-  text-align: center;
-  color: $text-dark;
-  margin-bottom: 10px;
-  font-size: 2.5rem;
-  font-weight: 700;
-}
-
-.text {
-  text-align: center;
-  color: $text-light;
-  margin-bottom: 40px;
-  font-size: 1.1rem;
-}
-
-.loading, .error {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2rem;
-    color: $text-dark;
-}
-
+// Контейнер, який буде тримати всі картки у вигляді гнучкого списку
 .list {
   display: grid;
-  // Адаптивна сітка: 1 колонка на мобільних, 3-4 на десктопі
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-}
-
-.card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  // Адаптивний Grid: 3 колонки на великих екранах, 1-2 на менших
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 1024px) {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  @media (max-width: 768px) {
+      grid-template-columns: 1fr;
   }
 }
 
-/* --- 1. Секція зображення --- */
-
-.imageWrapper {
-  width: 100%;
-  height: 200px;
+// 1. Стилі для окремої картки
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff; // $color-card-background
+  border-radius: 8px;
+  // Ефект тіні, як на фото
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  position: relative;
-  
-  // Рамка, як на зразку
-  border-bottom: 4px solid $primary-green; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  background-color: #FBF9F7; 
+
+  &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
 }
 
-.partnerImage {
+// 2. Обертка зображення
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  // Співвідношення сторін 16:9
+  padding-top: 56.25%; 
+}
+
+.partnerImage, .placeholderImage {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .placeholderImage {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background-color: $light-green;
-    color: $primary-green;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f7f7; // $color-light-background
+  color: #777; // $color-text-light
+  font-size: 1.2rem;
 }
 
-/* --- 2. Секція вмісту --- */
-
+// 3. Секція вмісту
 .content {
-  padding: 15px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;  
+  padding: 20px; 
+  gap: 15px;
 }
 
+// 4. Заголовок і рейтинг (у верхній частині контенту)
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  position: relative;   
 }
 
 .partnerName {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: $text-dark;
+  font-weight: 600;
+  color: #d87b09;
   margin: 0;
+  line-height: 1.2;
 }
 
 .rating {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 600;
-  color: $text-dark;
+  align-items: center;  
+  gap: 4px; 
 }
 
 .heartIcon {
-  color: #ffc107; /* Жовтий/помаранчевий для акценту на рейтингу */
+  color: #e67e22; // $color-rating (Помаранчевий/Коричневий, як на фото)
+  font-size: 0.9rem;
+  margin-right: 3px;
+  
+  :global(svg) {
+      width: 14px;
+      height: 14px;
+      fill: #e67e22; // $color-rating
+  }
 }
 
 .ratingValue {
-  color: $text-dark;
+  font-weight: 700;
+  color: #333; // $color-text-dark
+  font-size: 0.9rem;
+  margin-right: 5px;
 }
 
 .reviewCount {
-  color: $text-light;
-  font-weight: 400;
-  font-size: 0.9rem;
-}
-
-.description,
-.callToAction {
-  margin: 0;
-  color: $text-light;
-  line-height: 1.4;
-  font-size: 1rem;
+  color: #777; // $color-text-light
+  font-size: 0.8rem;
 }
 
 .description {
-    margin-bottom: 5px;
+  font-size: 0.95rem;
+  color: #333; // $color-text-dark
+  margin: 0.25rem 0 0;
 }
 
 .callToAction {
-    font-style: italic;
-    margin-bottom: 15px;
+  font-size: 0.95rem;
+  color: #333; // $color-text-dark
+  margin: 0.25rem 0 1rem;
 }
 
-/* --- 3. Секція доставки --- */
-
+// 5. Інформація про доставку
 .deliveryInfo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 0;
-    border-top: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
-    margin-bottom: 15px;
-    color: $text-dark;
-    font-size: 0.95rem;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #777; // $color-text-light
+  margin-bottom: 1.5rem; 
 }
 
 .deliveryIcon {
-    font-size: 1.2rem;
-    color: $primary-green;
+  margin-right: 8px;
+  
+  
+  :global(svg) {
+      width: 18px;
+      height: 18px;
+     
+  }
 }
 
-/* --- 4. Кнопка дії --- */
 
+// 6. Кнопка "Замовити страви"
 .orderButton {
+  align-self: flex-end; 
+  margin-top: auto; 
+  
   width: 100%;
-  padding: 12px;
-  background-color: $primary-green;
-  color: white;
+  padding: 16px;
+  background-color: #388e3c; // $color-primary (Темно-зелений)
+  color: #fff; // $color-card-background
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border-radius: 5px; 
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
 
+  // SCSS-функція darken не працює без змінних, використовуємо прямий код або функцію CSS color-mix
   &:hover {
-    background-color: $secondary-green;
+      background-color: #2e7d32; /* Трохи темніший зелений */
   }
 }
 
-/* Адаптивність */
-@media (max-width: 768px) {
-  .list {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  .title {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .list {
-    grid-template-columns: 1fr;
-  }
-  .card {
-    margin: 0 10px;
-  }
+// Стилі для повідомлень
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #333; // $color-text-dark
 }

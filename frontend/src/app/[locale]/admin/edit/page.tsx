@@ -1,9 +1,10 @@
 // src/app/admin/edit/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./page.module.scss";
 import { useLocale } from "next-intl";
+// Припускаємо, що ці імпорти API правильні
 import {
   fetchDishesApi,
   deleteDishApi,
@@ -12,6 +13,9 @@ import {
 } from "@/api/dishesApi";
 import { Dish } from "@/types/dish";
 import Link from "next/link";
+
+// Ключ для localStorage
+const CATEGORY_STORAGE_KEY = "adminDishCategory";
 
 // Категорії страв
 const dishTypes = [
@@ -23,6 +27,7 @@ const dishTypes = [
   { value: "appetizer", label: "🍢 Закуска / Appetizer" },
 ];
 
+// Компонент картки страви
 const DishCard = ({
   dish,
   onDelete,
@@ -81,6 +86,7 @@ const DishCard = ({
   );
 };
 
+// Основний компонент сторінки
 export default function Edit() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -90,32 +96,53 @@ export default function Edit() {
   const [limit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  // Новий стан для категорії
-  const [category, setCategory] = useState<string>("all");
-
-  const loadDishes = async (query = "", pageNumber = 1, categoryValue = "all") => {
-    setLoading(true);
-    try {
-      const response = await fetchDishesApi({
-        query,
-        page: pageNumber,
-        limit,
-        category: categoryValue !== "all" ? categoryValue : undefined,
-      });
-
-      setDishes(response.data);
-      setTotalPages(Math.ceil(response.count / limit));
-      setPage(response.page);
-    } catch (error) {
-      console.error("Помилка при завантаженні страв:", error);
-    } finally {
-      setLoading(false);
+  // Ініціалізація категорії: читання з localStorage або встановлення "all"
+  const [category, setCategory] = useState<string>(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const savedCategory = localStorage.getItem(CATEGORY_STORAGE_KEY);
+      // Перевірка, чи збережене значення є однією з доступних категорій
+      const isCategoryValid = dishTypes.some(type => type.value === savedCategory);
+      return isCategoryValid ? savedCategory! : "all";
     }
-  };
+    return "all";
+  });
 
+  // Функція для завантаження страв (обгорнута в useCallback)
+  const loadDishes = useCallback(
+    async (query = "", pageNumber = 1, categoryValue = "all") => {
+      setLoading(true);
+      try {
+        const response = await fetchDishesApi({
+          query,
+          page: pageNumber,
+          limit,
+          category: categoryValue !== "all" ? categoryValue : undefined,
+        });
+
+        setDishes(response.data);
+        setTotalPages(Math.ceil(response.count / limit));
+        setPage(response.page);
+      } catch (error) {
+        console.error("Помилка при завантаженні страв:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [limit]
+  );
+
+  // useEffect: Завантаження страв при зміні категорії
   useEffect(() => {
-    loadDishes("", 1, category);
-  }, [category]);
+    // При зміні категорії завжди скидаємо на першу сторінку та застосовуємо поточний пошуковий запит
+    loadDishes(searchQuery, 1, category);
+  }, [category, loadDishes, searchQuery]); 
+
+  // useEffect: Збереження категорії в localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      localStorage.setItem(CATEGORY_STORAGE_KEY, category);
+    }
+  }, [category]); 
 
   const handleDelete = async (id: number) => {
     try {
@@ -145,12 +172,20 @@ export default function Edit() {
     }
   };
 
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // Просто оновлюємо стан category. 
+    // loadDishes викличеться в useEffect, скинувши сторінку на 1.
+    setCategory(e.target.value);
+  };
+
   const handleSearch = () => {
-    loadDishes(searchQuery, 1, category);
+    // При пошуку, застосовуємо поточну категорію і починаємо з першої сторінки
+    loadDishes(searchQuery, 1, category); 
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    // При очищенні пошуку, завантажуємо знову з поточною категорією і з першої сторінки
     loadDishes("", 1, category);
   };
 
@@ -169,7 +204,7 @@ export default function Edit() {
         <div className={styles.filterContainer}>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={handleCategoryChange}
             className={styles.categorySelect}
           >
             {dishTypes.map((type) => (

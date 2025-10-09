@@ -1,37 +1,49 @@
 /* src/components/DishCard/DishCard.module.scss */
 
 .dishCardContainer {
+  // 1. КОНТЕЙНЕР: Забезпечує вертикальну структуру та займає всю доступну висоту.
   display: flex;
   flex-direction: column;
+  height: 100%; // ВАЖЛИВО: Займає 100% висоти батьківського .dishItem
+  
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: #FBF9F7;
   transition: box-shadow 0.3s ease;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 }
 
 .dishCard {
+  // 2. БЛОК LINK: Цей блок повинен займати весь вертикальний простір
+  // до кнопки інгредієнтів.
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: 1; /* ДОЗВОЛЯЄ РОЗТЯГУВАТИСЯ */
 }
 
 .dishPhoto {
   width: 100%;
-  height: 200px;
+  height: 200px; /* ФІКСОВАНА ВИСОТА ФОТО */
   object-fit: cover;
 }
 
 .dishInfo {
+  // 3. БЛОК ІНФОРМАЦІЇ: Використовуємо Flexbox для керування вмістом
   padding: 1rem;
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* ДОЗВОЛЯЄ БЛОКУ РОЗТЯГУВАТИСЯ ВЕРТИКАЛЬНО */
+  
+  // ВАЖЛИВО: Встановлюємо мінімальну висоту, щоб забезпечити
+  // достатньо місця для опису, навіть якщо він короткий.
+  min-height: 100px; 
 }
 
 .dishTitle {
@@ -41,13 +53,26 @@
 }
 
 .dishDescription {
+  // 4. ОПИС: Обмежуємо кількість рядків, щоб він не розтягував картку.
   font-size: 0.9rem;
   color: #666;
   margin: 0;
+  line-height: 1.4;
+  
+  // Техніка для обмеження тексту кількома рядками
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Обмежити 3 рядками */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  margin-bottom: 1rem; /* Відступ перед кнопкою */
 }
 
 .ingredientsButton {
-  background-color: #4caf50;
+  // 5. КНОПКА: Притискається до низу завдяки flex-grow: 1 на .dishCard
+  // Встановлюємо border-radius лише тоді, коли інгредієнти приховані.
+  background-color: #056C2A;
   color: white;
   padding: 0.75rem;
   border: none;
@@ -55,31 +80,42 @@
   font-size: 1rem;
   font-weight: 500;
   transition: background-color 0.3s ease;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0; /* Видаляємо, щоб не конфліктувало з ingredientsList */
   
+  // Якщо інгредієнти ПРИХОВАНІ, кнопка є нижнім краєм контейнера.
+  // Якщо ж інгредієнти ПОКАЗАНІ, кнопка знаходиться над ними.
+  
+  .dishCardContainer:not(:has(.ingredientsList)) & {
+      border-radius: 0 0 8px 8px; /* Застосовуємо, якщо ingredientsList відсутній */
+  }
+
   &:hover {
-    background-color: #43a047;
+      background-color: #43a047;
   }
 }
 
 .ingredientsList {
+  // 6. ІНГРЕДІЄНТИ: Додають додаткову висоту, коли видимі.
   padding: 0.5rem 1rem 1rem;
   background-color: #f9f9f9;
   border-top: 1px solid #eee;
+  
+  // Додаємо нижній border-radius, коли видимі
+  border-radius: 0 0 8px 8px; 
 
   h4 {
-    margin: 0 0 0.5rem;
-    color: #555;
+      margin: 0 0 0.5rem;
+      color: #555;
   }
 
   ul {
-    list-style-type: disc;
-    padding-left: 1.25rem;
-    margin: 0;
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin: 0;
   }
 
   li {
-    font-size: 0.9rem;
-    color: #666;
+      font-size: 0.9rem;
+      color: #666;
   }
 }

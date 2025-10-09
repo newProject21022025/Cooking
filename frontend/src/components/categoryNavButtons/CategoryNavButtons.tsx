@@ -2,70 +2,78 @@
 "use client";
 
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation"; 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
-import styles from "./CategoryNavButtons.module.scss"; 
+import styles from "./CategoryNavButtons.module.scss";
 
-const dishTypes = [
-  { value: "all", label: "🍽️ Всі страви / All dishes" },
-  { value: "soup", label: "🍲 Суп / Soup" },
-  { value: "main_course", label: "🥩 Основне блюдо / Main course" },
-  { value: "side_dish", label: "🍚 Гарнір / Side dish" },
-  { value: "salad", label: "🥗 Салат / Salad" },
-  { value: "appetizer", label: "🍢 Закуска / Appetizer" },
+// ✅ Оновлений список усіх 6 категорій з шляхами до зображень
+const dishCategories = [
+  // ПРИМІТКА: Шляхи до зображень припускаються. Виправте їх, якщо вони інші.
+  { value: "all", label_uk: "Всі страви", label_en: "All Dishes", image_url: "/photo/AllDishes.jpg" },
+  { value: "soup", label_uk: "Супи", label_en: "Soups", image_url: "/photo/Soups.jpg" },
+  { value: "main_course", label_uk: "Основні страви", label_en: "Main Courses", image_url: "/photo/MainDishes.jpg" },
+  { value: "side_dish", label_uk: "Гарніри", label_en: "Side Dishes", image_url: "/photo/SideDishes.jpg" },
+  { value: "salad", label_uk: "Салати", label_en: "Salads", image_url: "/photo/Salads.jpg" },
+  { value: "appetizer", label_uk: "Закуски", label_en: "Appetizers", image_url: "/photo/Appetizers.jpg" },
 ];
 
 interface CategoryNavButtonsProps {
-  // Пропс для додаткових стилів
-  className?: string; 
-  // activeCategory видалено, оскільки тепер береться з URL
+  className?: string;
 }
 
-// activeCategory прибрано з деструктуризації пропсів
-export default function CategoryNavButtons({ className = '' }: CategoryNavButtonsProps) { 
+export default function CategoryNavButtons({ className = '' }: CategoryNavButtonsProps) {
   const router = useRouter();
   const locale = useLocale();
-  // ✅ Зчитуємо параметри пошуку
-  const searchParams = useSearchParams(); 
-
-  // Встановлюємо цільовий шлях
-  const menuPagePath = `/${locale}/menu`; 
+  const searchParams = useSearchParams();
   
-  // ✅ Визначаємо активну категорію з URL. Якщо параметра немає, це "all".
+  const menuPagePath = `/${locale}/menu`;
+  // ✅ currentCategory буде використовуватися лише для підсвічування активної картки
   const currentCategory = searchParams.get('category') || 'all'; 
 
   const handleCategoryChange = (categoryValue: string) => {
     let targetUrl;
-    
-    // Формуємо URL: 
+
     if (categoryValue === "all") {
-      // Якщо обрано "Всі страви", переходимо на чистий URL
       targetUrl = menuPagePath;
     } else {
-      // Інакше додаємо параметр пошуку `category`
       targetUrl = `${menuPagePath}?category=${categoryValue}`;
     }
-    
-    // Виконуємо навігацію
+
     router.push(targetUrl);
   };
 
   return (
-    <div className={`${styles.categoryButtonsContainer} ${className}`}>
-      {dishTypes.map((type) => (
-        <button
-          key={type.value}
-          onClick={() => handleCategoryChange(type.value)}
-          className={`${styles.categoryButton} ${
-            // ✅ Підсвічуємо кнопку, якщо вона активна, використовуючи currentCategory
-            currentCategory === type.value ? styles.active : "" 
-          }`}
-        >
-          {locale === "uk"
-            ? type.label.split("/")[0].trim()
-            : type.label.split("/")[1].trim()}
-        </button>
-      ))}
+    // Змінено назву контейнера, якщо плануєте використовувати його для всіх категорій
+    <div className={`${styles.categoryCardsGrid} ${className}`}>
+      {dishCategories.map((type) => {
+        // Визначаємо відображувані тексти
+        const mainLabel = locale === "uk" ? type.label_uk : type.label_en;
+        const subLabel = locale === "uk" ? type.label_en : type.label_uk;
+
+        return (
+          <button
+            key={type.value}
+            onClick={() => handleCategoryChange(type.value)}
+            className={`${styles.categoryCard} ${
+              currentCategory === type.value ? styles.active : ""
+            }`}
+          >
+            {/* Контейнер для зображення */}
+            <div 
+              className={styles.imageContainer}
+              style={{ backgroundImage: `url(${type.image_url})` }}
+            >
+              {/* Оверлей, щоб текст на зображенні був читабельнішим (якщо потрібно) */}
+            </div>
+            
+            {/* Текстовий блок */}
+            <div className={styles.textBlock}>
+              <span className={styles.mainLabel}>{mainLabel}</span>
+              <span className={styles.subLabel}>{subLabel}</span>
+            </div>
+          </button>
+        );
+      })}     
     </div>
   );
 }
