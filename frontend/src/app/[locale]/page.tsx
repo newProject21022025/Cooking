@@ -118,7 +118,7 @@ export default function Home() {
                 <span className={styles.stepNumber}>2</span>
                 <h3 className={styles.stepTitle}>Перегляньте меню</h3>
                 <p className={styles.stepDescription}>
-                  Перейдіть у розділ "Меню" через головне меню сайту або кнопку
+                  Перейдіть у розділ &quot;Меню&quot; через головне меню сайту або кнопку
                   на банері.
                 </p>
               </div>
