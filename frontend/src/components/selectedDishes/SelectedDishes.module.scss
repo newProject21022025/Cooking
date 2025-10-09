@@ -1,29 +1,109 @@
 // src/components/SelectedDishes/SelectedDishes.module.scss
 
-.page {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-  }
+// Контейнер-обгортка для розміщення стрілок поверх списку
+.carouselWrapper {
+  max-width: 1400px;
+  margin: 0 auto 3rem; // Додамо відступ знизу
+  font-family: Arial, sans-serif;
+  padding: 0 1rem; // Забезпечимо невеликий відступ від країв
+}
+
+.pageTitle {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+// Контейнер, який розміщує список і стрілки
+.carouselContainer {
+  position: relative;
+  display: flex;
+  align-items: center; // Центруємо стрілки вертикально
+}
+
+// Список страв, який ми прокручуємо
+.dishList {
+  display: flex;
+  gap: 1.5rem; // Відстань між картками
   
-  .pageTitle {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 2rem;
-    text-align: center;
+  // Властивості для горизонтального скролу:
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  padding: 1rem 0; // Додамо внутрішній відступ, щоб тіні карток були видні
+
+  // Приховати скролбар для Webkit-браузерів (Chrome, Safari)
+  &::-webkit-scrollbar {
+      display: none;
   }
+}
+
+// Кожен елемент списку
+.dishItem {
+  // Встановлюємо фіксовану ширину для каруселі
+  flex: 0 0 280px; 
+  // Це робить картки негнучкими і забезпечує їхнє розміщення в ряд
+}
+
+// Стилі для кнопок прокручування
+.scrollButton {
+  // Стилі для позиціонування залишаємо без змін
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
   
-  .dishList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
+  // Властивості, які створювали круглу кнопку, ВИДАЛЯЄМО АБО ЗМІНЮЄМО:
+  background-color: transparent; /* Робимо фон прозорим */
+  border: none; /* Видаляємо рамку */
+  border-radius: 0; /* Видаляємо заокруглення (хоча й непотрібно при border: none) */
+  box-shadow: none; /* Видаляємо тінь */
   
-  .loadingMessage,
-  .noResults {
-    font-size: 1rem;
-    color: #777;
-    text-align: center;
-    width: 100%;
+  // Залишаємо розмір і властивості курсора
+  width: 40px; 
+  height: 40px;
+  cursor: pointer;
+  
+  // ВАЖЛИВО: Центруємо іконку всередині кнопки
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Залишаємо переходи для плавних ефектів
+  transition: transform 0.2s ease;
+
+  &:hover {
+      /* Прибираємо зміну фону, якщо кнопка має бути прозорою */
   }
+
+  &:active {
+      /* Можна залишити легкий ефект натискання, якщо потрібно */
+      transform: translateY(-50%) scale(0.95);
+  }
+}
+
+.left {
+  left: 0;
+  // Додамо прозорий фон на краях, щоб імітувати "затемнення"
+  // background: linear-gradient(to right, white 50%, rgba(255, 255, 255, 0.8) 100%);
+  // border-right: none;
+}
+
+.right {
+  right: 0;
+  // background: linear-gradient(to left, white 50%, rgba(255, 255, 255, 0.8) 100%);
+  // border-left: none;
+}
+
+// Повідомлення про стан (залишаємо для прикладу)
+.loadingMessage,
+.noResults,
+.errorMessage {
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+  width: 100%;
+  padding: 3rem 0;
+}
