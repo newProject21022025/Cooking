@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import styles from './footer.module.scss'; // Імпорт SCSS модулів
+import styles from './Footer.module.scss'; // Імпорт SCSS модулів
 
 // Припустімо, що ваші SVG-іконки імпортуються як компоненти
 // Налаштуйте ці імпорти відповідно до вашої структури
