@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
                             <MealUpLogo />
                         </div>
                         <p className={styles.slogan}>
-                            Зв'яжіться з нами – <br />
+                            Зв&apos;яжіться з нами – <br />
                             Разом готувати це смачніше!
                         </p>
                         
