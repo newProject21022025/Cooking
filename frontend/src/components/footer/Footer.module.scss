@@ -1,0 +1,238 @@
+/* src/app/components/footer/footer.module.scss */
+
+.footer {
+    background-color: #fff;
+    padding-top: 40px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .mainContent {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 30px;
+    padding-bottom: 40px;
+  }
+  
+  .slogan {
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  
+  /* Іконки та контакти */
+  .icon {
+    width: 18px;
+    height: 18px;
+    fill: #666; /* Колір для іконок контактів */
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .contactItem {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
+  /* Соціальні мережі */
+  .socials {
+    display: flex;
+    gap: 15px;
+    padding-top: 10px;
+  }
+  
+  .socialIcon {
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: #d87b09; /* Колір акценту */
+      transition: opacity 0.3s ease;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  /* Секції посилань та партнерів */
+  .sectionTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .linkList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li {
+      margin-bottom: 8px;
+    }
+  }
+  
+  .link {
+    text-decoration: none;
+    color: #666;
+    transition: color 0.3s ease;
+    &:hover {
+      color: #d87b09; /* Колір акценту */
+    }
+  }
+  
+  .partnerName {
+    font-weight: bold;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+  
+  /* Нижня смуга (Копірайт) */
+  .bottomBar {
+    border-top: 1px solid #e0e0e0;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .legalLinks {
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* Смуга безпеки (найнижча) */
+  .securityBar {
+    background-color: #f8f8f8;
+    border-top: 1px solid #f0f0f0;
+    padding: 10px 0;
+  }
+  
+  .securityContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 12px;
+    color: #999;
+  }
+  
+  .securityItem {
+    display: flex;
+    align-items: center;
+  }
+  
+  .securityIcon {
+    width: 14px;
+    height: 14px;
+    fill: #999;
+    margin-right: 5px;
+  }
+  
+  
+  /* ========================================================================= */
+  /* --- Media Queries (Адаптивність) --- */
+  /* ========================================================================= */
+  
+  /* 1440px */
+  @media (max-width: 1440px) {
+    .container, .securityContainer {
+      max-width: 1100px;
+    }
+  }
+  
+  /* 1024px */
+  @media (max-width: 1024px) {
+    .container {
+      padding: 0 30px;
+    }
+    .mainContent {
+      grid-template-columns: 1.5fr 1fr 1.5fr;
+      gap: 20px;
+      padding-bottom: 30px;
+    }
+    .sectionTitle {
+      margin-bottom: 15px;
+    }
+  }
+  
+  /* 768px (Планшет/Мобільний) */
+  @media (max-width: 768px) {
+    .footer {
+      padding-top: 30px;
+    }
+    .mainContent {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      padding-bottom: 20px;
+      text-align: center;
+    }
+  
+    .companyInfo {
+      .slogan {
+        text-align: center;
+      }
+      .contactInfo {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        
+        .contactItem {
+          justify-content: center;
+          margin-bottom: 5px;
+        }
+      }
+      .socials {
+        justify-content: center;
+      }
+    }
+  
+    .quickLinks, .partnersSection {
+      padding-top: 20px;
+      border-top: 1px dashed #f0f0f0;
+      
+      .sectionTitle {
+        text-align: center;
+      }
+      .linkList {
+        text-align: center;
+      }
+    }
+  
+    .partnerInfo {
+      text-align: center;
+      .contactItem {
+        justify-content: center;
+      }
+    }
+  
+    .bottomBar {
+      flex-direction: column;
+      text-align: center;
+      .copyright {
+        margin-bottom: 10px;
+      }
+      .legalLinks {
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+    }
+  
+    .securityContainer {
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
