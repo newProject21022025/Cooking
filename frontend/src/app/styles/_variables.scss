@@ -1,0 +1,19 @@
+/* Визначення глобальних CSS-змінних */
+:root { 
+     --background: #ffffff;  
+     --beige-background: #FBF9F7; 
+    // ---------------------------------------------------------------------
+     --dark-color: #151515; 
+     --white-color: #FFFFFF; 
+     --orange-color: #D87B09;
+     --green-color: #056C2A;
+     --gray-color:#757575;
+    // ---------------------------------------------------------------------
+     --btn-color-green: #056C2A;
+     --btn-color-orange: #D87B09;
+    // ---------------------------------------------------------------------
+     // Використовуйте 'лапки' для назв шрифтів, що складаються з кількох слів
+     --primary-font-family: 'Poppins', sans-serif;
+     --btn-font-family: 'Nunito', sans-serif;
+     --font-green: 'Indie Flower', cursive;
+    }

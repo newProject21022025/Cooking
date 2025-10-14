@@ -1,4 +1,5 @@
 /* src/app/page.module.scss */
+
 .page {
   min-height: 100vh;
 }
@@ -12,7 +13,7 @@
   padding: 80px 0 40px;
   display: flex;
   flex-direction: column;
-  align-items: center;  
+  align-items: center;
 }
 
 .general::before {
@@ -29,7 +30,7 @@
 .generalInfo {
   z-index: 2;
   width: 100%;
-  max-width: 1200px; /* Обмеження ширини контенту */
+  max-width: 1200px;
   padding: 0 20px;
   align-self: flex-start;
   margin-top: 70px;
@@ -38,7 +39,7 @@
 }
 
 .title {
-  color: #333;
+  // color: #333;
   font-size: 56px;
   font-weight: bold;
   max-width: 800px;
@@ -46,7 +47,7 @@
 }
 
 .generalText {
-  color: #555;
+  // color: #555;
   font-size: 20px;
   max-width: 600px;
   margin-bottom: 35px;
@@ -55,8 +56,8 @@
 .generalMenu {
   display: inline-block;
   text-decoration: none;
-  color: #fff;
-  background-color: #387040; /* Темно-зелений */
+  color:var(--white-color);
+  background-color: var(--green-color);
   padding: 12px 80px;
   border-radius: 4px;
   font-weight: 400;
@@ -64,28 +65,24 @@
 }
 
 .generalMenu:hover {
-  background-color: #4c8a54;
+  background-color: #01AA3F;
 }
 .generalStats {
   z-index: 2;
   width: 100%;
-  // max-width: 1000px; /* Обмеження ширини контейнера статистики */
   display: flex;
   justify-content: center;
   gap: 30px;
   padding: 0 20px;
-  margin: auto auto 25px auto; /* Центруємо горизонтально і фіксуємо знизу */
+  margin: auto auto 25px auto;
 }
 
 .statBox {
-  // flex-grow: 1;
-  // flex-basis: 0; /* Рівномірний розподіл ширини */
-  min-width: 370px; /* Мінімальна ширина картки */
+  min-width: 370px;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.7); /* Напівпрозорий білий */
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 8px;
   text-align: center;
-  /* Ефект блюру, щоб проступав фон */
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-top: 3px solid #d87b09;
@@ -95,81 +92,250 @@
   position: relative;
   font-size: 2rem;
   font-weight: 700;
-  color: #333;
+  // color: #333;
   margin: 0 0 5px 0;
   display: flex;
-  align-items: center; /* Вирівнює іконку та число по центру вертикалі */
-  justify-content: center; /* Центрує їх по горизонталі */
-  gap: 8px; /* Відстань між іконкою та числом */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 .iconCup {
   position: absolute;
   top: -10px;
   left: 70px;
-  // transform: translateY(-5px); 
 }
 .statLabel {
   font-size: 1rem;
-  color: #666;
+  color: var(--gray-color);
   margin: 0;
 }
 
 /* ========================================================================= */
 /* --- Media Queries (Адаптивність) --- */
 /* ========================================================================= */
-@media (max-width: 768px) {
+
+/* Стилі для екранів 1440px і менше (але більше 1024px) - тут використовуємо основні стилі */
+@media (max-width: 1440px) {
+  .generalInfo {
+    max-width: 1100px;
+  }
+}
+
+/* Стилі для екранів 1024px і менше */
+@media (max-width: 1024px) {
+  .general {
+    padding: 60px 0 30px;
+  }
+
+  .generalInfo {
+    max-width: 960px;
+    margin-top: 50px;
+    padding: 0 30px;
+  }
+
   .title {
-    font-size: 2.5rem;
+    font-size: 48px;
+    max-width: 600px;
   }
+
   .generalText {
-    font-size: 1rem;
+    font-size: 18px;
+    max-width: 500px;
   }
+
+  .generalMenu {
+    padding: 10px 60px;
+  }
+
   .generalStats {
-    flex-direction: column; /* Картки в стовпчик на малих екранах */
-    align-items: center;
+    gap: 20px;
   }
+
   .statBox {
-    width: 80%;
+    min-width: 280px;
+    padding: 15px;
+  }
+  
+  .iconCup {
+    left: 40px;
+  }
+  
+  /* ====================== steps section ====================== */
+  .stepsGrid {
+    gap: 40px;
+    max-width: 1000px;
+  }
+  
+  .step {
+    gap: 40px;
+  }
+  
+  .header {
+    margin: 0 auto 24px 30px;
+    padding: 15px;
+    max-width: 960px;
+  }
+  
+  .title {
+    font-size: 28px;
+  }
+  
+  .subtitle {
+    font-size: 15px;
+  }
+  
+  .iconContainer {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .stepTitle {
+    font-size: 18px;
+  }
+  
+  .stepDescription {
+    font-size: 13px;
+  }
+}
+
+/* Стилі для екранів 768px і менше */
+@media (max-width: 768px) {
+  .general {
+    padding: 40px 0 20px;
+  }
+
+  .generalInfo {
+    margin-top: 30px;
+    padding: 0 20px;
+  }
+
+  .title {
+    font-size: 36px;
+    max-width: 100%;
     margin-bottom: 15px;
+  }
+
+  .generalText {
+    font-size: 16px;
+    max-width: 100%;
+    margin-bottom: 25px;
+  }
+
+  .generalMenu {
+    padding: 10px 40px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .generalStats {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: auto auto 15px auto;
+  }
+
+  .statBox {
+    min-width: unset;
+    width: 90%;
+    max-width: 400px;
+    margin-bottom: 0;
+  }
+  
+  .statNumber {
+    font-size: 1.8rem;
+  }
+  
+  .iconCup {
+    left: 20px;
+    top: -5px;
+  }
+  
+  .statLabel {
+    font-size: 0.9rem;
+  }
+
+  /* ====================== steps section ====================== */
+  .steps {
+    padding: 40px 20px;
+  }
+  
+  .stepsGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .header {
+    text-align: center;
+    margin: 0 auto 30px auto;
+    padding: 0;
+  }
+  
+  .step {
+    padding: 20px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .step:last-child {
+    border-bottom: none;
+  }
+  
+  .iconContainer {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .textContainer {
+    padding-top: 0;
+  }
+  
+  .stepTitle {
+    font-size: 18px;
+  }
+  
+  .stepDescription {
+    font-size: 14px;
   }
 }
 
 
 /* ------------------------------------------------------------------------------ */
 .steps {
-  padding: 60px 20px; /* Приклад відступів, скоригуйте за потребою */
-  background-color: #FBF9F7; /* Приклад: білий фон секції */  
+  padding: 60px 20px;
+  background-color: var(--beige-background);
 }
 
 /* Заголовок секції */
-.header { 
-  margin: 0 auto 24px 70px; /* Центрування заголовка */
+.header {
+  margin: 0 auto 24px 70px;
   text-align: left;
   padding: 22px;
-  max-width: 1000px; 
+  max-width: 1000px;
 }
 
 .title {
-  font-size: 32px; /* Приклад розміру */
-  color: #333333; /* Приклад кольору */
+  font-size: 32px;
+  // color: #333333;
   margin-bottom: 16px;
   font-weight: bold;
   text-align: left;
 }
 
 .subtitle {
-  font-size: 16px; /* Приклад розміру */
-  color: #666666; /* Приклад кольору */
-  line-height: 145%;  
+  font-size: 16px;
+  // color: var(--gray-color);
+  line-height: 145%;
 }
 
 /* Сітка для розташування кроків */
 .stepsGrid {
   display: grid;
-  /* Для десктопа: 2 колонки по 2 кроки */
-  grid-template-columns: repeat(2, 1fr); 
-  gap: 60px; /* Відстань між кроками */
-  max-width: 1470px; /* Обмеження ширини сітки */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 60px;
+  max-width: 1470px;
   margin: 0 auto;
 }
 
@@ -178,21 +344,15 @@
   display: flex;
   align-items: center;
   gap: 85px;
-  padding-bottom: 20px; /* Забезпечення відступу знизу */
+  padding-bottom: 20px;
   position: relative;
 }
 
 /* Контейнер для SVG іконки */
 .iconContainer {
-  /* Ваш SVG компонент має забезпечити коло з обведенням */
-  /* Якщо SVG не вставляється в <div>, цей стиль може бути не потрібен */
-  flex-shrink: 0; /* Запобігає стисненню іконки */
-  width: 100px; /* Приклад розміру SVG */
+  flex-shrink: 0;
+  width: 100px;
   height: 100px;
-  /* Стилі для обведення та фону SVG */
-  /* background-color: #f7f7f7; */
-  /* border: 2px solid #e0e0e0; */
-  /* border-radius: 50%; */
 }
 
 .textContainer {
@@ -201,58 +361,37 @@
 
 /* Номер кроку (на картинці він інтегрований у SVG, але тут для структури) */
 .stepNumber {
-  display: none; /* Приховано, якщо номер є частиною SVG */
+  display: none;
 }
 
 .stepTitle {
-  font-size: 20px; /* Приклад розміру */
-  color: #333333;
+  font-size: 20px;
+  // color: #333333;
   font-weight: bold;
   margin-top: 0;
   margin-bottom: 8px;
 }
 
 .stepDescription {
-  font-size: 14px; /* Приклад розміру */
-  color: #666666;
+  font-size: 14px;
+  // color: var(--gray-color);
   line-height: 1.5;
 }
 
 .numberColor{
-  color: #d87b09; /* Колір номеру кроку */
+  color: var(--orange-color);
   padding: 0 5px;
 }
 
 
-/* Медіа-запити для адаптивності на мобільних пристроях */
-@media (max-width: 768px) {
-  .stepsGrid {
-    /* На мобільних: 1 колонка */
-    grid-template-columns: 1fr; 
-    gap: 0;
-  }
-  
-  .header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .step {
-    padding: 20px 0;
-    /* Візуальне розділення кроків на мобільному */
-    border-bottom: 1px dashed #e0e0e0; 
-  }   
-}
 /* ------------------------------------------------------------------------------ */
 
 .menu{
-  // background-color: #FBF9F7;
   padding: 60px 20px;
 }
 
 /* ------------------------------------------------------------------------------ */
 
-.selectedDishes, .partners {  
+.selectedDishes, .partners {
   padding: 0 20px;
 }
-

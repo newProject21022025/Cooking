@@ -7,6 +7,27 @@ import { ReactNode } from "react";
 import Header from "@/components/header/Header";
 import "../styles/globals.scss"; // Your global styles file (ensure the path is correct)
 import { ReduxProvider } from "@/providers/ReduxProvider"; // Import the new ReduxProvider wrapper
+import Footer from "@/components/footer/Footer";
+import { Poppins, Nunito, Indie_Flower } from 'next/font/google';
+
+
+const poppins = Poppins({ 
+  subsets: ['latin'], 
+  weight: ['400', '500','600', '700', '800'], // Приклад ваг
+  variable: '--primary-font-family', // Встановлюємо CSS-змінну
+});
+
+const nunito = Nunito({ 
+  subsets: ['latin'], 
+  weight: ['400', '500','600', '700', '800'], 
+  variable: '--btn-font-family', 
+});
+
+const indieFlower = Indie_Flower({ 
+  subsets: ['latin'], 
+  weight: ['400'], 
+  variable: '--font-green', 
+});
 
 type Props = {
   children: ReactNode;
@@ -39,6 +60,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Header locale={locale} />
             {children}
+             <Footer /> 
           </NextIntlClientProvider>
         </ReduxProvider>
       </body>
