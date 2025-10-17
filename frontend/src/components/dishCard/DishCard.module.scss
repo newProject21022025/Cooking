@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   height: 100%; // ВАЖЛИВО: Займає 100% висоти батьківського .dishItem
-  
+  position: relative;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -28,21 +28,28 @@
   flex-grow: 1; /* ДОЗВОЛЯЄ РОЗТЯГУВАТИСЯ */
 }
 
+// ✅ НОВИЙ СТИЛЬ: Обгортка для фото, щоб вона була клікабельною
+.dishPhotoLink {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  // ✅ Знімаємо flex-grow, оскільки .dishInfo тепер має його
+  // flex-grow: 1; 
+}
+
 .dishPhoto {
   width: 100%;
-  height: 200px; /* ФІКСОВАНА ВИСОТА ФОТО */
+  height: 200px;
   object-fit: cover;
+  cursor: pointer; /* ✅ Додаємо курсор, щоб показати, що фото клікабельне */
 }
 
 .dishInfo {
-  // 3. БЛОК ІНФОРМАЦІЇ: Використовуємо Flexbox для керування вмістом
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* ДОЗВОЛЯЄ БЛОКУ РОЗТЯГУВАТИСЯ ВЕРТИКАЛЬНО */
-  
-  // ВАЖЛИВО: Встановлюємо мінімальну висоту, щоб забезпечити
-  // достатньо місця для опису, навіть якщо він короткий.
+  flex-grow: 1; /* ✅ ВАЖЛИВО: дозволяє блоку з текстом розтягуватися */
   min-height: 100px; 
 }
 
@@ -69,33 +76,68 @@
   margin-bottom: 1rem; /* Відступ перед кнопкою */
 }
 
-.ingredientsButton {
-  // 5. КНОПКА: Притискається до низу завдяки flex-grow: 1 на .dishCard
-  // Встановлюємо border-radius лише тоді, коли інгредієнти приховані.
-  background-color: #056C2A;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  border-radius: 0; /* Видаляємо, щоб не конфліктувало з ingredientsList */
+// ✅ НОВИЙ СТИЛЬ: Контейнер для кнопок, щоб розмістити їх в один ряд
+.buttonsContainer {
+  position: relative; /* Для роботи z-index */
+    z-index: 20; /* Вище, ніж z-index: 10 у .ingredientsList */
+    display: flex;   
+    gap: 5px;
+    width: 100%;
+    padding: 5px;
+    
   
-  // Якщо інгредієнти ПРИХОВАНІ, кнопка є нижнім краєм контейнера.
-  // Якщо ж інгредієнти ПОКАЗАНІ, кнопка знаходиться над ними.
-  
+  // Якщо інгредієнти приховані, застосувати border-radius до контейнера кнопок
   .dishCardContainer:not(:has(.ingredientsList)) & {
-      border-radius: 0 0 8px 8px; /* Застосовуємо, якщо ingredientsList відсутній */
+      .ingredientsButton:first-child { // Ліва кнопка
+          border-bottom-left-radius: 8px;
+      }
+      .ingredientsButton:last-child { // Права кнопка
+          border-bottom-right-radius: 8px;
+      }
   }
+}
 
+.ingredientsButton {
+flex: 1; /* ✅ ВАЖЛИВО: Забезпечує однакову ширину для обох кнопок */
+background-color: var(--btn-color-green);
+padding: 0.75rem;
+border: none;
+cursor: pointer;
+font-size: 1rem;
+font-weight: 500;
+transition: background-color 0.3s ease;
+border-radius: 5px; /* Прибираємо радіус з самої кнопки */
+
+&:hover {
+  background-color: var(--btn-color-green-hover);
+}
+}
+
+.cookButton {
+  background-color: var(--btn-color-orange); 
+  
   &:hover {
-      background-color: #43a047;
+      background-color: #ffb74d;
   }
 }
 
 .ingredientsList {
-  // 6. ІНГРЕДІЄНТИ: Додають додаткову висоту, коли видимі.
+  // ✅ ЗМІНИ ДЛЯ ПОЗИЦІОНУВАННЯ ПОВЕРХ КОНТЕНТУ
+  position: absolute; 
+  bottom: 10px; // Розміщуємо його на нижньому краю картки
+  left: 0;
+  width: 100%; // Займає всю ширину картки
+  height: 245px;
+  z-index: 10; // Гарантуємо, що він буде вище за інший контент
+  
+  // ✅ Стилі для зовнішнього вигляду
+  padding: 0.5rem 1rem 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+  
+  // Додаємо нижній border-radius
+  border-radius: 0 0 8px 8px;
+  
   padding: 0.5rem 1rem 1rem;
   background-color: #f9f9f9;
   border-top: 1px solid #eee;

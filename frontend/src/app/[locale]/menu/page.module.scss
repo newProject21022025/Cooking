@@ -1,128 +1,127 @@
-/* src/app/page.module.scss */
+// /* src/app/page.module.scss */
 
-.page { 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  padding: 2rem;
-  box-sizing: border-box; 
-  background-color: transparent; 
-}
+// .page { 
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   min-height: 100vh;
+//   width: 100%; 
+//   box-sizing: border-box; 
+//   background-color: transparent; 
+// }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 1200px; 
-  padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px; 
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
-  backdrop-filter: blur(4px); 
-  -webkit-backdrop-filter: blur(4px); 
-  border: 1px solid rgba(255, 255, 255, 0.18); 
-  margin-top: 100px;
-}
+// .main {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   text-align: center;
+//   max-width: 1200px; 
+//   padding: 3rem 2rem;
+//   background: rgba(255, 255, 255, 0.05);
+//   border-radius: 15px; 
+//   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+//   backdrop-filter: blur(4px); 
+//   -webkit-backdrop-filter: blur(4px); 
+//   border: 1px solid rgba(255, 255, 255, 0.18); 
+//   margin-top: 100px;
+// }
 
-.title {
-  font-size: 3.5rem; 
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: black; 
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
-  animation: fadeIn 1s ease-out forwards;
-}
+// .title {
+//   font-size: 3.5rem; 
+//   font-weight: 700;
+//   margin-bottom: 1.5rem;
+//   color: black; 
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+//   animation: fadeIn 1s ease-out forwards;
+// }
 
-.description {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  color: black; 
-  max-width: 600px;
-  animation: slideInUp 1s ease-out forwards; 
-  animation-delay: 0.3s; 
-  opacity: 0; 
-}
+// .description {
+//   font-size: 1.2rem;
+//   line-height: 1.6;
+//   color: black; 
+//   max-width: 600px;
+//   animation: slideInUp 1s ease-out forwards; 
+//   animation-delay: 0.3s; 
+//   opacity: 0; 
+// }
 
-/* 🆕 Стилі для відображення страв */
+// /* 🆕 Стилі для відображення страв */
 
-.dishList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-  width: 100%;
-}
+// .dishList {
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+//   gap: 2rem;
+//   margin-top: 3rem;
+//   width: 100%;
+// }
 
-.dishCard {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
+// .dishCard {
+//   background: rgba(255, 255, 255, 0.08);
+//   border-radius: 12px;
+//   overflow: hidden;
+//   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+//   backdrop-filter: blur(5px);
+//   -webkit-backdrop-filter: blur(5px);
+//   border: 1px solid rgba(255, 255, 255, 0.1);
+//   transition: transform 0.3s ease, box-shadow 0.3s ease;
+//   display: flex;
+//   flex-direction: column;
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-  }
-}
+//   &:hover {
+//     transform: translateY(-5px);
+//     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+//   }
+// }
 
-.dishPhoto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
+// .dishPhoto {
+//   width: 100%;
+//   height: 200px;
+//   object-fit: cover;
+// }
 
-.dishInfo {
-  padding: 1.5rem;
-  text-align: left;
-}
+// .dishInfo {
+//   padding: 1.5rem;
+//   text-align: left;
+// }
 
-.dishTitle {
-  font-size: 1.5rem;
-  color: black;
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
+// .dishTitle {
+//   font-size: 1.5rem;
+//   color: black;
+//   margin-top: 0;
+//   margin-bottom: 0.75rem;
+// }
 
-.dishDescription {
-  font-size: 1rem;
-  color:black;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
+// .dishDescription {
+//   font-size: 1rem;
+//   color:black;
+//   line-height: 1.5;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   display: -webkit-box;
+//   -webkit-line-clamp: 3;
+//   -webkit-box-orient: vertical;
+// }
 
-/* Анімації */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// /* Анімації */
+// @keyframes fadeIn {
+//   from {
+//     opacity: 0;
+//     transform: translateY(-20px);
+//   }
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
+// }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// @keyframes slideInUp {
+//   from {
+//     opacity: 0;
+//     transform: translateY(20px);
+//   }
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
+// }

@@ -30,11 +30,11 @@
 .generalInfo {
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  // max-width: 1500px;
   padding: 0 20px;
   align-self: flex-start;
-  margin-top: 70px;
-  margin-left: auto;
+  margin-top: 150px;
+  margin-left: 70px;
   margin-right: auto;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .statBox {
-  min-width: 370px;
+  min-width: 300px; /* Базове значення для великих екранів */
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 8px;
@@ -86,10 +86,13 @@
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-top: 3px solid #d87b09;
+  /* Додамо гнучкість, щоб дозволити стиснення до меншої ширини */
+  flex-basis: 30%; /* Приблизно 1/3 ширини, щоб краще працювати з flex */
+  flex-shrink: 1; 
 }
 
 .statNumber {
-  position: relative;
+  // position: relative;
   font-size: 2rem;
   font-weight: 700;
   // color: #333;
@@ -99,11 +102,11 @@
   justify-content: center;
   gap: 8px;
 }
-.iconCup {
-  position: absolute;
-  top: -10px;
-  left: 70px;
-}
+// .iconCup {
+//   // position: absolute;
+//   top: -5px;
+//   left: 140px;
+// }
 .statLabel {
   font-size: 1rem;
   color: var(--gray-color);
@@ -129,7 +132,7 @@
 
   .generalInfo {
     max-width: 960px;
-    margin-top: 50px;
+    margin-top: 100px;
     padding: 0 30px;
   }
 
@@ -152,12 +155,15 @@
   }
 
   .statBox {
-    min-width: 280px;
+    /* Зменшуємо мінімальну ширину, щоб три картки помістилися */
+    min-width: 250px; 
     padding: 15px;
+    flex-basis: auto;
   }
   
   .iconCup {
-    left: 40px;
+    left: 20px;
+    top: -5px;
   }
   
   /* ====================== steps section ====================== */
@@ -205,7 +211,8 @@
   }
 
   .generalInfo {
-    margin-top: 30px;
+    margin-top: 70px;
+    margin-left: 0;
     padding: 0 20px;
   }
 
@@ -228,25 +235,29 @@
   }
 
   .generalStats {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin: auto auto 15px auto;
+    /* Перетворюємо на стовпець */
+    flex-direction: column; 
+    align-items: center; /* Центруємо картки по горизонталі */
+    gap: 15px; /* Зменшуємо вертикальний відступ */
+    padding: 0 15px; /* Зменшуємо горизонтальний відступ */
+    margin-bottom: 15px; /* Зменшуємо нижній відступ */
   }
 
   .statBox {
-    min-width: unset;
-    width: 90%;
+    /* Дозволяємо картці зайняти майже всю доступну ширину, 
+       але обмежуємо її, щоб вона не була занадто широкою на великих планшетах у стовпці */
+    min-width: 90%; 
     max-width: 400px;
-    margin-bottom: 0;
+    padding: 20px;
   }
+  
   
   .statNumber {
     font-size: 1.8rem;
   }
   
   .iconCup {
-    left: 20px;
+    left: 33%;
     top: -5px;
   }
   

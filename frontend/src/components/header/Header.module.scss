@@ -6,37 +6,31 @@
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(141, 100, 100, 0.9);
+  background: var(--background);
+  opacity: 0.75;
   backdrop-filter: blur(8px);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
-  box-shadow: none;  
+  padding: 24px;
+  box-shadow: none;
 
   &.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding: 8px 24px;
+    // background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);   
   }
 }
 
 .logo {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: #222;
-  a {
-    text-decoration: none;
-    // color: inherit;
-  }
+  position: absolute;
+  top: 5px;
+  left: 45%;
 }
 
-.menu{
-color: rgb(87, 154, 154);
+.menu {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .navigation {
@@ -46,17 +40,15 @@ color: rgb(87, 154, 154);
 }
 
 .navLink {
-  font-size: 16px;
-  color: #333;
   text-decoration: none;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: bold;
   padding: 6px 10px;
   border-radius: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    background: #f2f2f2;
-    color: #000;
+    font-size: 20px;   
   }
 
   button & {
@@ -74,25 +66,25 @@ color: rgb(87, 154, 154);
 }
 
 .languageButton {
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--gray-color);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 
   &.active {
-    color: #000;
+    color: var(--dark-color);
     text-decoration: underline;
   }
 
-  &:hover {
-    color: #000;
-  }
+  // &:hover {
+  //   font-size: 20px;  
+  // }
 }
 
 .languageSeparator {
-  font-size: 14px;
-  color: #aaa;
+  font-size: 16px;
+  color: var(--gray-color);
 }

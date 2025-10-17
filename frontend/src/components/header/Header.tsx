@@ -1,6 +1,5 @@
 // src/components/header/Header.tsx
 
-
 "use client";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +10,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { logout } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";
 import styles from "./Header.module.scss";
+import Logo from "@/svg/Logo/Logo";
 
 type HeaderProps = { locale: "uk" | "en" };
 
@@ -22,7 +22,9 @@ export default function Header({ locale }: HeaderProps) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { token, user: authUser } = useSelector((state: RootState) => state.auth);
+  const { token, user: authUser } = useSelector(
+    (state: RootState) => state.auth
+  );
   const isAuthenticated = !!token;
   const role = authUser?.role?.toLowerCase();
 
@@ -48,11 +50,14 @@ export default function Header({ locale }: HeaderProps) {
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+      <Link className={styles.menu} href="/menu">
+        Меню
+      </Link>
       <div className={styles.logo}>
-        <Link href="/">Ваш Логотип</Link>
-        <Link className={styles.menu} href="/menu">Меню</Link>
+        <Link href="/">
+          <Logo />
+        </Link>
       </div>
-
       <nav className={styles.navigation}>
         {!isAuthenticated ? (
           <Link href="/login" className={styles.navLink}>
@@ -62,17 +67,25 @@ export default function Header({ locale }: HeaderProps) {
           <>
             {role === "admin" && (
               <>
-                <Link href="/profile" className={styles.navLink}>Профіль</Link>
-                <Link href="/admin" className={styles.navLink}>Адмін</Link>
+                <Link href="/profile" className={styles.navLink}>
+                  Профіль
+                </Link>
+                <Link href="/admin" className={styles.navLink}>
+                  Адмін
+                </Link>
               </>
             )}
 
             {role === "user" && (
-              <Link href="/profile" className={styles.navLink}>Профіль</Link>
+              <Link href="/profile" className={styles.navLink}>
+                Профіль
+              </Link>
             )}
 
             {role === "partner" && (
-              <Link href="/partners" className={styles.navLink}>Партнери</Link>
+              <Link href="/partners" className={styles.navLink}>
+                Партнери
+              </Link>
             )}
 
             <button onClick={handleLogout} className={styles.navLink}>
@@ -80,30 +93,29 @@ export default function Header({ locale }: HeaderProps) {
             </button>
           </>
         )}
+        <div className={styles.languageSwitcher}>
+          <button
+            onClick={() => changeLanguage("en")}
+            className={`${styles.languageButton} ${
+              locale === "en" ? styles.active : ""
+            }`}
+          >
+            EN
+          </button>
+          <span className={styles.languageSeparator}>|</span>
+          <button
+            onClick={() => changeLanguage("uk")}
+            className={`${styles.languageButton} ${
+              locale === "uk" ? styles.active : ""
+            }`}
+          >
+            UK
+          </button>
+        </div>
       </nav>
-
-      <div className={styles.languageSwitcher}>
-        <button
-          onClick={() => changeLanguage("en")}
-          className={`${styles.languageButton} ${locale === "en" ? styles.active : ""}`}
-        >
-          EN
-        </button>
-        <span className={styles.languageSeparator}>|</span>
-        <button
-          onClick={() => changeLanguage("uk")}
-          className={`${styles.languageButton} ${locale === "uk" ? styles.active : ""}`}
-        >
-          UK
-        </button>
-      </div>
     </header>
   );
 }
-
-
-
-
 
 // "use client";
 
@@ -116,7 +128,6 @@ export default function Header({ locale }: HeaderProps) {
 // import { logout } from "@/redux/slices/authSlice";
 // import type { AppDispatch } from "@/redux/store";
 
-
 // type HeaderProps = {
 //   locale: "en" | "uk";
 // };
@@ -125,7 +136,7 @@ export default function Header({ locale }: HeaderProps) {
 //   const pathname = usePathname();
 //   const router = useRouter();
 //   // const dispatch = useDispatch();
-  
+
 // const dispatch = useDispatch<AppDispatch>()
 
 //   const [scrolled, setScrolled] = useState(false);
@@ -203,5 +214,3 @@ export default function Header({ locale }: HeaderProps) {
 //     </header>
 //   );
 // }
-
-
