@@ -37,13 +37,12 @@ export default function Menu() {
       <PartnersList />
       <main className={styles.main}>
         {" "}
-               <h1 className={styles.title}>{t("title")}</h1>
+        {/* <h1 className={styles.title}>{t("title")}</h1> */}
         {/* <p className={styles.description}>
           {t("text")}
         </p> */}
         <IngredientFilter />
       </main>{" "}
-           
     </div>
   );
 }

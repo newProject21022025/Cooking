@@ -35,7 +35,7 @@ const PartnersList = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.tittle}>Наші партнери</h2>
+      <h2 className={styles.tittle}>Наші друзі та однодумці</h2>
       <p className={styles.text}>
         Смачно та швидко! Замовляйте у наших перевірених партнерів вже сьогодні!
       </p>
