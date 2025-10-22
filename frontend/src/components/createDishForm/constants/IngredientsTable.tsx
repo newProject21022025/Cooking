@@ -99,6 +99,7 @@ export default function IngredientsTable({ name, label, type }: Props) {
             </table>
 
             <button
+            className={styles.addIngredient}
               type="button"
               onClick={() =>
                 push({

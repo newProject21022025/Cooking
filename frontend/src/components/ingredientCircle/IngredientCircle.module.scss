@@ -1,8 +1,8 @@
 /* src/components/IngredientCircle.module.scss */
 .circleCard {
     position: relative;
-    width: 500px;
-    height: 500px;
+    width: 550px;
+    height: 550px;
     margin: auto;
     text-align: center;
   }
@@ -19,9 +19,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     img {
-      width: 200px;
+      // width: 200px;
+      width: 100%;
       height: auto;
-      border-radius: 50%;
+      // border-radius: 50%;
     }    
   }
   

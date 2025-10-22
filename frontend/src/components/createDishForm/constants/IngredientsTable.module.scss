@@ -63,7 +63,7 @@
     padding: 4px 8px;
     border: none;
     background-color: #ff6b6b;
-    color: white;
+    color: black;
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s;
@@ -72,6 +72,12 @@
       background-color: #ff3b3b;
     }
   }
+}
+
+.addIngredient{
+  color: black;
+  font-weight: 700;
+  background-color: #c5bfbf;
 }
 
 /* Мобильная адаптация */

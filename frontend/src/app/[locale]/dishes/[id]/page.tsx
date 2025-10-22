@@ -232,13 +232,10 @@ export default function DishDetailPage() {
             selectedIngredient ? styles.hiddenSection : styles.modalSection
           }
         >
-          <Link href="/" className={styles.backButton}>
+          {/* <Link href="/" className={styles.backButton}>
             ← Назад до списку страв
-          </Link>
+          </Link> */}
 
-          <h1 className={styles.title}>
-            {locale === "uk" ? dish.name_ua : dish.name_en}
-          </h1>
           <div className={styles.blockImage}>
             <img
               src={dish.photo}
@@ -246,16 +243,25 @@ export default function DishDetailPage() {
               className={styles.dishImage}
             />
           </div>
-          <div className={styles.section}>
-            <h3>{locale === "uk" ? "Опис" : "Description"}</h3>
-            <p className={styles.description}>
-              {locale === "uk" ? dish.description_ua : dish.description_en}
-            </p>
-          </div>
+          <section className={styles.infoSection}>
+            <div className={styles.svgTitle}>svg</div>
+            <div className={styles.description}>
+              <h1 className={styles.descriptionTitle}>
+                {locale === "uk" ? dish.name_ua : dish.name_en}
+              </h1>
+              <h3 className={styles.descriptionSubTitle}>
+                {locale === "uk" ? "Опис" : "Description"}
+              </h3>
+              <p className={styles.descriptionText}>
+                {locale === "uk" ? dish.description_ua : dish.description_en}
+              </p>
+            </div>
+            <div className={styles.descriptionIcon}>icon, icon</div>
+          </section>
 
           {/* Калькулятор порцій */}
           <div className={styles.portionCalculator}>
-            <h3>
+            <h3 className={styles.portionTitle}>
               {locale === "uk" ? "Кількість порцій" : "Number of Servings"}
             </h3>
             <div className={styles.portionInputGroup}>
@@ -268,7 +274,7 @@ export default function DishDetailPage() {
                 −
               </button>
               <input
-                type="number"
+                type="text"
                 min="1"
                 value={calculatedServings}
                 onChange={(e) => setCalculatedServings(Number(e.target.value))}
@@ -277,7 +283,7 @@ export default function DishDetailPage() {
               <button
                 type="button"
                 onClick={handleIncrement}
-                className={styles.portionButton}
+                className={styles.portionButtonPlus}
               >
                 +
               </button>
@@ -286,84 +292,107 @@ export default function DishDetailPage() {
                 {dish.standard_servings})
               </span>
             </div>
-          </div>
 
-          <div className={styles.ingredientsSection}>
-            {calculatedIngredients && (
-              <>
-                <div className={styles.ingredientsList}>
-                  <h3>
-                    {locale === "uk"
-                      ? "Основні інгредієнти"
-                      : "Important Ingredients"}
-                  </h3>
-                  <ul>
-                    {calculatedIngredients.important.map(
-                      (ing: Ingredient, index: number) => (
-                        <li key={index}>
-                          {locale === "uk" ? ing.name_ua : ing.name_en}
-                          {ing.quantity !== undefined
-                            ? `: ${ing.quantity} ${ing.unit}`
-                            : ing.unit
-                            ? ` (${ing.unit})`
-                            : ""}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-
-                {calculatedIngredients.optional.length > 0 && (
+            <div className={styles.ingredientsSection}>
+              {calculatedIngredients && (
+                <>
                   <div className={styles.ingredientsList}>
-                    <h3>
+                    <h3 className={styles.ingredientsTitle}>
                       {locale === "uk"
-                        ? "Необов'язкові інгредієнти"
-                        : "Optional Ingredients"}
+                        ? "Основні інгредієнти"
+                        : "Important Ingredients"}
                     </h3>
                     <ul>
-                      {calculatedIngredients.optional.map(
+                      {calculatedIngredients.important.map(
                         (ing: Ingredient, index: number) => (
-                          <li key={index}>
-                            {locale === "uk" ? ing.name_ua : ing.name_en}
-                            {ing.quantity !== undefined
-                              ? `: ${ing.quantity} ${ing.unit}`
-                              : ing.unit
-                              ? ` (${ing.unit})`
-                              : ""}
+                          <li className={styles.ingredientsItem} key={index}>
+                            {/* 1. СПАН ДЛЯ НАЗВИ ІНГРЕДІЄНТА */}
+                            <span className={styles.ingredientName}>
+                              {locale === "uk" ? ing.name_ua : ing.name_en}
+                            </span>
+
+                            {/* 2. СПАН ДЛЯ КІЛЬКОСТІ/ОДИНИЦІ ВИМІРУ */}
+                            <span className={styles.ingredientQuantity}>
+                              {ing.quantity !== undefined
+                                ? ` ${ing.quantity} ${ing.unit}`
+                                : ing.unit
+                                ? ` (${ing.unit})`
+                                : ""}
+                            </span>
                           </li>
                         )
                       )}
                     </ul>
                   </div>
-                )}
-              </>
-            )}
+
+                  {calculatedIngredients.optional.length > 0 && (
+                    <div className={styles.ingredientsList}>
+                      <h3 className={styles.ingredientsTitle}>
+                        {locale === "uk"
+                          ? "Необов'язкові інгредієнти"
+                          : "Optional Ingredients"}
+                      </h3>
+                      <ul>
+                        {calculatedIngredients.optional.map(
+                          (ing: Ingredient, index: number) => (
+                            <li className={styles.ingredientsItem} key={index}>
+                              {/* 1. СПАН ДЛЯ НАЗВИ ІНГРЕДІЄНТА */}
+                              <span className={styles.ingredientName}>
+                                {locale === "uk" ? ing.name_ua : ing.name_en}
+                              </span>
+
+                              {/* 2. СПАН ДЛЯ КІЛЬКОСТІ/ОДИНИЦІ ВИМІРУ */}
+                              <span className={styles.ingredientQuantity}>
+                                {/* Перевіряємо, чи існує КІЛЬКІСТЬ (і вона не нульова, якщо це потрібно) */}
+                                {ing.quantity !== undefined &&
+                                ing.quantity !== null &&
+                                ing.quantity > 0
+                                  ? // Якщо КІЛЬКІСТЬ існує, рендеримо її, двокрапку та одиницю виміру
+                                    ` ${ing.quantity} ${ing.unit || ""}`
+                                  : ing.unit && ing.quantity === undefined
+                                  ? // Якщо КІЛЬКОСТІ немає, але є ОДИНИЦЯ виміру (наприклад, "за смаком"),
+                                    // рендеримо її в дужках.
+                                    ` (${ing.unit})`
+                                  : // В іншому випадку, не рендеримо НІЧОГО (порожній рядок)
+                                    ""}
+                              </span>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )}
+              <div className={styles.ingredientsBtnSection}>
+                <h3 className={styles.ingredientsTitle}>
+                  {locale === "uk"
+                    ? "Ключові інгредієнти страви:"
+                    : "Key ingredients of the dish:"}
+                </h3>
+                <p className={styles.ingredientsText}>
+                  Натискай на інгредієнт та дивись його корисність
+                </p>
+                <div className={styles.ingredientsBtnContainer}>
+                  {calculatedIngredients &&
+                    calculatedIngredients.important.map(
+                      (ing: Ingredient, index: number) => (
+                        <button
+                          key={index}
+                          className={styles.ingredientsBtn}
+                          // ✅ Викликаємо обробник, передаючи name_en
+                          onClick={() => handleIngredientClick(ing.name_en)}
+                        >
+                          {locale === "uk" ? ing.name_ua : ing.name_en}
+                        </button>
+                      )
+                    )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         {/* ------------------------------------------------------------------------------------------------------- */}
-
-        <div className={styles.ingredientsBtnSection}>
-          <h3 className={styles.ingredientsBtnTitle}>
-            {locale === "uk"
-              ? "Ключові інгредієнти страви:"
-              : "Key ingredients of the dish:"}
-          </h3>
-          <div className={styles.ingredientsBtnContainer}>
-            {calculatedIngredients &&
-              calculatedIngredients.important.map(
-                (ing: Ingredient, index: number) => (
-                  <button
-                    key={index}
-                    className={styles.ingredientsBtn}
-                    // ✅ Викликаємо обробник, передаючи name_en
-                    onClick={() => handleIngredientClick(ing.name_en)}
-                  >
-                    {locale === "uk" ? ing.name_ua : ing.name_en}
-                  </button>
-                )
-              )}
-          </div>
-        </div>
 
         {selectedIngredient && (
           <IngredientModal
@@ -376,13 +405,18 @@ export default function DishDetailPage() {
             selectedIngredient ? styles.hiddenSection : styles.modalSection
           }
         >
-          <div className={styles.section}>
-            <h3>{locale === "uk" ? "Рецепт" : "Recipe"}</h3>
+          <div className={styles.recipe}>
+            <h3 className={styles.recipeTitle}>
+              {locale === "uk" ? "Рецепт приготування" : "Cooking recipe"}
+            </h3>
             <ol className={styles.recipeList}>
               {splitRecipeIntoSteps(
                 locale === "uk" ? dish.recipe_ua : dish.recipe_en
               ).map((step, index) => (
                 <li key={index} className={styles.recipeStep}>
+                  <span className={styles.stepNumber}>
+                    {locale === "uk" ? "Крок" : "Step"} {index + 1}.
+                  </span>{" "}
                   {step}
                 </li>
               ))}
