@@ -16,22 +16,36 @@ const IngredientModal: React.FC<IngredientModalProps> = ({ ingredient, onClose }
   if (!ingredient) {
     return null;
   }
+  
+  // 🔥 ФУНКЦІЯ ДЛЯ ОЧИЩЕННЯ РЯДКА ВІД **
+  const cleanText = (text: string) => text.replace(/\*\*/g, "");
 
-  const getCircleProps = (ing: FullIngredient) => ({
-    name: locale === "uk" ? ing.name_uk : ing.name_en,
-    image: ing.image,
-    benefits: ing.benefits.map((b) => ({
-      text: locale === "uk" ? b.text_uk : b.text_en,
-    })),
-  });
+  const getCircleProps = (ing: FullIngredient) => {
+    
+    // 1. ОЧИЩЕННЯ НАЗВИ
+    const rawName = locale === "uk" ? ing.name_uk : ing.name_en;
+
+    return {
+      name: cleanText(rawName), // Використовуємо очищену назву
+      image: ing.image,
+      
+      // 2. ОЧИЩЕННЯ ТЕКСТІВ ПЕРЕВАГ
+      benefits: ing.benefits.map((b) => {
+        const rawBenefitText = locale === "uk" ? b.text_uk : b.text_en;
+        return {
+            // 🔥 ОЧИЩУЄМО КОЖЕН ТЕКСТ ПЕРЕВАГИ
+            text: cleanText(rawBenefitText), 
+        };
+      }),
+    };
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        {/* 🔥 Кнопка закриття тепер передається як пропс і буде рендеритися всередині IngredientCircle */}
         <IngredientCircle
           {...getCircleProps(ingredient)}
-          onClose={onClose} // 🔥 Передаємо функцію onClose
+          onClose={onClose}
         />
       </div>
     </div>

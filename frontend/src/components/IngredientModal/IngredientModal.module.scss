@@ -8,7 +8,6 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.9);
   z-index: 1000;
-
   display: flex;
   justify-content: center;
   align-items: center; // 🔥 рівно посередині viewport
@@ -23,7 +22,6 @@
   max-width: 600px;
   width: 90%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-
   max-height: 90vh;
   overflow-y: auto;
 }

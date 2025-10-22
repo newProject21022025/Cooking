@@ -2,27 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
-import styles from './Footer.module.scss'; // Імпорт SCSS модулів
+import styles from './Footer.module.scss'; 
+import MealUpLogo from '@/svg/Logo/Logo'; 
 
-// Припустімо, що ваші SVG-іконки імпортуються як компоненти
-// Налаштуйте ці імпорти відповідно до вашої структури
-// (Наприклад, якщо ви використовуєте @svgr/webpack)
-// import LocationIcon from '@/public/icons/location.svg';
-// import PhoneIcon from '@/public/icons/phone.svg';
-// import EmailIcon from '@/public/icons/email.svg';
+import LocationIcon from '@/svg/LocationIcon/LocationIcon';
+import PhoneIcon from '@/svg/PhoneIcon/PhoneIcon';
+import EmailIcon from '@/svg/EmailIcon/EmailIcon';
 
-// import TelegramIcon from '@/public/icons/telegram.svg';
-// import FacebookIcon from '@/public/icons/facebook.svg';
-// import InstagramIcon from '@/public/icons/instagram.svg';
-// import YoutubeIcon from '@/public/icons/youtube.svg';
+import TelegramIcon from '@/svg/TelegramIcon/TelegramIcon';
+import FacebookIcon from '@/svg/FacebookIcon/FacebookIcon';
+import InstagramIcon from '@/svg/InstagramIcon/InstagramIcon';
+import YoutubeIcon from '@/svg/YoutubeIcon/YoutubeIcon';
 
-// import SslIcon from '@/public/icons/ssl_lock.svg';
-// import LocalProductIcon from '@/public/icons/local_product.svg';
-
-// Приклад SVG для логотипу (замініть на ваш компонент або img)
-const MealUpLogo = () => (
-    <img src="/photo/logo.svg" alt="MealUp Logo" className={styles.logo} />
-);
+import SslIcon from '@/svg/SslIcon/SslIcon';
+import LocalProductIcon from '@/svg/LocalProductIcon/LocalProductIcon';
 
 // Дані для футера
 const quickLinks = [
