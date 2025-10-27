@@ -1,5 +1,12 @@
-// src/app/login/page.module.scss
+// src/app/[locale]/login/page.module.scss
+
+// 1. Стили для всего контейнера (фона)
 .container {
+  // В отличие от твоего примера, фон лучше задать здесь,
+  // чтобы контролировать его через SCSS-модуль.
+  // Если фон задан в globals.scss, его можно убрать отсюда,
+  // но для блюра самого фона (как на макете) лучше использовать псевдоэлемент.
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,81 +15,63 @@
   width: 100%;
   padding: 2rem;
   box-sizing: border-box;
-  background-color: transparent; // Фон уже задан в globals.scss
+  position: relative; // Для позиционирования псевдоэлемента с блюром
+
+  // Задний фон с блюром через псевдоэлемент
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("/photo/Generated Image.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px); // Эффект сильного размытия для фона
+    z-index: -2; // Помещаем под контейнер
+  }
+
+  // Полупрозрачный слой поверх блюра (для светлого оттенка макета)
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.4); // Легкий белый налет
+    z-index: -1;
+  }
 }
 
+// 2. Стили для центрального блока (Glassmorphism)
 .mainContent {
+  width: 100%;
+  max-width: 680px; // Ограничиваем ширину формы для десктопа
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  // Эффект Glassmorphism
+  background-color: rgba(255, 255, 255, 0.4); // Светлый, полупрозрачный фон
+  backdrop-filter: blur(10px); // Блюр для "стекла"
+  border: 1px solid rgba(255, 255, 255, 0.3); // Легкая рамка
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 450px; // Немного уже для формы
-  padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  gap: 20px; // Отступ между заголовком и формой (или ее элементами)
 }
 
+// 3. Стили для заголовка
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #e0e0e0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  font-family: var(--primary-font-family);
+  font-size: 28px;
+  font-weight: 600; // Немного более жирный
+  color: var(--dark-color);
+  text-align: center;
+  margin-bottom: 0; // Заголовок "Вхід"
 }
 
-.description {
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #b0b0b0;
-  margin-bottom: 2rem;
-}
 
-.form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 1rem; 
-}
 
-.input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: black;
-  font-size: 1rem;
-  outline: none;
-
-  &:focus {
-    border-color: #0070f3; 
-    box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.3);
-  }
-  &::placeholder {
-    color: #ccc;
-  }
-}
-
-.button {
-  padding: 0.8rem 1.5rem;
-  background-color: #0070f3; // Яркая кнопка
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-
-  &:hover {
-    background-color: #005bb5;
-    transform: translateY(-2px);
-  }
-  &:active {
-    transform: translateY(0);
-  }
-}
