@@ -5,11 +5,11 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import styles from "@/app/[locale]/login/page.module.scss";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 import { registerUser, CreateUserData, resetPassword } from "@/api/usersApi";
 import { AxiosError } from "axios";
+import styles from "./LoginForm.module.scss";
 
 // Валідації
 const LoginSchema = Yup.object().shape({
@@ -101,15 +101,13 @@ export default function LoginForm() {
       await resetPassword({ email: values.email });
       setResetMessage("Інструкція для відновлення пароля надіслана на email");
       setFormError("");
-    } catch (err: unknown) { // Використовуйте 'unknown' для безпеки
-      // Перевіряємо, чи є помилка від Axios
+    } catch (err: unknown) {
       if (err instanceof AxiosError && err.response) {
-        // Якщо так, отримуємо повідомлення про помилку з об'єкта відповіді
         setFormError(
-          (err.response.data.message as string) || "Сталася помилка при відновленні пароля"
+          (err.response.data.message as string) ||
+            "Сталася помилка при відновленні пароля"
         );
       } else {
-        // Якщо це інша помилка, встановлюємо загальне повідомлення
         setFormError("Сталася невідома помилка");
       }
       setResetMessage("");
@@ -141,6 +139,14 @@ export default function LoginForm() {
     >
       {({ isSubmitting }) => (
         <Form className={styles.form}>
+          <h2 className={styles.title}>
+            {isRegister
+              ? "Реєстрація"
+              : isResetPassword
+              ? "Відновлення пароля"
+              : "Вхід"}
+          </h2>
+
           {isRegister && (
             <>
               <div className={styles.formGroup}>
@@ -176,7 +182,7 @@ export default function LoginForm() {
             <Field
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Ел. пошта"
               className={styles.input}
             />
             <ErrorMessage
@@ -213,37 +219,42 @@ export default function LoginForm() {
               ? "Зареєструватися"
               : isResetPassword
               ? "Відновити пароль"
-              : "Вхід"}
+              : "Увійти"}
           </button>
 
           {(authError || formError) && (
             <p className={styles.error}>{authError || formError}</p>
           )}
-          {resetMessage && <p style={{ color: "green" }}>{resetMessage}</p>}
 
-          <div style={{ marginTop: "10px", textAlign: "center" }}>
-            {!isResetPassword && (
+          {resetMessage && (
+            <p className={styles.success}>{resetMessage}</p>
+          )}
+
+          <div className={styles.links}>
+            {!isResetPassword ? (
               <>
                 <button
                   type="button"
-                  className={styles.toggleButton}
-                  onClick={toggleForm}
-                >
-                  {isRegister ? "Увійти" : "Реєстрація"}
-                </button>
-                <button
-                  type="button"
-                  className={styles.toggleButton}
+                  className={styles.linkButton}
                   onClick={toggleResetPassword}
                 >
                   Забули пароль?
                 </button>
+                <p className={styles.text}>
+                  Немає облікового запису?{" "}
+                  <button
+                    type="button"
+                    className={styles.linkButton}
+                    onClick={toggleForm}
+                  >
+                    Зареєструватися
+                  </button>
+                </p>
               </>
-            )}
-            {isResetPassword && (
+            ) : (
               <button
                 type="button"
-                className={styles.toggleButton}
+                className={styles.linkButton}
                 onClick={toggleResetPassword}
               >
                 Повернутись до входу

@@ -31,8 +31,8 @@ export default function LoginPage() {
   return (
     <div className={styles.container}>
       <main className={styles.mainContent}>
-        <h1 className={styles.title}>Увійти</h1>
-        <p className={styles.description}>Будь ласка, введіть дані для входу.</p>
+        {/* <h1 className={styles.title}>Увійти</h1> */}
+        {/* <p className={styles.description}>Будь ласка, введіть дані для входу.</p> */}
         <LoginForm />
       </main>
     </div>
