@@ -20,13 +20,13 @@ export default function Header({ locale }: HeaderProps) {
 
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>(); // 💡 ВИПРАВЛЕНО: Отримуємо лише токен для перевірки автентифікації (з authSlice)
 
-  const { token, user: authUser } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const isAuthenticated = !!token;
-  const role = authUser?.role?.toLowerCase();
+  const { token } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token; // 💡 ВИПРАВЛЕНО: Отримуємо актуальні дані користувача (для ролі) з userSlice
+
+  const { data: profileUser } = useSelector((state: RootState) => state.user);
+  const role = profileUser?.role?.toLowerCase();
 
   useEffect(() => {
     setMounted(true);
@@ -34,7 +34,7 @@ export default function Header({ locale }: HeaderProps) {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, []); // Очікуємо mounted перед рендерингом вмісту, щоб уникнути помилок гідратації
 
   if (!mounted) return <header className={styles.header} />;
 
@@ -50,167 +50,74 @@ export default function Header({ locale }: HeaderProps) {
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+      {" "}
       <Link className={styles.menu} href="/menu">
-        Меню
-      </Link>
+        Меню{" "}
+      </Link>{" "}
       <div className={styles.logo}>
+        {" "}
         <Link href="/">
-          <Logo />
-        </Link>
-      </div>
+          <Logo />{" "}
+        </Link>{" "}
+      </div>{" "}
       <nav className={styles.navigation}>
+        {" "}
         {!isAuthenticated ? (
           <Link href="/login" className={styles.navLink}>
-            Увійти
+            Увійти{" "}
           </Link>
         ) : (
           <>
+            {" "}
+            {/* Тепер використовуємо role з profileUser (state.user) */}{" "}
             {role === "admin" && (
               <>
+                {" "}
                 <Link href="/profile" className={styles.navLink}>
-                  Профіль
-                </Link>
+                  Профіль{" "}
+                </Link>{" "}
                 <Link href="/admin" className={styles.navLink}>
-                  Адмін
-                </Link>
+                  Адмін{" "}
+                </Link>{" "}
               </>
-            )}
-
+            )}{" "}
             {role === "user" && (
               <Link href="/profile" className={styles.navLink}>
-                Профіль
+                Профіль{" "}
               </Link>
-            )}
-
+            )}{" "}
             {role === "partner" && (
               <Link href="/partners" className={styles.navLink}>
-                Партнери
+                Партнери{" "}
               </Link>
-            )}
-
+            )}{" "}
+            {/* Кнопка Вийти відображається, якщо isAuthenticated = true (тобто є токен) */}{" "}
             <button onClick={handleLogout} className={styles.navLink}>
-              Вийти
-            </button>
+              Вийти{" "}
+            </button>{" "}
           </>
-        )}
+        )}{" "}
         <div className={styles.languageSwitcher}>
+          {" "}
           <button
             onClick={() => changeLanguage("en")}
             className={`${styles.languageButton} ${
               locale === "en" ? styles.active : ""
             }`}
           >
-            EN
+            EN{" "}
           </button>
-          <span className={styles.languageSeparator}>|</span>
+          <span className={styles.languageSeparator}>|</span>{" "}
           <button
             onClick={() => changeLanguage("uk")}
             className={`${styles.languageButton} ${
               locale === "uk" ? styles.active : ""
             }`}
           >
-            UK
-          </button>
-        </div>
-      </nav>
+            UK{" "}
+          </button>{" "}
+        </div>{" "}
+      </nav>{" "}
     </header>
   );
 }
-
-// "use client";
-
-// import { usePathname, Link } from "@/i18n/navigation";
-// import styles from "./Header.module.scss";
-// import { useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { useSelector, useDispatch } from "react-redux";
-// import { RootState } from "@/redux/store";
-// import { logout } from "@/redux/slices/authSlice";
-// import type { AppDispatch } from "@/redux/store";
-
-// type HeaderProps = {
-//   locale: "en" | "uk";
-// };
-
-// export default function Header({ locale }: HeaderProps) {
-//   const pathname = usePathname();
-//   const router = useRouter();
-//   // const dispatch = useDispatch();
-
-// const dispatch = useDispatch<AppDispatch>()
-
-//   const [scrolled, setScrolled] = useState(false);
-
-//   const { token, user: authUser } = useSelector((state: RootState) => state.auth);
-//   const isAuthenticated = !!token;
-
-//   useEffect(() => {
-//     const handleScroll = () => setScrolled(window.scrollY > 10);
-//     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-
-//   const handleLogout = () => {
-//     dispatch(logout());
-//     router.push("/login");
-//   };
-
-//   const changeLanguage = (newLocale: string) => {
-//     const currentPathWithoutLocale = pathname.replace(`/${locale}`, "");
-//     window.location.href = `/${newLocale}${currentPathWithoutLocale}`;
-//   };
-
-//   const role = authUser?.role?.toLowerCase();
-
-//   return (
-//     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
-//       <div className={styles.logo}>
-//         <Link href="/">Ваш Логотип</Link>
-//       </div>
-
-//       <nav className={styles.navigation}>
-//         {!isAuthenticated ? (
-//           <Link href="/login" className={styles.navLink}>
-//             Увійти
-//           </Link>
-//         ) : (
-//           <>
-//             {/* Меню за роллю */}
-//             {role === "admin" && (
-//               <>
-//                 <Link href="/profile" className={styles.navLink}>Профіль</Link>
-//                 <Link href="/admin" className={styles.navLink}>Адмін</Link>
-//               </>
-//             )}
-
-//             {role === "user" && (
-//               <Link href="/profile" className={styles.navLink}>Профіль</Link>
-//             )}
-
-//             {role === "partner" && (
-//               <Link href="/partners" className={styles.navLink}>Партнери</Link>
-//             )}
-
-//             <button onClick={handleLogout} className={styles.navLink}>Вийти</button>
-//           </>
-//         )}
-//       </nav>
-
-//       <div className={styles.languageSwitcher}>
-//         <button
-//           onClick={() => changeLanguage("en")}
-//           className={`${styles.languageButton} ${locale === "en" ? styles.active : ""}`}
-//         >
-//           EN
-//         </button>
-//         <span className={styles.languageSeparator}>|</span>
-//         <button
-//           onClick={() => changeLanguage("uk")}
-//           className={`${styles.languageButton} ${locale === "uk" ? styles.active : ""}`}
-//         >
-//           UK
-//         </button>
-//       </div>
-//     </header>
-//   );
-// }
