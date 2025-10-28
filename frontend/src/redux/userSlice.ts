@@ -1,19 +1,20 @@
 // src/store/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { User, UserRole } from "@/types/user";
+// import { User, UserRole } from "@/types/user";
 
 
-// export type UserRole = 'user' | 'partner' | 'admin';
+export type UserRole = 'user' | 'partner' | 'admin';
 
-// interface User {
-//   id: string;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   photo?: string;
-//   role: UserRole;
-// }
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  photo?: string;
+  role: UserRole;
+  favorites: string[]; // Масив ID улюблених страв
+}
 
 interface UserState {
   data: User | null;
