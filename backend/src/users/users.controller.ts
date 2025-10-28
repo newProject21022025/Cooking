@@ -66,7 +66,8 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAllUsers(@Query('email') email?: string) { // ✅ Додано параметр email з декоратором @Query
+  async getAllUsers(@Query('email') email?: string) {
+    // ✅ Додано параметр email з декоратором @Query
     if (email) {
       // Якщо в запиті є email, виконуємо пошук
       const user = await this.usersService.findOneByEmail(email);
@@ -84,9 +85,35 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('file')) // 'file' - ім'я поля у формі, де передається файл
   async uploadAvatar(
     @Param('id') userId: string,
-    @UploadedFile() file: Express.Multer.File // Декоратор для отримання файлу
+    @UploadedFile() file: Express.Multer.File, // Декоратор для отримання файлу
   ) {
     // Передаємо обробку файлу сервісу
     return this.usersService.uploadUserAvatar(userId, file);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('favorites/:dishId') // PATCH users/favorites/:dishId
+  async addDishToFavorites(
+    @Request() req, // Отримуємо дані користувача з JWT токена
+    @Param('dishId') dishId: string, // ID страви, яку потрібно додати
+  ) {
+    const userId = req.user.id; // Припускаємо, що JWT Guard додає об'єкт користувача з полем id до req.user
+
+    // ❗ Перевірте, чи dishId є валідним ID (можливо, UUID), якщо це необхідно
+
+    return this.usersService.addToFavorites(userId, dishId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('favorites/:dishId') // DELETE users/favorites/:dishId
+  async removeDishFromFavorites(
+    @Request() req,
+    @Param('dishId') dishId: string,
+  ) {
+    const userId = req.user.id;
+
+    // ❗ Перевірте, чи dishId є валідним ID (можливо, UUID), якщо це необхідно
+
+    return this.usersService.removeFromFavorites(userId, dishId);
   }
 }

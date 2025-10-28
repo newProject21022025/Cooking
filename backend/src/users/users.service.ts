@@ -17,35 +17,37 @@ export class UsersService {
     if (!dto.email || !dto.password) {
       throw new BadRequestException('Email and password are required');
     }
-  
+
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-  
-    // console.log('Попытка вставки в таблицу:', 'users'); 
+
+    // console.log('Попытка вставки в таблицу:', 'users');
     const { data, error } = await this.supabaseService
       .getClient()
-      .from('users') 
-      .insert([{
-        ...dto,
-        password: hashedPassword,
-        role: dto.role ?? 'user',   // <-- дефолтна роль user
-        isBlocked: dto.isBlocked ?? false, // <-- дефолт false
-      }])
+      .from('users')
+      .insert([
+        {
+          ...dto,
+          password: hashedPassword,
+          role: dto.role ?? 'user', // <-- дефолтна роль user
+          isBlocked: dto.isBlocked ?? false, // <-- дефолт false
+        },
+      ])
       .select(); // щоб одразу повернути створений рядок
-  
+
     if (error) {
-      console.error('Ошибка при вставке пользователя:', error.message); 
+      console.error('Ошибка при вставке пользователя:', error.message);
       throw new BadRequestException(error.message);
     }
-  
-    // console.log('Пользователь успешно создан:', data); 
+
+    // console.log('Пользователь успешно создан:', data);
     return data ? data[0] : null;
   }
 
   async findOneByEmail(email: string): Promise<any | undefined> {
-    // console.log('Попытка поиска пользователя по email в таблице:', 'users'); 
+    // console.log('Попытка поиска пользователя по email в таблице:', 'users');
     const { data, error } = await this.supabaseService
       .getClient()
-      .from('users') 
+      .from('users')
       .select('*')
       .eq('email', email)
       .single();
@@ -59,38 +61,38 @@ export class UsersService {
     }
     return data;
   }
- 
 
   async updateUser(id: string, dto: UpdateUserDto) {
     // Якщо пароль передають — хешуємо його
     if (dto.password) {
       dto.password = await bcrypt.hash(dto.password, 10);
     }
-  
+
     // ❗ формуємо allowedFields (без role, isBlocked і т.д.)
     const allowedFields: any = {};
     if (dto.firstName !== undefined) allowedFields.firstName = dto.firstName;
     if (dto.lastName !== undefined) allowedFields.lastName = dto.lastName;
-    if (dto.phoneNumber !== undefined) allowedFields.phoneNumber = dto.phoneNumber;
-    if (dto.deliveryAddress !== undefined) allowedFields.deliveryAddress = dto.deliveryAddress;
+    if (dto.phoneNumber !== undefined)
+      allowedFields.phoneNumber = dto.phoneNumber;
+    if (dto.deliveryAddress !== undefined)
+      allowedFields.deliveryAddress = dto.deliveryAddress;
     if (dto.photo !== undefined) allowedFields.photo = dto.photo;
     if (dto.password !== undefined) allowedFields.password = dto.password;
-  
+
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users')
-      .update(allowedFields)   // ⚡️ тільки дозволені поля
+      .update(allowedFields) // ⚡️ тільки дозволені поля
       .eq('id', id)
       .select();
-  
+
     if (error) {
       console.error('Помилка при оновленні користувача:', error.message);
       throw new BadRequestException(error.message);
     }
-  
+
     return data ? data[0] : null;
   }
-  
 
   async deleteUser(id: string) {
     const { data, error } = await this.supabaseService
@@ -99,14 +101,14 @@ export class UsersService {
       .delete()
       .eq('id', id)
       .select();
-  
+
     if (error) {
       console.error('Помилка при видаленні користувача:', error.message);
       throw new BadRequestException(error.message);
     }
-  
+
     return data ? data[0] : null;
-  }  
+  }
 
   async setBlockStatus(userId: string, isBlocked: boolean) {
     const { data, error } = await this.supabaseService
@@ -115,16 +117,16 @@ export class UsersService {
       .update({ isBlocked })
       .eq('id', userId)
       .select();
-  
+
     if (error) {
       console.error('Помилка при зміні статусу блокування:', error.message);
       throw new BadRequestException(error.message);
     }
-  
+
     return data ? data[0] : null;
   }
 
-   async findOneById(id: string): Promise<any | undefined> {
+  async findOneById(id: string): Promise<any | undefined> {
     // console.log('Попытка поиска пользователя по ID в таблице:', 'users');
     const { data, error } = await this.supabaseService
       .getClient()
@@ -142,18 +144,18 @@ export class UsersService {
     }
     return data;
   }
-  
+
   async findAll(): Promise<any[]> {
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users')
       .select('*');
-  
+
     if (error) {
       console.error('Помилка при отриманні всіх користувачів:', error.message);
       throw new BadRequestException(error.message);
     }
-  
+
     return data;
   }
   async uploadUserAvatar(userId: string, file: Express.Multer.File) {
@@ -165,11 +167,10 @@ export class UsersService {
     // 2. Завантажуємо файл в Supabase Storage
     const { data: uploadData, error: uploadError } = await this.supabaseService
       .getClient()
-      .storage
-      .from('avatars') // Назва вашого бакета в Supabase Storage (створити заздалегідь в панелі Supabase)
+      .storage.from('avatars') // Назва вашого бакета в Supabase Storage (створити заздалегідь в панелі Supabase)
       .upload(filePath, file.buffer, {
         cacheControl: '3600',
-        upsert: true // Якщо файл існує - перезаписати
+        upsert: true, // Якщо файл існує - перезаписати
       });
 
     if (uploadError) {
@@ -180,8 +181,7 @@ export class UsersService {
     // 3. Отримуємо публічний URL завантаженого файлу
     const { data: urlData } = this.supabaseService
       .getClient()
-      .storage
-      .from('avatars')
+      .storage.from('avatars')
       .getPublicUrl(filePath);
 
     const publicUrl = urlData.publicUrl;
@@ -208,9 +208,80 @@ export class UsersService {
       .eq('id', id)
       .select()
       .single();
-  
+
     if (error) throw new BadRequestException(error.message);
-  
+
+    return data;
+  }
+
+  async addToFavorites(userId: string, dishId: string) {
+    // 1. Отримати поточний список favorites
+    const user = await this.findOneById(userId);
+
+    if (!user) {
+      throw new BadRequestException('Користувача не знайдено');
+    }
+
+    const currentFavorites: string[] = user.favorites || [];
+
+    // 2. Перевірити, чи страва вже є в обраному
+    if (currentFavorites.includes(dishId)) {
+      // Можна просто повернути користувача або кинути помилку,
+      // залежно від бажаної логіки (наприклад, "Страва вже в обраному")
+      // Наразі просто повертаємо поточного користувача
+      return user;
+      // throw new BadRequestException('Страва вже є в обраному');
+    }
+
+    // 3. Додати ID страви та оновити в БД
+    const newFavorites = [...currentFavorites, dishId];
+
+    const { data, error } = await this.client
+      .from('users')
+      .update({ favorites: newFavorites })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Помилка при додаванні в обране:', error.message);
+      throw new BadRequestException(error.message);
+    }
+
+    return data;
+  }
+  async removeFromFavorites(userId: string, dishId: string) {
+    // 1. Отримати поточний список favorites
+    const user = await this.findOneById(userId);
+
+    if (!user) {
+      throw new BadRequestException('Користувача не знайдено');
+    }
+
+    const currentFavorites: string[] = user.favorites || [];
+
+    // 2. Фільтруємо масив, залишаючи всі ID, крім dishId
+    const newFavorites = currentFavorites.filter((id) => id !== dishId);
+
+    // 3. Перевіряємо, чи відбулася зміна (чи був ID в масиві)
+    if (newFavorites.length === currentFavorites.length) {
+      // Страва не була в обраному, просто повертаємо поточного користувача
+      return user;
+    }
+
+    // 4. Оновлюємо в БД
+    const { data, error } = await this.client
+      .from('users')
+      .update({ favorites: newFavorites })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Помилка при видаленні з обраного:', error.message);
+      throw new BadRequestException(error.message);
+    }
+
     return data;
   }
 }

@@ -1,0 +1,38 @@
+const Icon_share_green = () => {
+  return (
+    <svg
+      width="44"
+      height="44"
+      viewBox="0 0 44 44"
+      fill="none"    
+    >
+      <rect width="44" height="44" rx="22" fill="white" />
+      <path
+        d="M28 16.1992L16 20.6992M28 28.1992L16 23.6992"
+        stroke="#17522D"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M13 25.1992C14.6569 25.1992 16 23.8561 16 22.1992C16 20.5424 14.6569 19.1992 13 19.1992C11.3431 19.1992 10 20.5424 10 22.1992C10 23.8561 11.3431 25.1992 13 25.1992Z"
+        stroke="#17522D"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M31 17.6992C32.6569 17.6992 34 16.3561 34 14.6992C34 13.0424 32.6569 11.6992 31 11.6992C29.3431 11.6992 28 13.0424 28 14.6992C28 16.3561 29.3431 17.6992 31 17.6992Z"
+        stroke="#17522D"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+      <path
+        d="M31 32.6992C32.6569 32.6992 34 31.3561 34 29.6992C34 28.0424 32.6569 26.6992 31 26.6992C29.3431 26.6992 28 28.0424 28 29.6992C28 31.3561 29.3431 32.6992 31 32.6992Z"
+        stroke="#17522D"
+        strokeWidth="2"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+};
+
+export default Icon_share_green;

@@ -20,6 +20,11 @@ import CommentForm from "@/components/commentForm/CommentForm"; // ✅ Імпо�
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store"; // ✅ Імпортуємо тип RootState
 import { User } from "@/types/user";
+// import Icon_heart_green from '@/svg/Icon_heart/Icon_heart_green';
+// import Icons_heart_green_full from '@/svg/Icon_heart/Icon_heart_green_full';
+import Icon_share_green from '@/svg/Icon_share/Icon_share_green';
+import ToggleFavoriteButton from "@/components/toggleFavoriteButton/ToggleFavoriteButton";
+
 
 export default function DishDetailPage() {
   const params = useParams();
@@ -65,17 +70,6 @@ export default function DishDetailPage() {
     setSelectedIngredient(null);
     dispatch(closeModal()); // ✅ Відправляємо дію для закриття модального вікна
   };
-
-  // // ✅ Функція для підготовки даних для IngredientCircle
-  // const getCircleProps = (ingredient: FullIngredient) => {
-  //   return {
-  //     name: locale === "uk" ? ingredient.name_uk : ingredient.name_en,
-  //     image: ingredient.image,
-  //     benefits: ingredient.benefits.map((b: Benefit) => ({
-  //       text: locale === "uk" ? b.text_uk : b.text_en,
-  //     })),
-  //   };
-  // };
 
   // ✅ Wrap the function in useCallback to prevent unnecessary re-creations
   const fetchDishDetails = useCallback(async () => {
@@ -231,10 +225,7 @@ export default function DishDetailPage() {
           className={
             selectedIngredient ? styles.hiddenSection : styles.modalSection
           }
-        >
-          {/* <Link href="/" className={styles.backButton}>
-            ← Назад до списку страв
-          </Link> */}
+        >      
 
           <div className={styles.blockImage}>
             <img
@@ -256,8 +247,12 @@ export default function DishDetailPage() {
                 {locale === "uk" ? dish.description_ua : dish.description_en}
               </p>
             </div>
-            <div className={styles.descriptionIcon}>icon, icon</div>
-          </section>
+            <div className={styles.iconContainer}>
+              {/* <span className={styles.iconButton}> <Icon_heart_green/>  <Icons_heart_green_full/></span> */}
+              <ToggleFavoriteButton dishId={dishId} />
+              <span className={styles.iconButton}> <Icon_share_green/> </span>
+              </div>
+          </section> 
 
           {/* Калькулятор порцій */}
           <div className={styles.portionCalculator}>

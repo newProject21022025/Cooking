@@ -123,3 +123,31 @@ export const fetchAllDishesApi = async (): Promise<Dish[]> => {
   return data;
 };
 
+export const fetchDishesByIdsApi = async (dishIds: string[]): Promise<Dish[]> => {
+  if (!dishIds || dishIds.length === 0) {
+    return [];
+  }
+
+  try {
+    // 💡 Припускаємо, що ваш бекенд має ендпоінт для масового отримання,
+    // наприклад, POST /dishes/details-by-ids, який приймає { dishIds: string[] }
+    const { data } = await axios.post<Dish[]>(`${API_URL}/details-by-ids`, { 
+        dishIds 
+    });
+    
+    return data ?? [];
+  } catch (err) {
+    if (isAxiosError(err)) {
+      console.error(
+        "Помилка запиту fetchDishesByIdsApi:",
+        err.response?.data ?? err.message
+      );
+      throw new Error(
+        (err.response?.data as { message?: string })?.message ||
+          err.message ||
+          "Не вдалося завантажити деталі обраних страв."
+      );
+    }
+    throw new Error("Невідома помилка мережі або системи.");
+  }
+};

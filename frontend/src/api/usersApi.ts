@@ -160,3 +160,16 @@ export const resetPassword = async (
   );
   return response.data;
 };
+
+// ✅ Функціонал "Обране" (Favorites)
+export const addDishToFavorites = async (dishId: string): Promise<User> => {
+  const { data } = await apiClient.patch<User>(`/favorites/${dishId}`);
+  return data;
+};
+
+export const removeDishFromFavorites = async (
+  dishId: string
+): Promise<User> => {
+  const { data } = await apiClient.delete<User>(`/favorites/${dishId}`);
+  return data;
+};

@@ -167,4 +167,26 @@ export class DishesService {
   return data || [];
 }
 
+async getDishesByIds(dishIds: string[]) {
+  // 1. Конвертуємо масив ID (string[]) на масив чисел (number[])
+  const numericIds = dishIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+
+  if (numericIds.length === 0) {
+      return [];
+  }
+
+  // 2. Використовуємо .in() для отримання страв, чий id є у списку
+  const { data, error } = await this.client
+      .from('dishes')
+      .select('*')
+      .in('id', numericIds); // Пошук серед числових ID
+
+  if (error) {
+      throw new BadRequestException(`Помилка Supabase при отриманні обраних страв: ${error.message}`);
+  }
+  
+  // Повертаємо знайдені страви (порядок може відрізнятися від вхідного масиву)
+  return data || [];
+}
+
 }

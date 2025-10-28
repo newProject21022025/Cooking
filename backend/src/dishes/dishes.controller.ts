@@ -13,7 +13,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
-import { CreateDishDto } from './dto/create-dish.dto';
+import { CreateDishDto, DishIdsDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -24,15 +24,13 @@ import { PaginationQueryDto } from './dto/pagination-query.dto';
 export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
 
-
-    @Get('all')
-async getAllDishes(
-  @Query('query') searchQuery?: string,
-  @Query('category') category?: string,
-) {
-  return this.dishesService.getAllDishes(searchQuery, category);
-}
-
+  @Get('all')
+  async getAllDishes(
+    @Query('query') searchQuery?: string,
+    @Query('category') category?: string,
+  ) {
+    return this.dishesService.getAllDishes(searchQuery, category);
+  }
 
   // ----------------------------------------
   // Коментарі
@@ -107,8 +105,8 @@ async getAllDishes(
       is_selected === 'true'
         ? true
         : is_selected === 'false'
-        ? false
-        : undefined;
+          ? false
+          : undefined;
 
     let processedIngredients: string[] | undefined;
 
@@ -136,7 +134,10 @@ async getAllDishes(
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateDishDto: UpdateDishDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDishDto: UpdateDishDto,
+  ) {
     return this.dishesService.updateDish(id, updateDishDto);
   }
 
@@ -154,7 +155,10 @@ async getAllDishes(
   async unselect(@Param('id', ParseIntPipe) id: number) {
     return this.dishesService.unselectDish(id);
   }
-  
 
-
+  @Post('details-by-ids')
+  async getDetailsByIds(@Body() { dishIds }: DishIdsDto) {
+    // dishIds is now guaranteed to be a non-empty array of strings if validation passes
+    return this.dishesService.getDishesByIds(dishIds);
+  }
 }

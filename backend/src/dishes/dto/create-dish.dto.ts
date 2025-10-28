@@ -1,6 +1,6 @@
 // src/dishes/dto/create-dish.dto.ts
 
-import { IsString, IsNumber, IsOptional, IsArray, ValidateNested, IsBoolean } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, ValidateNested, IsBoolean, ArrayNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class IngredientDto {
@@ -58,5 +58,12 @@ export class CreateDishDto {
 
     @IsBoolean()
     is_selected: boolean;
+  }
+
+  export class DishIdsDto {
+    @IsArray()
+    @ArrayNotEmpty({ message: 'The list of dish IDs cannot be empty.' })
+    @IsString({ each: true, message: 'Each dish ID must be a string.' })
+    dishIds: string[];
   }
   
