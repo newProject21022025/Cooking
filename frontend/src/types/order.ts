@@ -13,7 +13,7 @@ export interface OrderItem {
 export interface Order {
   orderNumber: string;
   createdAt: string;
-  userId?: string;
+  userId?: string | null;
   partnerId: string;
   firstName: string;
   lastName: string;

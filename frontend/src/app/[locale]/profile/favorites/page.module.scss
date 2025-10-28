@@ -1,0 +1,33 @@
+// Стилі для контейнера сітки
+.dishesGrid {
+    display: grid;
+    // ✅ Встановлюємо 3 стовпці однакової ширини для великих екранів
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px; /* Проміжок між картками */
+    margin-top: 30px;
+  }
+  
+  // Стилі для обгортки кожної картки (важливо для рівної висоти карток)
+  .dishItem {
+    display: flex; 
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  
+  // --- АДАПТИВНІСТЬ ---
+  
+  // На планшетах (до 1024px): 2 картки в рядку
+  @media (max-width: 1024px) {
+      .dishesGrid {
+          grid-template-columns: repeat(2, 1fr);
+      }
+  }
+  
+  // На мобільних (до 600px): 1 картка в рядку
+  @media (max-width: 600px) {
+      .dishesGrid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+      }
+  }

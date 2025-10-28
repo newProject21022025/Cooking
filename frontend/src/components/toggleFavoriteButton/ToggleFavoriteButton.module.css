@@ -1,0 +1,23 @@
+.iconButton {   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; 
+    background-color: #ffffff;
+    cursor: pointer;  
+ 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease-in-out;  
+    
+    /* & > svg {
+      display: block;
+      width: 44px; 
+      height: 44px;    }
+  
+    
+    &:hover {
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    } */
+}

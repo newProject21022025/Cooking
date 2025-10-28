@@ -1,18 +1,34 @@
 // src/store/userSlice.ts
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+// import { User, UserRole } from "@/types/user";
 
 
 export type UserRole = 'user' | 'partner' | 'admin';
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  photo?: string;
-  role: UserRole;
+export interface User {
+  id: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string | null;
+  phoneNumber: string | null;
+  deliveryAddress: string | null;
+  role: UserRole | null;
+  averageRating: number | null;
+  isBlocked?: boolean;
+  favorites?: string[] | null;
 }
+
+// interface User {
+//   id: string;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   photo?: string;
+//   role: UserRole;
+//   favorites: string[]; // Масив ID улюблених страв
+// }
 
 interface UserState {
   data: User | null;
@@ -53,6 +69,10 @@ const userSlice = createSlice({
     clearUser: (state) => {
       state.data = null;
     },
+    setUserData: (state, action: PayloadAction<User>) => {
+      state.data = action.payload;
+      state.error = null;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -71,5 +91,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearUser } = userSlice.actions;
+export const { clearUser, setUserData } = userSlice.actions;
 export default userSlice.reducer;

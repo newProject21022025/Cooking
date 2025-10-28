@@ -13,6 +13,7 @@ export interface User {
   role: UserRole | null;
   averageRating: number | null;
   isBlocked?: boolean;
+  favorites?: string[] | null;
 }
 
 export interface UserState extends User {
