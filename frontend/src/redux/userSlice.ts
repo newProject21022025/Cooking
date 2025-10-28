@@ -6,15 +6,29 @@ import axios from "axios";
 
 export type UserRole = 'user' | 'partner' | 'admin';
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  photo?: string;
-  role: UserRole;
-  favorites: string[]; // Масив ID улюблених страв
+export interface User {
+  id: string | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string | null;
+  phoneNumber: string | null;
+  deliveryAddress: string | null;
+  role: UserRole | null;
+  averageRating: number | null;
+  isBlocked?: boolean;
+  favorites?: string[] | null;
 }
+
+// interface User {
+//   id: string;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   photo?: string;
+//   role: UserRole;
+//   favorites: string[]; // Масив ID улюблених страв
+// }
 
 interface UserState {
   data: User | null;

@@ -56,6 +56,18 @@ export default function BasketPage() {
     return sum + finalPrice * item.quantity;
   }, 0);
 
+  const orderFormUser = user
+    ? {
+        // Перетворюємо string | null на string | undefined для всіх полів
+        id: user.id || undefined,
+        firstName: user.firstName || undefined, // <-- ВИПРАВЛЕННЯ
+        lastName: user.lastName || undefined, // <-- ВИПРАВЛЕННЯ
+        email: user.email || undefined, // <-- ВИПРАВЛЕННЯ
+        phoneNumber: user.phoneNumber || undefined, // <-- ВИПРАВЛЕННЯ
+        deliveryAddress: user.deliveryAddress || undefined, // <-- ВИПРАВЛЕННЯ
+      }
+    : null;
+
   return (
     <UserLoader>
       <div className={styles.checkoutContainer}>
@@ -117,7 +129,7 @@ export default function BasketPage() {
 
             {/* Форма замовлення */}
             <div className={styles.orderFormContainer}>
-              <OrderForm user={user || null} />
+              <OrderForm user={orderFormUser} />
             </div>
           </div>
         )}
