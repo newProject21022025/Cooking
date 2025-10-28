@@ -64,24 +64,25 @@ export default function ProfileForm({
     photo: user.photo || "",
   };
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: any) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+ const handleFileChange = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  setFieldValue: (field: string, value: string) => void
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    try {
-      setUploading(true);
-      const result = await uploadToCloudinary(file);
-      setFieldValue("photo", result.secure_url);
-    } catch (err) {
-      console.error("Помилка завантаження фото:", err);
-      alert("Не вдалося завантажити фото. Спробуйте ще раз.");
-    } finally {
-      setUploading(false);
-    }
-  };
+  try {
+    setUploading(true);
+    const result = await uploadToCloudinary(file);
+    setFieldValue("photo", result.secure_url);
+  } catch (err) {
+    console.error("Помилка завантаження фото:", err);
+    alert("Не вдалося завантажити фото. Спробуйте ще раз.");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   return (
     <Formik
@@ -93,7 +94,7 @@ export default function ProfileForm({
       {({ dirty, values, setFieldValue }) => (
         <Form className={styles.form}>
           <div className={styles.formGroup}>
-            <label htmlFor="firstName">Ім'я</label>
+            <label htmlFor="firstName">Ім&apos;я</label>
             <Field type="text" id="firstName" name="firstName" className={styles.input} />
             <ErrorMessage name="firstName" component="div" className={styles.errorText} />
           </div>

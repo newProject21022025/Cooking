@@ -29,7 +29,7 @@ export default function ProfileView({ user, onEdit }: ProfileViewProps) {
         <strong>Email:</strong> {user.email}
       </p>
       <p>
-        <strong>Ім'я:</strong> {user.firstName}
+        <strong>Ім&apos;я:</strong> {user.firstName}
       </p>
       <p>
         <strong>Прізвище:</strong> {user.lastName}
