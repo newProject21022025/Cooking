@@ -54,7 +54,7 @@ export default function ProfileSettingsPage() {
       setIsSubmitting(true);
       setError(null);
       setUpdateSuccess(false);
-      
+
       if (!user) throw new Error("Дані користувача відсутні");
 
       const updatedUser = await updateCurrentUserProfile(values);
@@ -67,7 +67,7 @@ export default function ProfileSettingsPage() {
         message?: string;
         response?: { data?: { errors?: Record<string, string[]> } };
       };
-      
+
       if (e.response?.data?.errors) {
         const backendErrors: Record<string, string[]> = e.response.data.errors;
         const formikErrors: Record<string, string> = {};
@@ -98,7 +98,7 @@ export default function ProfileSettingsPage() {
     try {
       setIsSubmitting(true);
       setPasswordError(null);
-      
+
       if (!user) throw new Error("Дані користувача відсутні");
 
       await updateCurrentUserProfile({ password: values.newPassword });
@@ -134,13 +134,28 @@ export default function ProfileSettingsPage() {
   return (
     <div>
       <h2>Налаштування профілю</h2>
-      
+
       {updateSuccess && (
         <div className={styles.success}>Профіль успішно оновлено!</div>
       )}
       {error && <div className={styles.error}>{error}</div>}
-
       <div className={styles.card}>
+        <ProfileForm
+          user={user}
+          onSubmit={handleProfileSubmit}
+          onCancel={() => setIsEditing(false)}
+          isSubmitting={isSubmitting}
+        />
+
+        <PasswordForm
+          onSubmit={handlePasswordChange}
+          isSubmitting={isSubmitting}
+          success={passwordSuccess}
+          error={passwordError}
+        />
+      </div>
+
+      {/* <div className={styles.card}>
         {!isEditing ? (
           <ProfileView 
             user={user} 
@@ -163,7 +178,7 @@ export default function ProfileSettingsPage() {
             />
           </>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
