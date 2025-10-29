@@ -1,202 +1,250 @@
-.card {
+.container{
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
-
-.avatarContainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.avatar {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #3b82f6;
-}
-
-.placeholderAvatar {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  background-color: #d1d5db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4b5563;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.details {
-    padding-bottom: 1rem;
-}
-
-.details p {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  color: #374151;
-}
-
-.details strong {
-  color: #1f2937;
-  display: inline-block;
-  min-width: 150px;
-}
-
-.editButton {
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.editButton:hover {
-  background-color: #2563eb;
-}
-
-/* Form Styles */
-.formTitle {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e5e7eb;
-}
-
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  /* Структура сітки 2x2 */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 30px;
+  padding: 20px 0; /* Внутрішні відступи */
+  // background-color: rgba(255, 255, 255, 0.5); /* Білий фон */
+  max-width: 900px;
+  margin: 0 auto;
 }
 
+/* Група полів форми */
 .formGroup {
   display: flex;
   flex-direction: column;
 }
 
-.previewImage{
-  margin-top: 0.5rem;
-  width: 300px;
-  height: auto;
-  object-fit: cover;
-  border-radius: 0.5rem;
+/* --- Стилі для секції "Фото профілю" (Яка знаходиться ПЕРШОЮ в наданому коді) --- */
+
+/* Контейнер для фото профілю, який має займати 2 колонки */
+.formGroup:nth-child(1) {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;  
+  border-bottom: 2px dashed rgba(153, 153, 153, 0.25); /* Пунктирна лінія */
 }
+
+/* Підпис "Фото профілю" ховаємо, бо на макеті його немає */
+// .formGroup:nth-child(1) label {
+//     display: none;
+// }
+
+.formGroupImage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hiddenInput {
+  display: none; // повністю ховаємо стандартний інпут
+}
+
+.customFileButton {
+  background: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #0056b3;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.previewContainer {
+  margin-bottom: 10px;
+}
+
+.previewImage {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.uploading {
+  font-style: italic;
+  color: gray;
+}
+
+/* Приховуємо стандартний input[type="file"] */
+.formGroup:nth-child(1) input[type="file"] {
+    display: none;
+}
+
+/* Застосовуємо стиль кнопки "Змінити фото" до .formGroup:nth-child(1) > input + label */
+/* Так як у вас немає окремої кнопки, ми стилізуємо label, який йде після Field/Input */
+/* Припускаємо, що label, який стоїть після input[type="file"] (ваш .formGroup:nth-child(1) input) буде стилізовано як кнопку */
+
+/* Стилізуємо елемент, який повинен бути кнопкою "Змінити фото" */
+.formGroup:nth-child(1) label[for="photo"] {
+    display: block;
+    background-color: #f7a01c; /* Помаранчевий колір кнопки */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    margin-top: 0; /* Перезаписуємо margin-bottom: 5px */
+
+    &:hover {
+        background-color: #e5941a;
+    }
+}
+
+
+/* Приховуємо текст "Завантаження..." */
+.uploading {
+    display: none;
+}
+
+/* Приховуємо ErrorMessage, якщо вона є поруч із фото */
+.formGroup:nth-child(1) .errorText {
+    display: none;
+}
+
+/* --- Стилі для основних полів вводу та підписів --- */
 
 .formGroup label {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 5px;
   font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.25rem;
 }
 
-.input, .textarea {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input:focus, .textarea:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  outline: none;
-}
-
+.input,
 .textarea {
-  resize: vertical;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background-color: #f0f0f0; /* Світло-сірий фон полів */
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    background-color: #e6e6e6;
+  }
 }
 
 .errorText {
-  color: #ef4444; /* Red 500 */
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+  color: #d9534f;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
+/* --- Стилі для кнопки "Зберегти" та "Скасувати" --- */
+
+/* Блок кнопок займає 2 колонки */
 .buttonGroup {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-column: 1 / -1;
+  display: flex; /* Переводимо на флекс для кращого контролю */
+  flex-direction: column; /* Розташовуємо елементи по вертикалі */
+  align-items: flex-start; /* Вирівнюємо по лівому краю */
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee; /* Лінія під кнопками */
+  margin-top: 10px;
 }
 
-.saveButton, .cancelButton {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
-}
-
+/* Стиль для кнопки "Зберегти" */
 .saveButton {
-  background-color: #10b981; /* Green 500 */
+  background-color: #87b546; /* Зелений колір кнопки */
   color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  width: 250px; /* Ширина, як на макеті */
+  text-align: center;
+  
+  /* Імітуємо чекбокс тут, тому що в наданому коді немає окремого елемента для чекбоксу */
+  margin-top: 15px; /* Залишаємо відступ від лінії */
+
+  &:hover:not(:disabled) {
+    background-color: #729b3a;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    color: #999;
+    cursor: not-allowed;
+  }
 }
 
-.saveButton:hover:not(:disabled) {
-  background-color: #059669; /* Green 600 */
-}
-
-.saveButton:disabled {
-  background-color: #a7f3d0; /* Green 200 */
-  cursor: not-allowed;
-}
-
+/* Стиль для кнопки "Скасувати" (якої немає на макеті, тому просто ховаємо її) */
 .cancelButton {
-  background-color: #f3f4f6; /* Gray 100 */
-  color: #4b5563; /* Gray 600 */
+    display: none;
 }
 
-.cancelButton:hover:not(:disabled) {
-  background-color: #e5e7eb; /* Gray 200 */
+/* --- Імітація Чекбоксу та Угоди --- */
+
+/* На макеті є чекбокс та угода, але в наданому коді для них немає окремих елементів.
+   Стилізуємо за допомогою псевдоелементів, або додаємо клас для угоди.
+   Оскільки нам не можна міняти код, ми використовуємо .form::after для тексту угоди
+   і .buttonGroup::before для імітації чекбоксу перед кнопкою.
+*/
+
+/* ✅ Імітація тексту згоди внизу */
+.form::after {
+    content: "Заявляю, що я ознайомився(лась) із Принципами обробки персональних даних, а також із Комерційними умовами і хочу зареєструватися.";
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: #666;
+    margin-top: 20px;
 }
 
-/* Password Card specific styles */
-.passwordCard {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
-}
-.passwordCard h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 1rem;
-}
-.passwordCard .saveButton {
-    background-color: #f59e0b; /* Amber 500 */
-}
-.passwordCard .saveButton:hover:not(:disabled) {
-    background-color: #d97706; /* Amber 600 */
+/* ✅ Імітація чекбоксу перед кнопкою */
+.buttonGroup::before {
+    content: "Хочу отримувати інформацію про новини та акції";
+    grid-column: 1 / -1;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
 }
 
-/* Success/Error messages specific to the card, since it manages local state */
-.success {
-    background-color: #d1fae5; /* light green */
-    color: #059669;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
+/* ✅ Стилізуємо псевдоелемент для вигляду чекбоксу */
+.buttonGroup::before::before {
+    content: "\2713"; /* Символ галочки */
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #e4e4e4; /* Колір неактивного чекбоксу */
+    color: transparent; /* Ховаємо галочку, якщо вона неактивна */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
 }
-.error {
-    background-color: #fee2e2; /* light red */
-    color: #dc2626;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-}
+
+/* Примітка: Без змін у TSX-коді, відтворити клікабельний чекбокс ідеально неможливо, але візуально це буде схоже. */

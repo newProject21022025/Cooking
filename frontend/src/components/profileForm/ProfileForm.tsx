@@ -1,3 +1,5 @@
+// src/components/profileForm/ProfileForm.tsx
+
 "use client";
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
@@ -5,7 +7,7 @@ import * as Yup from "yup";
 import styles from "./ProfileForm.module.scss";
 import { User, UpdateUserProfileData } from "@/types/user";
 import { uploadToCloudinary } from "@/api/cloudinaryApi";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -64,25 +66,24 @@ export default function ProfileForm({
     photo: user.photo || "",
   };
 
- const handleFileChange = async (
-  e: React.ChangeEvent<HTMLInputElement>,
-  setFieldValue: (field: string, value: string) => void
-) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: (field: string, value: string) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  try {
-    setUploading(true);
-    const result = await uploadToCloudinary(file);
-    setFieldValue("photo", result.secure_url);
-  } catch (err) {
-    console.error("Помилка завантаження фото:", err);
-    alert("Не вдалося завантажити фото. Спробуйте ще раз.");
-  } finally {
-    setUploading(false);
-  }
-};
-
+    try {
+      setUploading(true);
+      const result = await uploadToCloudinary(file);
+      setFieldValue("photo", result.secure_url);
+    } catch (err) {
+      console.error("Помилка завантаження фото:", err);
+      alert("Не вдалося завантажити фото. Спробуйте ще раз.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <Formik
@@ -92,87 +93,127 @@ export default function ProfileForm({
       enableReinitialize
     >
       {({ dirty, values, setFieldValue }) => (
-        <Form className={styles.form}>
-          <div className={styles.formGroup}>
-            <label htmlFor="firstName">Ім&apos;я</label>
-            <Field type="text" id="firstName" name="firstName" className={styles.input} />
-            <ErrorMessage name="firstName" component="div" className={styles.errorText} />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="lastName">Прізвище</label>
-            <Field type="text" id="lastName" name="lastName" className={styles.input} />
-            <ErrorMessage name="lastName" component="div" className={styles.errorText} />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="phoneNumber">Телефон</label>
-            <Field
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              className={styles.input}
-              placeholder="+380 (XX) XXX-XX-XX"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const formatted = formatPhoneNumber(e.target.value);
-                setFieldValue("phoneNumber", formatted);
-              }}
-              value={values.phoneNumber || "+380"}
-            />
-            <ErrorMessage name="phoneNumber" component="div" className={styles.errorText} />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="deliveryAddress">Адреса доставки</label>
-            <Field
-              as="textarea"
-              id="deliveryAddress"
-              name="deliveryAddress"
-              className={styles.textarea}
-              rows={3}
-            />
-            <ErrorMessage name="deliveryAddress" component="div" className={styles.errorText} />
-          </div>
-
-          {/* ✅ Фото-профиль с Cloudinary */}
-          <div className={styles.formGroup}>
-            <label htmlFor="photo">Фото профілю</label>
-
+        <Form className={styles.container}>
+          <div className={styles.formGroupImage}>
             {values.photo && (
               <div className={styles.previewContainer}>
-                <img src={values.photo} alt="Avatar preview" className={styles.previewImage} />
+                <img
+                  src={values.photo}
+                  alt="Avatar preview"
+                  className={styles.previewImage}
+                />
               </div>
             )}
 
+            {/* Приховуємо стандартний інпут */}
             <input
               type="file"
               id="photo"
               accept="image/*"
               onChange={(e) => handleFileChange(e, setFieldValue)}
               disabled={uploading}
+              className={styles.hiddenInput}
             />
 
-            {uploading && <p className={styles.uploading}>Завантаження...</p>}
+            {/* Створюємо власну кнопку */}
+            <label htmlFor="photo" className={styles.customFileButton}>
+              {uploading ? "Завантаження..." : "Обрати фото"}
+            </label>
 
-            <ErrorMessage name="photo" component="div" className={styles.errorText} />
+            <ErrorMessage
+              name="photo"
+              component="div"
+              className={styles.errorText}
+            />
           </div>
 
-          <div className={styles.buttonGroup}>
-            <button
-              type="submit"
-              className={styles.saveButton}
-              disabled={isSubmitting || uploading || !dirty}
-            >
-              {isSubmitting ? "Збереження..." : "Зберегти"}
-            </button>
-            <button
-              type="button"
-              className={styles.cancelButton}
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
-              Скасувати
-            </button>
+          <div className={styles.form}>
+            <div className={styles.formGroup}>
+              <label htmlFor="firstName">Ім&apos;я</label>
+              <Field
+                type="text"
+                id="firstName"
+                name="firstName"
+                className={styles.input}
+              />
+              <ErrorMessage
+                name="firstName"
+                component="div"
+                className={styles.errorText}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="lastName">Прізвище</label>
+              <Field
+                type="text"
+                id="lastName"
+                name="lastName"
+                className={styles.input}
+              />
+              <ErrorMessage
+                name="lastName"
+                component="div"
+                className={styles.errorText}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="phoneNumber">Телефон</label>
+              <Field
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                className={styles.input}
+                placeholder="+380 (XX) XXX-XX-XX"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const formatted = formatPhoneNumber(e.target.value);
+                  setFieldValue("phoneNumber", formatted);
+                }}
+                value={values.phoneNumber || "+380"}
+              />
+              <ErrorMessage
+                name="phoneNumber"
+                component="div"
+                className={styles.errorText}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="deliveryAddress">Адреса доставки</label>
+              <Field
+                as="textarea"
+                id="deliveryAddress"
+                name="deliveryAddress"
+                className={styles.textarea}
+                rows={3}
+              />
+              <ErrorMessage
+                name="deliveryAddress"
+                component="div"
+                className={styles.errorText}
+              />
+            </div>
+
+            {/* ✅ Фото-профиль с Cloudinary */}
+
+            <div className={styles.buttonGroup}>
+              <button
+                type="submit"
+                className={styles.saveButton}
+                disabled={isSubmitting || uploading || !dirty}
+              >
+                {isSubmitting ? "Збереження..." : "Зберегти"}
+              </button>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={onCancel}
+                disabled={isSubmitting}
+              >
+                Скасувати
+              </button>
+            </div>
           </div>
         </Form>
       )}
