@@ -105,7 +105,7 @@ export default function PasswordForm({
 
             <button
               type="submit"
-              className={styles.saveButton}
+              className={styles.savePasswordButton}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Збереження..." : "Змінити пароль"}

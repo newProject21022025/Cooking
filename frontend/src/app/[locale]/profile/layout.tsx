@@ -33,45 +33,45 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
 
   return (
     <div className={styles.container}>
-         <h1 className={styles.title}>Особистий кабінет</h1>     {" "}
+         <h1 className={styles.title}>Особистий кабінет</h1>     
       <div className={styles.layout}>
-            {/* Боковая панель с навигацией */}   {" "}
+            {/* Боковая панель с навигацией */}   
         <nav className={styles.sidebar}>
                {/* Тепер activeTab коректно відображає поточний URL */} 
-            {" "}
+            
           <button
             className={`${styles.navButton} ${
               activeTab === "profile" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("profile")}
           >
-                  📊 Профіль та пароль     {" "}
+                   Профіль та пароль     
           </button>
-                   {" "}
+                   
           <button
             className={`${styles.navButton} ${
               activeTab === "history" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("history")}
           >
-                  📖 Історія покупок     {" "}
+                   Історія замовлень     
           </button>
-                   {" "}
+                   
           <button
             className={`${styles.navButton} ${
               activeTab === "favorites" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("favorites")}
           >
-                  ❤️ Улюблені страви     {" "}
+                   Улюблені страви     
           </button>
-             {" "}
+             
         </nav>
-            {/* Основной контент */}   {" "}
+            {/* Основной контент */}   
         <main className={styles.content}>     {children}    </main> 
-        {" "}
+        
       </div>
-       {" "}
+       
     </div>
   );
 }

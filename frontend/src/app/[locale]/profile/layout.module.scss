@@ -1,11 +1,7 @@
 // src/app/[locale]/profile/layout.module.scss
-// 1. Стили для всего контейнера (фона)
+
 .container {
-  // В отличие от твоего примера, фон лучше задать здесь,
-  // чтобы контролировать его через SCSS-модуль.
-  // Если фон задан в globals.scss, его можно убрать отсюда,
-  // но для блюра самого фона (как на макете) лучше использовать псевдоэлемент.
-margin-top: 100px;
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +10,7 @@ margin-top: 100px;
   width: 100%;
   padding: 2rem;
   box-sizing: border-box;
-  position: relative; // Для позиционирования псевдоэлемента с блюром
+  position: relative; 
 
   // Задний фон с блюром через псевдоэлемент
   &::before {
@@ -45,15 +41,6 @@ margin-top: 100px;
 }
 
 
-
-
-
-// .container {
-//   max-width: 1200px;
-//   margin: 0 auto;
-//   padding: 20px;
-// }
-
 .title {
   text-align: center;
   margin-bottom: 30px;
@@ -64,13 +51,12 @@ margin-top: 100px;
 .layout {
   display: flex;
   flex-direction: column;
- background-color: rgba(255, 255, 255, 0.5);
-//  opacity: 0.5;
+  background-color: rgba(255, 255, 255, 0.5); 
   min-height: 600px;
   max-width: 1400px;
   width: 100%;
   border-radius: 10px;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -81,13 +67,12 @@ margin-top: 100px;
   // background: #f8f9fa;
   // border-radius: 10px;
   padding: 20px;
-   display: grid;
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 
-
   gap: 10px;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     flex-direction: row;
@@ -96,26 +81,26 @@ margin-top: 100px;
 }
 
 .navButton {
- 
   padding: 15px;
-  border: none;
+  border: 1px solid #ddd;
+  box-shadow: #b4b3b3 0px 4px 6px -1px, #b4b3b3 0px 2px 4px -1px;
   background: none;
   border-radius: 8px;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   font-size: 16px;
   transition: all 0.3s ease;
   color: var(--dark-color);
-  
+
   &:hover {
     background: #e9ecef;
   }
-  
+
   &.active {
     background: var(--orange-color);
     color: white;
   }
-  
+
   @media (max-width: 768px) {
     white-space: nowrap;
     flex-shrink: 0;
@@ -133,7 +118,9 @@ margin-top: 100px;
 // --------------------------------------------------------------------------------------------------------
 
 // Добавляем в layout.module.scss или создаем отдельный файл
-.loading, .error, .success {
+.loading,
+.error,
+.success {
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -177,7 +164,7 @@ margin-top: 100px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  
+
   &:hover {
     background: #0056b3;
   }
@@ -195,7 +182,7 @@ margin-top: 100px;
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
   }
@@ -249,7 +236,7 @@ margin-top: 100px;
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
-  
+
   &:hover {
     background: #218838;
   }
@@ -263,7 +250,7 @@ margin-top: 100px;
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
-  
+
   &:hover {
     background: #c82333;
   }

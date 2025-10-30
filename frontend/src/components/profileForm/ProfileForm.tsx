@@ -96,7 +96,7 @@ export default function ProfileForm({
         <Form className={styles.container}>
           <div className={styles.formGroupImage}>
             {values.photo && (
-              <div className={styles.previewContainer}>
+              <div>
                 <img
                   src={values.photo}
                   alt="Avatar preview"
@@ -182,7 +182,7 @@ export default function ProfileForm({
             <div className={styles.formGroup}>
               <label htmlFor="deliveryAddress">Адреса доставки</label>
               <Field
-                as="textarea"
+                // as="textarea"
                 id="deliveryAddress"
                 name="deliveryAddress"
                 className={styles.textarea}

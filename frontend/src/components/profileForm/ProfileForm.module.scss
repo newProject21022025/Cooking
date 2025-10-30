@@ -7,10 +7,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px 30px;
-  padding: 20px 0; /* Внутрішні відступи */
-  // background-color: rgba(255, 255, 255, 0.5); /* Білий фон */
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 20px 0; /* Внутрішні відступи */  
 }
 
 /* Група полів форми */
@@ -18,28 +15,14 @@
   display: flex;
   flex-direction: column;
 }
-
-/* --- Стилі для секції "Фото профілю" (Яка знаходиться ПЕРШОЮ в наданому коді) --- */
-
-/* Контейнер для фото профілю, який має займати 2 колонки */
-.formGroup:nth-child(1) {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 20px;  
-  border-bottom: 2px dashed rgba(153, 153, 153, 0.25); /* Пунктирна лінія */
-}
-
-/* Підпис "Фото профілю" ховаємо, бо на макеті його немає */
-// .formGroup:nth-child(1) label {
-//     display: none;
-// }
-
 .formGroupImage {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: flex;  
+  align-items:center;
+  justify-content: left;
+  gap: 20px;
+  background-color: rgb(255, 255, 255); 
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .hiddenInput {
@@ -47,7 +30,7 @@
 }
 
 .customFileButton {
-  background: #007bff;
+  background: var( --btn-color-orange);
   color: white;
   padding: 8px 16px;
   border-radius: 8px;
@@ -55,17 +38,13 @@
   transition: background 0.3s ease;
 
   &:hover {
-    background: #0056b3;
+    background: var(--btn-color-orange-hover);
   }
 
   &:disabled {
     background: #ccc;
     cursor: not-allowed;
   }
-}
-
-.previewContainer {
-  margin-bottom: 10px;
 }
 
 .previewImage {
@@ -85,10 +64,6 @@
     display: none;
 }
 
-/* Застосовуємо стиль кнопки "Змінити фото" до .formGroup:nth-child(1) > input + label */
-/* Так як у вас немає окремої кнопки, ми стилізуємо label, який йде після Field/Input */
-/* Припускаємо, що label, який стоїть після input[type="file"] (ваш .formGroup:nth-child(1) input) буде стилізовано як кнопку */
-
 /* Стилізуємо елемент, який повинен бути кнопкою "Змінити фото" */
 .formGroup:nth-child(1) label[for="photo"] {
     display: block;
@@ -107,7 +82,6 @@
         background-color: #e5941a;
     }
 }
-
 
 /* Приховуємо текст "Завантаження..." */
 .uploading {
@@ -162,14 +136,13 @@
   flex-direction: column; /* Розташовуємо елементи по вертикалі */
   align-items: flex-start; /* Вирівнюємо по лівому краю */
   gap: 10px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee; /* Лінія під кнопками */
+  padding-bottom: 20px; 
   margin-top: 10px;
 }
 
 /* Стиль для кнопки "Зберегти" */
 .saveButton {
-  background-color: #87b546; /* Зелений колір кнопки */
+  background-color: var(--btn-color-green); /* Зелений колір кнопки */
   color: white;
   padding: 12px 25px;
   border: none;
@@ -178,14 +151,14 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-weight: bold;
-  width: 250px; /* Ширина, як на макеті */
+  // width: 250px; /* Ширина, як на макеті */
   text-align: center;
   
   /* Імітуємо чекбокс тут, тому що в наданому коді немає окремого елемента для чекбоксу */
   margin-top: 15px; /* Залишаємо відступ від лінії */
 
   &:hover:not(:disabled) {
-    background-color: #729b3a;
+    background-color: var(--btn-color-green-hover);
   }
 
   &:disabled {
@@ -200,51 +173,77 @@
     display: none;
 }
 
-/* --- Імітація Чекбоксу та Угоди --- */
+.savePasswordButton{
+  background-color: var(--btn-color-green); /* Зелений колір кнопки */  
+  border-radius: 4px;
+  font-size: 16px; 
+  font-weight: bold;
+  width: 250px;
+  height: 40px;
+  margin-top: 25px;
 
-/* На макеті є чекбокс та угода, але в наданому коді для них немає окремих елементів.
-   Стилізуємо за допомогою псевдоелементів, або додаємо клас для угоди.
-   Оскільки нам не можна міняти код, ми використовуємо .form::after для тексту угоди
-   і .buttonGroup::before для імітації чекбоксу перед кнопкою.
-*/
+  &:hover:not(:disabled) {
+    background-color: var(--btn-color-green-hover);
+  }
+}
 
-/* ✅ Імітація тексту згоди внизу */
-.form::after {
-    content: "Заявляю, що я ознайомився(лась) із Принципами обробки персональних даних, а також із Комерційними умовами і хочу зареєструватися.";
+/* --- МЕДІА-ЗАПИТИ --- */
+@media (max-width: 1440px) {
+  .form {
+    /* Загальний макет форми 2x2, як у вихідному коді */
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 60px; /* Можемо ще збільшити відступи для великого екрана */
+  }
+
+  /* При 1440px поля форми залишаються в 2 колонках */
+  /* Група полів з фото залишається на 2 колонки */
+  .formGroupImage {
     grid-column: 1 / -1;
-    font-size: 12px;
-    color: #666;
-    margin-top: 20px;
-}
+  }
 
-/* ✅ Імітація чекбоксу перед кнопкою */
-.buttonGroup::before {
-    content: "Хочу отримувати інформацію про новини та акції";
+  /* Група кнопок залишається на 2 колонки */
+  .buttonGroup {
     grid-column: 1 / -1;
-    font-size: 14px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-left: 30px;
-    margin-bottom: 15px;
+    flex-direction: row; /* На десктопі можемо розмістити кнопки горизонтально */
+    gap: 20px;
+  }
+  
+  .saveButton,
+  .savePasswordButton {
+    /* Збереження ширини кнопок 250px */
+    width: 250px;
+  }
 }
 
-/* ✅ Стилізуємо псевдоелемент для вигляду чекбоксу */
-.buttonGroup::before::before {
-    content: "\2713"; /* Символ галочки */
-    position: absolute;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    background-color: #e4e4e4; /* Колір неактивного чекбоксу */
-    color: transparent; /* Ховаємо галочку, якщо вона неактивна */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
+@media (max-width: 1024px) {
+  .form {
+    /* На більших екранах зберігаємо 2 колонки, але можемо збільшити gap */
+    gap: 25px 40px;
+    padding: 30px 0;
+  }
+
+  .previewImage {
+    width: 120px; /* Повертаємо більший розмір */
+    height: 120px;
+  }
+
+  .saveButton,
+  .savePasswordButton {
+    width: 250px; /* Обмежуємо ширину кнопок */
+    max-width: none;
+  }
 }
 
-/* Примітка: Без змін у TSX-коді, відтворити клікабельний чекбокс ідеально неможливо, але візуально це буде схоже. */
+@media (max-width: 768px) {
+  .form {
+    /* На планшетах (768px і вище) форма переходить на 2 колонки */
+    grid-template-columns: 1fr;
+    gap: 20px 30px; /* Трохи більший відступ між елементами */
+  }
+
+  /* Переносимо фото і кнопки на всю ширину (якщо потрібно) */
+  .formGroupImage,
+  .buttonGroup {
+    grid-column: 1 / -1;
+  }
+}

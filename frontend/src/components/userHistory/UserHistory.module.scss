@@ -1,29 +1,25 @@
 // src/components/userHistory/UserHistory.module.scss
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
+    margin-top: 30px;
+    padding: 20px;    
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);        
   }
   
-  .historyList {
+  .historyList {      
     list-style: none;
     padding: 0;
     margin: 0;
   }
   
   .historyItem {
+    display: flex;
+    justify-content: space-between;
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
+    padding: 25px;
+    margin-bottom: 20px;   
     gap: 15px;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   
@@ -34,17 +30,17 @@
   }
   
   .partnerInfo {
-    display: flex;
+    display: flex;    
     align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+    gap: 15px;   
+   
+   
   
     h3 {
       margin: 0;
-      font-size: 1.5rem;
-      color: #007bff;
+      font-size: 20px;
+      color:var(--orange-color);
+      font-family: var(--font-green);
     }
   }
   
@@ -84,4 +80,10 @@
     font-size: 1.25rem;
     color: #333;
     margin-bottom: 10px;
+  }
+
+  .orderTotal{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }

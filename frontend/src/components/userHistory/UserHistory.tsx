@@ -14,7 +14,9 @@ interface UserHistoryProps {
 
 export default function UserHistory({ userId }: UserHistoryProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { history, loading, error } = useSelector((state: RootState) => state.userHistory);
+  const { history, loading, error } = useSelector(
+    (state: RootState) => state.userHistory
+  );
 
   useEffect(() => {
     if (userId) {
@@ -33,34 +35,51 @@ export default function UserHistory({ userId }: UserHistoryProps) {
 
   return (
     <div className={styles.container}>
-      <h2>Історія замовлень</h2>
+      {/* <h2>Історія замовлень</h2> */}
       <ul className={styles.historyList}>
         {history.map((order) => (
           <li key={order.orderNumber} className={styles.historyItem}>
             <div className={styles.partnerInfo}>
               {order.partnerPhoto && (
-                <img 
-                  src={order.partnerPhoto} 
-                  alt={`${order.partnerFirstName} ${order.partnerLastName}`} 
-                  className={styles.partnerPhoto} 
+                <img
+                  src={order.partnerPhoto}
+                  alt={`${order.partnerFirstName} ${order.partnerLastName}`}
+                  className={styles.partnerPhoto}
                 />
               )}
-              <h3>{order.partnerFirstName} {order.partnerLastName}</h3>
+              <h3>
+                {order.partnerFirstName} {order.partnerLastName}
+              </h3>
             </div>
-            <p>Номер замовлення: <strong>{order.orderNumber}</strong></p>
-            <p>Дата: <strong>{new Date(order.createdAt).toLocaleString()}</strong></p>
-            <p>Статус: <strong>{order.status || "Не визначено"}</strong></p>
-            <div>
-              <p>Страви:</p>
-              <ul>
-                {order.items.map((item, idx) => (
-                  <li key={idx}>
-                    {item.name} x {item.quantity} = {item.price * item.quantity} грн
-                  </li>
-                ))}
-              </ul>
+            <div className={styles.orderInfo}>
+              <p>
+                Номер замовлення: <strong>{order.orderNumber}</strong>
+              </p>
+              <p>
+                Дата:{" "}
+                <strong>{new Date(order.createdAt).toLocaleString()}</strong>
+              </p>
+              <div>
+                <p>Страви:</p>
+                <ul>
+                  {order.items.map((item, idx) => (
+                    <li key={idx}>
+                      {item.name} x {item.quantity} ={" "}
+                      {item.price * item.quantity} грн
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <p>Сума замовлення: <strong>{order.totalSum}</strong> грн</p>
+            <div className={styles.orderTotal}>
+              <p>
+                Статус: <strong>{order.status || "Не визначено"}</strong>
+              </p>
+
+              <p>
+                Сума замовлення: <strong>{order.totalSum}</strong> грн
+              </p>
+            </div>
           </li>
         ))}
       </ul>

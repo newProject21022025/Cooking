@@ -3,13 +3,14 @@
 
 import { useEffect, useState } from "react";
 import { FormikHelpers } from "formik";
-import styles from "../layout.module.scss";
+// import styles from "../layout.module.scss";
+import styles from "./page.module.scss";
 import { User, UpdateUserProfileData } from "@/types/user";
 import {
   getCurrentUserProfile,
   updateCurrentUserProfile,
 } from "@/api/usersApi";
-import ProfileView from "@/components/profileForm/ProfileView";
+// import ProfileView from "@/components/profileForm/ProfileView";
 import ProfileForm from "@/components/profileForm/ProfileForm";
 import PasswordForm from "@/components/profileForm/PasswordForm";
 import { AxiosError } from "axios";
@@ -133,7 +134,7 @@ export default function ProfileSettingsPage() {
 
   return (
     <div>
-      <h2>Налаштування профілю</h2>
+      <h2 className={styles.profileTitle}>Налаштування профілю</h2>
 
       {updateSuccess && (
         <div className={styles.success}>Профіль успішно оновлено!</div>
