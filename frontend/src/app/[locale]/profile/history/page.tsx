@@ -24,8 +24,8 @@ export default function PurchaseHistoryPage() {
 
   return (
     <div>
-      <h2>Історія покупок</h2>
-      <p>Тут ви можете переглянути історію своїх замовлень.</p>
+      <h2>Історія замовлень</h2>
+      <p>Дивіться свої попередні замовлення та замовляйте знову.</p>
       
       {user && <UserHistory userId={user.id} />}
     </div>
