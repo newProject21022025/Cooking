@@ -49,18 +49,18 @@
     padding-top: 10px;
   }
   
-  .socialIcon {
-    svg {
-      width: 24px;
-      height: 24px;
-      fill: #d87b09; /* Колір акценту */
-      transition: opacity 0.3s ease;
+  // .socialIcon {
+  //   svg {
+  //     width: 40px;
+  //     height: 40px;
+  //     fill: white; /* Колір акценту */
+  //     transition: opacity 0.3s ease;
       
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-  }
+  //     &:hover {
+  //       opacity: 0.8;
+  //     }
+  //   }
+  // }
   
   /* Секції посилань та партнерів */
   .sectionTitle {

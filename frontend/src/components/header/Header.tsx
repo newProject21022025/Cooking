@@ -11,6 +11,8 @@ import { logout } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";
 import styles from "./Header.module.scss";
 import Logo from "@/svg/Logo/Logo";
+import Icon_enter from "@/svg/Icon_enter/Icon_enter";
+import Icon_heart_empty from "@/svg/Icon_heart/Icon_heart_empty";
 
 type HeaderProps = { locale: "uk" | "en" };
 
@@ -40,7 +42,7 @@ export default function Header({ locale }: HeaderProps) {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/login");
+    router.push("/");
   };
 
   const changeLanguage = (newLocale: string) => {
@@ -50,74 +52,76 @@ export default function Header({ locale }: HeaderProps) {
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
-      {" "}
       <Link className={styles.menu} href="/menu">
-        Меню{" "}
-      </Link>{" "}
+        Меню
+      </Link>
       <div className={styles.logo}>
-        {" "}
         <Link href="/">
-          <Logo />{" "}
-        </Link>{" "}
-      </div>{" "}
+          <Logo />
+        </Link>
+      </div>
       <nav className={styles.navigation}>
-        {" "}
         {!isAuthenticated ? (
           <Link href="/login" className={styles.navLink}>
-            Увійти{" "}
+            Увійти
           </Link>
         ) : (
           <>
-            {" "}
-            {/* Тепер використовуємо role з profileUser (state.user) */}{" "}
+            {/* Тепер використовуємо role з profileUser (state.user) */}
             {role === "admin" && (
               <>
-                {" "}
                 <Link href="/profile" className={styles.navLink}>
-                  Профіль{" "}
-                </Link>{" "}
+                  <Icon_enter />
+                </Link>
                 <Link href="/admin" className={styles.navLink}>
-                  Адмін{" "}
-                </Link>{" "}
+                  Адмін
+                </Link>
+                <Link href="/profile/favorites" className={styles.navLink}>
+                  <Icon_heart_empty />
+                </Link>
               </>
-            )}{" "}
+            )}
             {role === "user" && (
-              <Link href="/profile" className={styles.navLink}>
-                Профіль{" "}
-              </Link>
-            )}{" "}
+              <div>
+                <Link href="/profile/favorites" className={styles.navLink}>
+                  <Icon_heart_empty />
+                </Link>
+                <Link href="/profile" className={styles.navLink}>
+                  <Icon_enter />
+                </Link>
+              </div>
+            )}
             {role === "partner" && (
               <Link href="/partners" className={styles.navLink}>
-                Партнери{" "}
+                <Icon_enter />
               </Link>
-            )}{" "}
-            {/* Кнопка Вийти відображається, якщо isAuthenticated = true (тобто є токен) */}{" "}
+            )}
+            {/* Кнопка Вийти відображається, якщо isAuthenticated = true (тобто є токен) */}
             <button onClick={handleLogout} className={styles.navLink}>
-              Вийти{" "}
-            </button>{" "}
+              Вийти
+            </button>
           </>
-        )}{" "}
+        )}
         <div className={styles.languageSwitcher}>
-          {" "}
           <button
             onClick={() => changeLanguage("en")}
             className={`${styles.languageButton} ${
               locale === "en" ? styles.active : ""
             }`}
           >
-            EN{" "}
+            EN
           </button>
-          <span className={styles.languageSeparator}>|</span>{" "}
+          <span className={styles.languageSeparator}>|</span>
           <button
             onClick={() => changeLanguage("uk")}
             className={`${styles.languageButton} ${
               locale === "uk" ? styles.active : ""
             }`}
           >
-            UK{" "}
-          </button>{" "}
-        </div>{" "}
-      </nav>{" "}
+            UK
+          </button>
+        </div>
+      </nav>
     </header>
   );
 }

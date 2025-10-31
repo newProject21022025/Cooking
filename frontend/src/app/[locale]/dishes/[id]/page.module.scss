@@ -321,11 +321,19 @@
 
         .commentAuthor {
           display: flex;
-          gap: 5px;
+          gap: 15px;
+          align-items: center;
 
           .authorName {
             font-weight: 500;
+            font-size: 20px;
           }
+        }
+        .avatarImage {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          object-fit: cover;
         }
 
         .deleteButton {
