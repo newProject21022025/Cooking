@@ -41,7 +41,8 @@ export interface Comment {
     firstName: string;
     lastName: string;
     email?: string;
-    avatar_url?: string;
+    photo?: string;
+
   };
 }
 

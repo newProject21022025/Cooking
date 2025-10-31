@@ -1,11 +1,10 @@
 const EmailIcon = () => {
   return (
     <svg
-      width="36"
-      height="36"
+      width="25"
+      height="25"
       viewBox="0 0 36 36"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      fill="none"      
     >
       <path
         d="M33 7.5H3V28.5H33V7.5Z"

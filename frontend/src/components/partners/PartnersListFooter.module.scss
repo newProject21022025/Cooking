@@ -1,0 +1,70 @@
+// src/components/partners/PartnersInfoFooter.module.scss
+
+// .container {
+//     padding: 20px;   
+//   }
+  
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    
+  }
+  
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .item {
+    margin-bottom: 15px;
+    // Елементи списку не мають виглядати як кнопки
+    cursor: default; 
+  }
+  
+  .partnerName {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  .contactItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  
+  .iconPlaceholder {
+    margin-right: 10px;
+    font-size: 18px; // для емодзі
+  }
+  
+  .icon {    
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    fill: #888; // Колір іконок
+  }
+  
+  .value {
+    color: #333;
+  }
+  
+  .valueLink {
+    color: #333; // Щоб посилання не виділялося синім
+    text-decoration: none;
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  .divider {
+      border: none;    
+      margin: 15px 0;
+      // Якщо хочете точно як на зображенні (повторюється ім'я), цей розділювач можна прибрати,
+      // і покластися на зовнішній відступ `margin-bottom` для `.item`.
+  }

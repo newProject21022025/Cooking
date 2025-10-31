@@ -4,10 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.scss'; 
 import MealUpLogo from '@/svg/Logo/Logo'; 
+import PartnersInfoFooter from '@/components/partners/PartnersListFooter';
 
-import LocationIcon from '@/svg/LocationIcon/LocationIcon';
-import PhoneIcon from '@/svg/PhoneIcon/PhoneIcon';
-import EmailIcon from '@/svg/EmailIcon/EmailIcon';
+
+// import LocationIcon from '@/svg/LocationIcon/LocationIcon';
+// import PhoneIcon from '@/svg/PhoneIcon/PhoneIcon';
+// import EmailIcon from '@/svg/EmailIcon/EmailIcon';
 
 import TelegramIcon from '@/svg/TelegramIcon/TelegramIcon';
 import FacebookIcon from '@/svg/FacebookIcon/FacebookIcon';
@@ -31,20 +33,20 @@ const legalLinks = [
     { name: 'Доступність', href: '/confidentiality' },
 ];
 
-const partnerInfo = [
-    {
-        name: "Ім'я партнера",
-        location: 'М. Київ, вул. Дніпровська набережна, 12',
-        phone: '+380965874567',
-        email: 'hello@mealup.com',
-    },
-    {
-        name: "Ім'я партнера",
-        location: 'М. Київ, вул. Дніпровська набережна, 12',
-        phone: '+380965874567',
-        email: 'hello@mealup.com',
-    },
-];
+// const partnerInfo = [
+//     {
+//         name: "Ім'я партнера",
+//         location: 'М. Київ, вул. Дніпровська набережна, 12',
+//         phone: '+380965874567',
+//         email: 'hello@mealup.com',
+//     },
+//     {
+//         name: "Ім'я партнера",
+//         location: 'М. Київ, вул. Дніпровська набережна, 12',
+//         phone: '+380965874567',
+//         email: 'hello@mealup.com',
+//     },
+// ];
 
 const Footer: React.FC = () => {
     return (
@@ -61,18 +63,19 @@ const Footer: React.FC = () => {
                             Зв&apos;яжіться з нами – <br />
                             Разом готувати це смачніше!
                         </p>
-                        
+
+                                              
                         <div className={styles.contactInfo}>
                             <div className={styles.contactItem}>
-                                {/* <LocationIcon className={styles.icon} /> */}
+                                
                                 <span>М. Київ, вул. Дніпровська набережна, 12</span>
                             </div>
                             <div className={styles.contactItem}>
-                                {/* <PhoneIcon className={styles.icon} /> */}
+                                
                                 <span>+380965874567</span>
                             </div>
                             <div className={styles.contactItem}>
-                                {/* <EmailIcon className={styles.icon} /> */}
+                               
                                 <span>hello@mealup.com</span>
                             </div>
                         </div>
@@ -80,16 +83,16 @@ const Footer: React.FC = () => {
                         {/* Соціальні мережі */}
                         <div className={styles.socials}>
                             <Link href="#" aria-label="Telegram" className={styles.socialIcon}>
-                                {/* <TelegramIcon /> */}
+                                <TelegramIcon />
                             </Link>
                             <Link href="#" aria-label="Facebook" className={styles.socialIcon}>
-                                {/* <FacebookIcon /> */}
+                                <FacebookIcon />
                             </Link>
                             <Link href="#" aria-label="Instagram" className={styles.socialIcon}>
-                                {/* <InstagramIcon /> */}
+                                <InstagramIcon />
                             </Link>
                             <Link href="#" aria-label="Youtube" className={styles.socialIcon}>
-                                {/* <YoutubeIcon /> */}
+                                <YoutubeIcon />
                             </Link>
                         </div>
                     </div>
@@ -110,26 +113,7 @@ const Footer: React.FC = () => {
 
                     {/* Секція 3: Інформація про партнерів */}
                     <div className={styles.partnersSection}>
-                        <h4 className={styles.sectionTitle}>Локації, інформація про Партнерів</h4>
-                        <div className={styles.partnerList}>
-                            {partnerInfo.map((partner, index) => (
-                                <div key={index} className={styles.partnerInfo}>
-                                    <h5 className={styles.partnerName}>{partner.name}</h5>
-                                    <div className={styles.contactItem}>
-                                        {/* <LocationIcon className={styles.icon} /> */}
-                                        <span>{partner.location}</span>
-                                    </div>
-                                    <div className={styles.contactItem}>
-                                        {/* <PhoneIcon className={styles.icon} /> */}
-                                        <span>{partner.phone}</span>
-                                    </div>
-                                    <div className={styles.contactItem}>
-                                        {/* <EmailIcon className={styles.icon} /> */}
-                                        <span>{partner.email}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                    <PartnersInfoFooter/>
                     </div>
                 </div>
 

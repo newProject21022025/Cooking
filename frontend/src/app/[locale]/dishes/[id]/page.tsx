@@ -22,9 +22,8 @@ import { RootState } from "@/redux/store"; // ✅ Імпортуємо тип Ro
 import { User } from "@/types/user";
 // import Icon_heart_green from '@/svg/Icon_heart/Icon_heart_green';
 // import Icons_heart_green_full from '@/svg/Icon_heart/Icon_heart_green_full';
-import Icon_share_green from '@/svg/Icon_share/Icon_share_green';
+import Icon_share_green from "@/svg/Icon_share/Icon_share_green";
 import ToggleFavoriteButton from "@/components/toggleFavoriteButton/ToggleFavoriteButton";
-
 
 export default function DishDetailPage() {
   const params = useParams();
@@ -225,8 +224,7 @@ export default function DishDetailPage() {
           className={
             selectedIngredient ? styles.hiddenSection : styles.modalSection
           }
-        >      
-
+        >
           <div className={styles.blockImage}>
             <img
               src={dish.photo}
@@ -250,9 +248,12 @@ export default function DishDetailPage() {
             <div className={styles.iconContainer}>
               {/* <span className={styles.iconButton}> <Icon_heart_green/>  <Icons_heart_green_full/></span> */}
               <ToggleFavoriteButton dishId={dishId} />
-              <span className={styles.iconButton}> <Icon_share_green/> </span>
-              </div>
-          </section> 
+              <span className={styles.iconButton}>
+                {" "}
+                <Icon_share_green />{" "}
+              </span>
+            </div>
+          </section>
 
           {/* Калькулятор порцій */}
           <div className={styles.portionCalculator}>
@@ -427,12 +428,21 @@ export default function DishDetailPage() {
                     <p className={styles.commentText}>{comment.comment_text}</p>
                     <p className={styles.commentMeta}>
                       <span className={styles.commentAuthor}>
+                        <span className={styles.authorPhoto}>
+                          {/* Використовуйте 'photo' тут, якщо ви додали його до інтерфейсу */}
+                          {comment.user?.photo && (
+                            <img
+                              src={comment.user.photo} // Тепер TypeScript не видасть помилку
+                              alt={`${
+                                comment.user.firstName || "User"
+                              }'s photo`}
+                              className={styles.avatarImage}
+                            />
+                          )}
+                        </span>
                         <span className={styles.authorName}>
                           {comment.user?.firstName || "Анонімний"}{" "}
                           {comment.user?.lastName || ""}
-                        </span>
-                        <span className={styles.authorEmail}>
-                          ({comment.user?.email || ""})
                         </span>
                       </span>
                       <span className={styles.commentDate}>
