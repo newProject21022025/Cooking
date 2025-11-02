@@ -204,7 +204,7 @@ export default function PartnerProfileForm({
 
             {/* Поля профілю */}
             <div className={styles.formGroup}>
-              <label>Ім'я</label>
+              <label>Ім&apos;я</label>
               <Field name="firstName" placeholder="Ім'я" className={styles.input} />
               <ErrorMessage name="firstName" component="div" className={styles.errorText} />
             </div>
