@@ -1,0 +1,185 @@
+/* src/app/[locale]/partners/personal/page.module.scss */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+  max-width: 700px;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+  }
+}
+
+.input,
+.textarea {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+  resize: none;
+
+  &:focus {
+    border-color: #4b9ce2;
+    box-shadow: 0 0 0 3px rgba(75, 156, 226, 0.2);
+    outline: none;
+  }
+}
+
+.textarea {
+  min-height: 80px;
+}
+
+.errorText {
+  color: #e74c3c;
+  font-size: 0.85rem;
+}
+
+.success {
+  background: #e6f9ee;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  padding: 0.7rem 1rem;
+  border-radius: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.error {
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #f5c6cb;
+  padding: 0.7rem 1rem;
+  border-radius: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.saveButton,
+.cancelButton {
+  padding: 0.7rem 1.6rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.saveButton {
+  background-color: #4b9ce2;
+  color: #fff;
+
+  &:hover {
+    background-color: #3a89d1;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+/* === Блок аватара === */
+.avatarSection,
+.photoSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fafafa;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #eee;
+}
+
+.avatarContainer,
+.photoContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e8f0fe;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #4b9ce2;
+}
+
+.avatar,
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholderAvatar {
+  width: 80px;
+  height: 80px;
+  background: #dce6f9;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  color: #4b9ce2;
+  font-size: 1.5rem;
+}
+
+.avatarUpload,
+.photoUpload {
+  input[type="file"] {
+    display: block;
+    font-size: 0.9rem;
+  }
+
+  span {
+    font-size: 0.85rem;
+    color: #666;
+  }
+}
+
+/* === Карточка зміни пароля === */
+.passwordCard {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  max-width: 700px;
+
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+}

@@ -38,7 +38,7 @@ export default function Edit() {
   // Локальний стейт для редагування
   const [editingValues, setEditingValues] = useState<Record<
     string,
-    { price: number; discount: number }
+    { price: string; discount: string }
   >>({});
 
   useEffect(() => {
@@ -51,14 +51,21 @@ export default function Edit() {
 
   useEffect(() => {
     // Ініціалізуємо локальний стейт з даних з Redux
-    const initialValues: Record<string, { price: number; discount: number }> = {};
+    const initialValues: Record<string, { price: string; discount: string }> = {};
     items.forEach((d) => {
-      initialValues[d.id] = { price: d.price || 0, discount: d.discount || 0 };
+      initialValues[d.id] = {
+        price: d.price?.toString() || "",
+        discount: d.discount?.toString() || "",
+      };
     });
     setEditingValues(initialValues);
   }, [items]);
 
-  const handleInputChange = (id: string, field: "price" | "discount", value: number) => {
+  const handleInputChange = (
+    id: string,
+    field: "price" | "discount",
+    value: string
+  ) => {
     setEditingValues((prev) => ({
       ...prev,
       [id]: { ...prev[id], [field]: value },
@@ -68,29 +75,29 @@ export default function Edit() {
   const handleSave = (id: string) => {
     const values = editingValues[id];
     const dish = items.find((d) => d.id === id);
-  
+
     if (dish && values && partnerId) {
       dispatch(
         updatePartnerDish({
           id,
           dish: {
-            partner_id: dish.partner_id || partnerId, // UUID
-            dish_id: dish.dish_id,                   // number
-            price: values.price,
-            discount: values.discount,
+            partner_id: dish.partner_id || partnerId,
+            dish_id: dish.dish_id,
+            price: Number(values.price) || 0,
+            discount: Number(values.discount) || 0,
             availablePortions: dish.availablePortions ?? 0,
           },
         })
       );
     }
   };
-  
-  
+
   const handleDelete = (id: string) => {
     dispatch(deletePartnerDish(id));
   };
 
-  if (!partnerId) return <p className={styles.error}>Не вдалося отримати ID партнера</p>;
+  if (!partnerId)
+    return <p className={styles.error}>Не вдалося отримати ID партнера</p>;
 
   return (
     <div className={styles.container}>
@@ -112,24 +119,55 @@ export default function Edit() {
           </thead>
           <tbody>
             {items.map((dish) => {
-              const { price, discount } = editingValues[dish.id] || { price: 0, discount: 0 };
-              const discountPrice = price - (price * discount) / 100;
+              const { price, discount } = editingValues[dish.id] || {
+                price: "",
+                discount: "",
+              };
+              const numericPrice = Number(price) || 0;
+              const numericDiscount = Number(discount) || 0;
+              const discountPrice =
+                numericPrice - (numericPrice * numericDiscount) / 100;
+
               return (
                 <tr key={dish.id}>
-                  <td>{locale === "uk" ? dish.dishes?.name_ua : dish.dishes?.name_en}</td>
-                  <td>{locale === "uk" ? dish.dishes?.description_ua : dish.dishes?.description_en}</td>
+                  <td>
+                    {locale === "uk"
+                      ? dish.dishes?.name_ua
+                      : dish.dishes?.name_en}
+                  </td>
+                  <td>
+                    {locale === "uk"
+                      ? dish.dishes?.description_ua
+                      : dish.dishes?.description_en}
+                  </td>
                   <td>
                     <input
                       type="number"
                       value={price}
-                      onChange={(e) => handleInputChange(dish.id, "price", +e.target.value)}
+                      onFocus={() =>
+                        setEditingValues((prev) => ({
+                          ...prev,
+                          [dish.id]: { ...prev[dish.id], price: "" },
+                        }))
+                      }
+                      onChange={(e) =>
+                        handleInputChange(dish.id, "price", e.target.value)
+                      }
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={discount}
-                      onChange={(e) => handleInputChange(dish.id, "discount", +e.target.value)}
+                      onFocus={() =>
+                        setEditingValues((prev) => ({
+                          ...prev,
+                          [dish.id]: { ...prev[dish.id], discount: "" },
+                        }))
+                      }
+                      onChange={(e) =>
+                        handleInputChange(dish.id, "discount", e.target.value)
+                      }
                     />
                   </td>
                   <td>{discountPrice.toFixed(2)}</td>
@@ -148,5 +186,3 @@ export default function Edit() {
     </div>
   );
 }
-
-

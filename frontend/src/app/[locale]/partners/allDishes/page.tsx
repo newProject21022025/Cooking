@@ -5,7 +5,10 @@ import React, { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 import { Dish } from "@/types/dish";
 import { useLocale } from "next-intl";
-import { createPartnerDish, fetchPartnerDishes } from "@/redux/slices/partnerDishesSlice";
+import {
+  createPartnerDish,
+  fetchPartnerDishes,
+} from "@/redux/slices/partnerDishesSlice";
 import { fetchDishes } from "@/redux/slices/dishesSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
@@ -33,29 +36,22 @@ const getUserIdFromStorage = (): string | null => {
     }
   }
 
-  const sessionUserId = sessionStorage.getItem("userId");
-  if (sessionUserId) return sessionUserId;
-
-  return null;
+  return sessionStorage.getItem("userId") || null;
 };
 
-const DishCard = ({ dish, partnerId }: { dish: Dish; partnerId: string }) => {
+// --- Карточка блюда ---
+const DishCard = ({
+  dish,
+  partnerId,
+  added,
+  onAdd,
+}: {
+  dish: Dish;
+  partnerId: string;
+  added: boolean;
+  onAdd: () => void;
+}) => {
   const locale = useLocale();
-  const dispatch = useAppDispatch();
-
-  const handleAdd = async () => {
-    await dispatch(
-      createPartnerDish({
-        partner_id: partnerId,
-        dish_id: Number(dish.id),
-        price: 0,
-        discount: 0,
-        availablePortions: 0,
-      })
-    ).unwrap();
-
-    dispatch(fetchPartnerDishes(partnerId));
-  };
 
   return (
     <div className={styles.dishCard}>
@@ -63,8 +59,12 @@ const DishCard = ({ dish, partnerId }: { dish: Dish; partnerId: string }) => {
       <div className={styles.dishInfo}>
         <h3>{locale === "uk" ? dish.name_ua : dish.name_en}</h3>
         <p>{locale === "uk" ? dish.description_ua : dish.description_en}</p>
-        <button onClick={handleAdd} className={styles.addButton}>
-          Додати до меню
+        <button
+          onClick={onAdd}
+          className={`${styles.addButton} ${added ? styles.added : ""}`}
+          disabled={added}
+        >
+          {added ? "✅ Додано" : "Додати до меню"}
         </button>
       </div>
     </div>
@@ -73,46 +73,61 @@ const DishCard = ({ dish, partnerId }: { dish: Dish; partnerId: string }) => {
 
 export default function AllDishesPage() {
   const dispatch = useAppDispatch();
-  const { items: dishes, loading, error, count } = useAppSelector((state) => state.dishes);
+  const { items: dishes, loading, error, count } = useAppSelector(
+    (state) => state.dishes
+  );
+  const { items: partnerDishes } = useAppSelector(
+    (state) => state.partnerDishes
+  );
+
   const [partnerId, setPartnerId] = useState<string | null>(null);
-
-  // --- Фільтр за категоріями ---
   const [category, setCategory] = useState<string>("all");
-
-  // --- Пагінація ---
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const totalPages = Math.ceil((count || 0) / limit);
 
-  const loadDishes = () => {
-    dispatch(fetchDishes({
-      page,
-      limit,
-      category: category !== "all" ? category : undefined,
-    }));
-  };
-
   useEffect(() => {
     const id = getUserIdFromStorage();
-    setPartnerId(id);
-  }, []);
+    if (id) {
+      setPartnerId(id);
+      dispatch(fetchPartnerDishes(id)); // загрузим добавленные блюда
+    }
+  }, [dispatch]);
 
-  // Завантажуємо дані при зміні сторінки або категорії
+  const loadDishes = () => {
+    dispatch(
+      fetchDishes({
+        page,
+        limit,
+        category: category !== "all" ? category : undefined,
+      })
+    );
+  };
+
   useEffect(() => {
     if (partnerId) loadDishes();
   }, [page, category, partnerId]);
 
-  if (!partnerId) {
+  const handleAdd = async (dishId: number) => {
+    if (!partnerId) return;
+    await dispatch(
+      createPartnerDish({
+        partner_id: partnerId,
+        dish_id: dishId,
+        price: 0,
+        discount: 0,
+        availablePortions: 0,
+      })
+    ).unwrap();
+    dispatch(fetchPartnerDishes(partnerId)); // обновим список
+  };
+
+  if (!partnerId)
     return <p className={styles.error}>Не вдалося отримати ID партнера</p>;
-  }
 
-  const handlePrevPage = () => {
-    if (page > 1) setPage((prev) => prev - 1);
-  };
-
-  const handleNextPage = () => {
-    if (page < totalPages) setPage((prev) => prev + 1);
-  };
+  const handlePrevPage = () => page > 1 && setPage((p) => p - 1);
+  const handleNextPage = () =>
+    page < totalPages && setPage((p) => p + 1);
 
   return (
     <div className={styles.container}>
@@ -124,7 +139,7 @@ export default function AllDishesPage() {
           value={category}
           onChange={(e) => {
             setCategory(e.target.value);
-            setPage(1); // Скидаємо на першу сторінку при зміні категорії
+            setPage(1);
           }}
           className={styles.categorySelect}
         >
@@ -140,9 +155,21 @@ export default function AllDishesPage() {
       {error && <p className={styles.error}>{error}</p>}
 
       <div className={styles.grid}>
-        {dishes.map((dish) => (
-          <DishCard key={dish.id} dish={dish} partnerId={partnerId} />
-        ))}
+        {dishes.map((dish) => {
+          const isAdded = partnerDishes.some(
+            (pd) => pd.dish_id === Number(dish.id)
+          );
+
+          return (
+            <DishCard
+              key={dish.id}
+              dish={dish}
+              partnerId={partnerId}
+              added={isAdded}
+              onAdd={() => handleAdd(Number(dish.id))}
+            />
+          );
+        })}
       </div>
 
       {/* --- Пагінація --- */}

@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { UpdatePartnerProfileData } from "@/types/partner";
 import { formatPhoneNumber } from "./formatters";
-import styles from "@/app/[locale]/partners/personal/page.module.scss";
+import styles from "./PartnerProfileForm.module.scss";
 import { useState } from "react";
 import { changePartnerPassword } from "@/api/partnersApi"; // новий API для зміни пароля
 import { uploadToCloudinary } from "@/api/cloudinaryApi";
