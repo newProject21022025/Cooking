@@ -3,7 +3,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import {
+  Formik,
+  Form as FormikForm,
+  Field,
+  ErrorMessage,
+  FormikHelpers,
+} from "formik";
 import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
@@ -11,7 +17,7 @@ import { registerUser, CreateUserData, resetPassword } from "@/api/usersApi";
 import { AxiosError } from "axios";
 import styles from "./LoginForm.module.scss";
 
-// Валідації
+// ====================== ВАЛІДАЦІЯ ======================
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
   password: Yup.string()
@@ -32,7 +38,7 @@ const ResetPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
 });
 
-// Типи для форми
+// ====================== ТИПИ ФОРМИ ======================
 interface FormValues extends CreateUserData {
   firstName: string;
   lastName: string;
@@ -48,28 +54,25 @@ export default function LoginForm() {
 
   const [isRegister, setIsRegister] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [formError, setFormError] = useState("");
   const [resetMessage, setResetMessage] = useState("");
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  // ====================== ПЕРЕМИКАЧІ ======================
   const toggleForm = () => {
-    setIsRegister(!isRegister);
+    setIsRegister((prev) => !prev);
     setIsResetPassword(false);
     setFormError("");
     setResetMessage("");
   };
 
   const toggleResetPassword = () => {
-    setIsResetPassword(!isResetPassword);
+    setIsResetPassword((prev) => !prev);
     setIsRegister(false);
     setFormError("");
     setResetMessage("");
   };
 
+  // ====================== РЕЄСТРАЦІЯ ======================
   const handleRegister = async (
     values: FormValues,
     helpers: FormikHelpers<FormValues>
@@ -93,6 +96,7 @@ export default function LoginForm() {
     }
   };
 
+  // ====================== ВІДНОВЛЕННЯ ПАРОЛЯ ======================
   const handleResetPassword = async (
     values: FormValues,
     helpers: FormikHelpers<FormValues>
@@ -116,8 +120,7 @@ export default function LoginForm() {
     }
   };
 
-  if (!mounted) return null;
-
+  // ====================== РЕНДЕР ======================
   return (
     <Formik
       initialValues={{ firstName: "", lastName: "", email: "", password: "" }}
@@ -129,6 +132,7 @@ export default function LoginForm() {
           : LoginSchema
       }
       onSubmit={(values, helpers) => {
+        console.log("Submit fired", values); // Проверка
         if (isRegister) handleRegister(values, helpers);
         else if (isResetPassword) handleResetPassword(values, helpers);
         else {
@@ -138,7 +142,7 @@ export default function LoginForm() {
       }}
     >
       {({ isSubmitting }) => (
-        <Form className={styles.form}>
+        <FormikForm className={styles.form}>
           <h2 className={styles.title}>
             {isRegister
               ? "Реєстрація"
@@ -147,6 +151,7 @@ export default function LoginForm() {
               : "Вхід"}
           </h2>
 
+          {/* Ім'я та Прізвище */}
           {isRegister && (
             <>
               <div className={styles.formGroup}>
@@ -178,6 +183,7 @@ export default function LoginForm() {
             </>
           )}
 
+          {/* Email */}
           <div className={styles.formGroup}>
             <Field
               type="email"
@@ -185,13 +191,10 @@ export default function LoginForm() {
               placeholder="Ел. пошта"
               className={styles.input}
             />
-            <ErrorMessage
-              name="email"
-              component="div"
-              className={styles.error}
-            />
+            <ErrorMessage name="email" component="div" className={styles.error} />
           </div>
 
+          {/* Пароль (якщо не reset) */}
           {!isResetPassword && (
             <div className={styles.formGroup}>
               <Field
@@ -208,6 +211,7 @@ export default function LoginForm() {
             </div>
           )}
 
+          {/* Кнопка */}
           <button
             type="submit"
             className={styles.button}
@@ -222,14 +226,13 @@ export default function LoginForm() {
               : "Увійти"}
           </button>
 
+          {/* Повідомлення */}
           {(authError || formError) && (
             <p className={styles.error}>{authError || formError}</p>
           )}
+          {resetMessage && <p className={styles.success}>{resetMessage}</p>}
 
-          {resetMessage && (
-            <p className={styles.success}>{resetMessage}</p>
-          )}
-
+          {/* Посилання */}
           <div className={styles.links}>
             {!isResetPassword ? (
               <>
@@ -261,7 +264,7 @@ export default function LoginForm() {
               </button>
             )}
           </div>
-        </Form>
+        </FormikForm>
       )}
     </Formik>
   );
