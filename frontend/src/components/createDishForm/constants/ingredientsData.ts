@@ -39,6 +39,7 @@ export const ingredientsByCategory: Record<string, IngredientOption[]> = {
     { name_ua: "Серце", name_en: "Heart" },
     { name_ua: "Крильця курячі", name_en: "Chicken wings" },
     { name_ua: "Філе куряче", name_en: "Chicken fillet" },
+    { name_ua: "Яйце", name_en: "Egg" }
   ],
   "Риба": [
     { name_ua: "Скумбрія", name_en: "Mackerel" },
@@ -185,8 +186,7 @@ export const ingredientsByCategory: Record<string, IngredientOption[]> = {
     { name_ua: "Ванілін", name_en: "Vanillin" },
   ],
 
-  "Інше": [
-    { name_ua: "Яйце", name_en: "Egg" },
+  "Інше": [    
     { name_ua: "Вода", name_en: "Water" },
     { name_ua: "Олія", name_en: "Oil" },
     { name_ua: "Цукор", name_en: "Sugar" },

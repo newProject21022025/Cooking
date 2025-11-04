@@ -1,71 +1,73 @@
 /* src/app/page.module.scss */
 
 .container {
-  max-width: 1200px;
+  // max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
-  margin-top: 100px;
+  // padding: 24px;
+  margin: 100px 70px;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #222;
+  margin-bottom: 10px;
+  // text-align: center;  
+}
+.titleName{
+  font-family: var( --font-green);
+  color: var(--orange-color);
+  margin-left: 10px;
+}
+.subTitle {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: var(--btn-font-family);
+  
 }
 
 .buttonGroup {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 24px;
+  flex-wrap: nowrap;
+  gap: 10px; 
+  justify-content: space-between; /* Розтягуємо елементи по краях */
+  width: 100%; /* Забезпечуємо повну ширину */
+  max-width: none; /* 👈 ВИДАЛЯЄМО ОБМЕЖЕННЯ */
+  margin: 24px 0; /* Прибираємо auto-центрирування */
+  
+  // Додаємо тінь для всієї групи
+  
 }
 
 .button {
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
+  flex: 1 1 0; /* 👈 Забезпечуємо рівну ширину для всіх кнопок */
+  padding: 12px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: capitalize;
   color: #333;
-  background: #f7f7f7;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  border: 1px solid #ccc;   
   cursor: pointer;
-  transition: all 0.25s ease;
-
-  &:hover {
-    background: #eaeaea;
-    color: #000;
-  }
-
-  &:active {
-    background: #ddd;
-  }
+  transition: background-color 0.25s ease, color 0.25s ease;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3); 
+  border-radius: 8px;    
 }
 
 /* Активна вкладка */
 .buttonActive {
-  background: #333;
-  color: #fff;
-  border-color: #333;
+  background-color: var(--btn-color-orange); 
+  color: white; 
+  box-shadow: none; 
+  z-index: 1; 
 }
 
-/* Адаптивність */
+/* ... (Ваша адаптивність) ... */
 @media (max-width: 768px) {
   .buttonGroup {
-    gap: 8px;
+    /* Навіть на мобільних пристроях займає 100% */
+    margin-left: 0;
+    margin-right: 0;
   }
-
   .button {
-    flex: 1 1 calc(50% - 8px);
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .button {
-    flex: 1 1 100%;
+    padding: 10px 10px;
   }
 }
