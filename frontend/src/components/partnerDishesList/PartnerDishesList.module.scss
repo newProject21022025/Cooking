@@ -1,49 +1,57 @@
 /* src/components/PartnerDishesList/PartnerDishesList.module.scss */
 
 .container {
-  padding: 2rem;
-  max-width: 1200px;
   margin: 0 auto;
-  font-family: 'Poppins', sans-serif;
-  color: #333;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.titleName {
+  font-family: var(--font-green);
+  color: var(--orange-color);
+  margin-left: 10px;
 }
 
 .searchContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
+  gap: 16px;
+  margin-bottom: 40px;
 }
 
 .searchBar {
   flex-grow: 1;
-  padding: 0.8rem 1.25rem;
-  font-size: 1rem;
+  padding: 15px 25px;
+  font-size: 16px;
   border: 2px solid #e0e0e0;
-  border-radius: 50px;
+  border-radius: 10px;
   box-sizing: border-box;
   transition: all 0.3s ease;
-  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 
   &:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #4caf50;
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
   }
 }
 
 .searchButton {
-  background-color: #4CAF50;
+  background-color: var(--btn-color-green);
   color: white;
-  padding: 0.8rem 2rem;
+  padding: 15px 25px;
   border: none;
-  border-radius: 50px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 20%;
 
   &:hover {
     background-color: #45a049;
@@ -57,152 +65,201 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 2rem;
 }
 
 .card {
-  
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--beige-background);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+  min-width: 420px;
+
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
   }
 }
-
 .image {
   width: 100%;
-  height: 180px;
+  max-height: 330px;
   object-fit: cover;
 }
 
-.cardContent {
-  padding: 1.5rem;
+.cardTitle {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.cardName {
+  font-family: var(--font-green);
+  color: var(--orange-color);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.cardPrice {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  align-items: flex-end;
 }
 
-.card h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-  color: #2c3e50;
+.cardFinalPrice {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green-color);
 }
 
-.card p {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #6c757d;
-  margin-bottom: 0.5rem;
+.cardGeneralPrice {
+  font-family: var(--btn-font-family);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--red-color);
 }
-
-.buyButton {
-  background-color: #4CAF50;
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: auto;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-
-  &:hover {
-    background-color: #43a047;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+.cardGeneralPrice::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--red-color);
+  position: relative;
+  top: -12px;
 }
-
-.addedButton {
-  background-color: #6c757d;
-  cursor: not-allowed;
-  
-  &:hover {
-    background-color: #6c757d;
-    transform: none;
-  }
-}
-
-.ingredientsButton {
-  background-color: #007bff;
-  color: white;
-  padding: 0.75rem 1rem;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
+.cardDiscountPrice {
+  font-size: 20px;
   font-weight: 500;
-  transition: background-color 0.3s ease, border-radius 0.3s ease;
-  border-radius: 50px;
-  margin-top: 1rem;
-
-  &:hover {
-    background-color: #0069d9;
-  }
+  color: var(--orange-color);
+  margin-top: 5px;
 }
 
-.ingredientsList {
-  padding: 1rem 1.5rem 1.5rem;
-  background-color: #fafafa;
-  border-top: 1px dashed #e0e0e0;
-  margin-top: 1rem;
-  
-  h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem;
-    color: #495057;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
-  }
-  
-  li {
-    font-size: 0.9rem;
-    color: #5a5a5a;
-    line-height: 1.8;
-    position: relative;
-    padding-left: 1.2rem;
-    
-    &::before {
-      content: '•';
-      color: #4CAF50;
-      position: absolute;
-      left: 0;
-      font-size: 1.2rem;
-      top: -2px;
+.cardDescription {
+  font-family: var(--btn-font-family);
+  font-size: 16px;
+  color: var(--gray-color);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis; /* Не завжди необхідна, але допомагає */
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  padding: 20px;
+}
+.iconTime svg {
+  width: 32px;
+  height: 32px;
+}
+.freeDelivery {
+  font-family: var(--btn-font-family);
+  font-size: 16px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttonsContainer {
+  position: relative; /* Для роботи z-index */
+  z-index: 20; /* Вище, ніж z-index: 10 у .ingredientsList */
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  padding: 5px;
+  margin-top: 20px;
+
+  // Якщо інгредієнти приховані, застосувати border-radius до контейнера кнопок
+  .dishCardContainer:not(:has(.ingredientsList)) & {
+    .ingredientsButton:first-child {
+      // Ліва кнопка
+      border-bottom-left-radius: 8px;
+    }
+    .ingredientsButton:last-child {
+      // Права кнопка
+      border-bottom-right-radius: 8px;
     }
   }
 }
 
-.emptyMessage {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #888;
-  margin-top: 2rem;
+.ingredientsButton {
+  flex: 1; /* ✅ ВАЖЛИВО: Забезпечує однакову ширину для обох кнопок */
+  background-color: var(--btn-color-green);
+  padding: 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  border-radius: 5px; /* Прибираємо радіус з самої кнопки */
+
+  &:hover {
+    background-color: var(--btn-color-green-hover);
+  }
 }
 
-.subTitle {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 2rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+.cookButton {
+  background-color: var(--btn-color-orange);
+
+  &:hover {
+    background-color: #ffb74d;
+  }
 }
+
+.ingredientsList {
+  // ✅ ЗМІНИ ДЛЯ ПОЗИЦІОНУВАННЯ ПОВЕРХ КОНТЕНТУ
+  position: absolute;
+  bottom: 78px; // Розміщуємо його на нижньому краю картки
+  left: 0;
+  width: 100%; // Займає всю ширину картки
+  height: 150px;
+  z-index: 10; // Гарантуємо, що він буде вище за інший контент
+
+  // ✅ Стилі для зовнішнього вигляду
+  padding: 0.5rem 1rem 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+
+  // Додаємо нижній border-radius
+  border-radius: 0 0 8px 8px;
+
+  padding: 0.5rem 1rem 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+
+  // Додаємо нижній border-radius, коли видимі
+  border-radius: 0 0 8px 8px;
+
+  h4 {
+    margin: 0 0 0.5rem;
+    color: #555;
+  }
+
+  ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  li {
+    font-size: 0.9rem;
+    color: #666;
+  }
+}
+@media (max-width: 1440px) {
+  .image {
+    max-height: 280px;
+  }
+}
+

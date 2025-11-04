@@ -9,6 +9,8 @@ import { addToBasket } from "@/redux/slices/basketSlice";
 import { PartnerDish } from "@/types/partner"; // Предполагается, что этот импорт верный
 import { Dish, Ingredient } from "@/types/dish"; // ✅ Импорт для типизации
 import styles from "./PartnerDishesList.module.scss";
+import { useSearchParams } from "next/navigation";
+import Icon_Time from "@/svg/Icon_Time/Icon_Time";
 
 // Интерфейс для объединенного объекта блюда, который отображается в списке
 interface DisplayedDish {
@@ -32,12 +34,24 @@ export default function PartnerDishesList({
   const [searchResults, setSearchResults] = useState<DisplayedDish[]>([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [showIngredients, setShowIngredients] = useState<Record<string, boolean>>({});
+  const [showIngredients, setShowIngredients] = useState<
+    Record<string, boolean>
+  >({});
 
   const { partnerDishes, loading: loadingPartnerDishes } = useSelector(
     (state: RootState) => state.partners
   );
-
+  const { partners, selectedPartnerId } = useSelector(
+    (state: RootState) => state.partners
+  );
+  const searchParams = useSearchParams();
+  const urlPartnerId = searchParams.get("partnerId");
+  const currentPartnerId = urlPartnerId || selectedPartnerId;
+  const selectedPartner = partners.find((p) => p.id === currentPartnerId);
+  const partnerName = selectedPartner
+    ? `${selectedPartner.firstName} ${selectedPartner.lastName}`
+    : "";
+  const titleText = partnerName ? `${partnerName}` : " ";
   const basketItems = useSelector((state: RootState) => state.basket.items);
 
   // Загружаем все блюда
@@ -64,14 +78,14 @@ export default function PartnerDishesList({
       setLoadingSearch(false);
       return;
     }
-    
+
     // Результаты поиска всегда должны быть отфильтрованы по partnerId
     const results: DisplayedDish[] = partnerDishes
-      .filter(pd => pd.partner_id === partnerId)
-      .map(pd => {
-        const dish = allDishes.find(d => d.id === pd.dish_id);
+      .filter((pd) => pd.partner_id === partnerId)
+      .map((pd) => {
+        const dish = allDishes.find((d) => d.id === pd.dish_id);
         if (!dish) return null;
-        
+
         // Фильтрация по поисковому запросу
         if (
           dish.name_ua.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,7 +105,7 @@ export default function PartnerDishesList({
   };
 
   const handleIngredientsToggle = (dishId: number) => {
-    setShowIngredients(prev => ({
+    setShowIngredients((prev) => ({
       ...prev,
       [dishId]: !prev[dishId],
     }));
@@ -110,9 +124,9 @@ export default function PartnerDishesList({
   } else {
     // Обработка всего меню: сначала фильтруем PartnerDish, потом преобразуем в DisplayedDish
     displayedPartnerDishes = partnerDishes
-      .filter(pd => pd.partner_id === partnerId) // pd здесь гарантированно имеет тип PartnerDish
-      .map(pd => {
-        const dish = allDishes.find(d => d.id === pd.dish_id);
+      .filter((pd) => pd.partner_id === partnerId) // pd здесь гарантированно имеет тип PartnerDish
+      .map((pd) => {
+        const dish = allDishes.find((d) => d.id === pd.dish_id);
         if (!dish) return null;
         const finalPrice = pd.discount
           ? pd.price - pd.price * (pd.discount / 100)
@@ -128,8 +142,10 @@ export default function PartnerDishesList({
 
   return (
     <div className={styles.container}>
-      <h2>Меню партнера</h2>
-
+      <h2 className={styles.title}>
+        Меню
+        <span className={styles.titleName}>{titleText}</span>
+      </h2>
       <div className={styles.searchContainer}>
         <input
           type="text"
@@ -146,48 +162,78 @@ export default function PartnerDishesList({
       <div className={styles.cards}>
         {displayedPartnerDishes.map(({ partnerDish, dish, finalPrice }) => {
           // dish гарантированно имеет тип Dish, а partnerDish — PartnerDish
-          const isAdded = basketItems.some(item => item.partnerDish.id === partnerDish.id);
+          const isAdded = basketItems.some(
+            (item) => item.partnerDish.id === partnerDish.id
+          );
 
           return (
             <div key={partnerDish.id} className={styles.card}>
-              <img src={dish.photo} alt={dish.name_ua} className={styles.image} />
-              <h3>{dish.name_ua}</h3>
-              <p>{dish.description_ua}</p>
-              <p>
-                Ціна: {partnerDish.price} грн
-                {(partnerDish.discount ?? 0) > 0 &&
-                  `(Знижка ${partnerDish.discount}%)`}
-              </p>
-              <p>Кінцева ціна: {finalPrice.toFixed(2)} грн</p>
-              <button
-                className={`${styles.buyButton} ${isAdded ? styles.addedButton : ""}`}
-                onClick={() =>
-                  !isAdded &&
-                  dispatch(addToBasket({ partnerDish, dish, quantity: 1 }))
-                }
-                disabled={isAdded}
-              >
-                {isAdded ? "Товар доданий до кошика" : "Купити"}
-              </button>
-
-              <button
-                onClick={() => handleIngredientsToggle(dish.id)}
-                className={styles.ingredientsButton}
-              >
-                {showIngredients[dish.id] ? "Приховати інгредієнти" : "Інгредієнти"}
-              </button>
-
-              {showIngredients[dish.id] && (
-                <div className={styles.ingredientsList}>
-                  <h4>Основні інгредієнти:</h4>
-                  <ul>
-                    {/* ✅ ingredient теперь имеет явный тип Ingredient */}
-                    {dish.important_ingredients.map((ingredient: Ingredient, index) => (
-                      <li key={index}>{ingredient.name_ua}</li>
-                    ))}
-                  </ul>
+              <img
+                src={dish.photo}
+                alt={dish.name_ua}
+                className={styles.image}
+              />
+              <div className={styles.cardInfo}>
+                <div className={styles.cardTitle}>
+                  <h3 className={styles.cardName}>{dish.name_ua}</h3>
+                  <div className={styles.cardPrice}>
+                    <p className={styles.cardFinalPrice}>
+                      {finalPrice.toFixed(2)}₴
+                    </p>
+                    <p className={styles.cardGeneralPrice}>
+                      {partnerDish.price}₴
+                    </p>
+                    <p className={styles.cardDiscountPrice}>
+                      {(partnerDish.discount ?? 0) > 0 &&
+                        `-${partnerDish.discount}%`}
+                    </p>
+                  </div>
                 </div>
-              )}
+                <p className={styles.cardDescription}>{dish.description_ua}</p>
+                <p className={styles.freeDelivery}>
+                  <span className={styles.iconTime}>                   
+                    <Icon_Time />
+                  </span>
+                  Безкоштовна доставка по місту від 500 ₴{" "}
+                </p>
+
+                <div className={styles.buttonsContainer}>
+                  <button
+                    onClick={() => handleIngredientsToggle(dish.id)}
+                    className={styles.ingredientsButton}
+                  >
+                    {showIngredients[dish.id]
+                      ? "Приховати інгредієнти"
+                      : "Інгредієнти"}
+                  </button>
+                  <button
+                    className={`${styles.ingredientsButton} ${
+                      styles.cookButton
+                    } ${isAdded ? styles.addedButton : ""}`}
+                    onClick={() =>
+                      !isAdded &&
+                      dispatch(addToBasket({ partnerDish, dish, quantity: 1 }))
+                    }
+                    disabled={isAdded}
+                  >
+                    {isAdded ? "Товар доданий до кошика" : "Замовити"}
+                  </button>
+
+                  {showIngredients[dish.id] && (
+                    <div className={styles.ingredientsList}>
+                      <h4>Основні інгредієнти:</h4>
+                      <ul>
+                        {/* ✅ ingredient теперь имеет явный тип Ingredient */}
+                        {dish.important_ingredients.map(
+                          (ingredient: Ingredient, index) => (
+                            <li key={index}>{ingredient.name_ua}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           );
         })}
