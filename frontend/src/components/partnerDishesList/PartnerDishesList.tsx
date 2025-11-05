@@ -180,9 +180,12 @@ export default function PartnerDishesList({
                     <p className={styles.cardFinalPrice}>
                       {finalPrice.toFixed(2)}₴
                     </p>
-                    <p className={styles.cardGeneralPrice}>
-                      {partnerDish.price}₴
-                    </p>
+                    {/** ✅ ДОДАЄМО УМОВУ ПЕРЕВІРКИ ЗНИЖКИ **/}
+                    {(partnerDish.discount ?? 0) > 0 && (
+                      <p className={styles.cardGeneralPrice}>
+                        {partnerDish.price}₴
+                      </p>
+                    )}
                     <p className={styles.cardDiscountPrice}>
                       {(partnerDish.discount ?? 0) > 0 &&
                         `-${partnerDish.discount}%`}
@@ -191,7 +194,7 @@ export default function PartnerDishesList({
                 </div>
                 <p className={styles.cardDescription}>{dish.description_ua}</p>
                 <p className={styles.freeDelivery}>
-                  <span className={styles.iconTime}>                   
+                  <span className={styles.iconTime}>
                     <Icon_Time />
                   </span>
                   Безкоштовна доставка по місту від 500 ₴{" "}

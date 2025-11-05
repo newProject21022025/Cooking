@@ -1,17 +1,17 @@
 .orderForm {
-    background: #fff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    max-width: 500px;
+    // background: #fff;
+    // border-radius: 12px;
+    // padding: 24px;
+    // box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    // max-width: 500px;
     margin: 32px auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   
     h2 {
-      text-align: center;
+      // text-align: center;
       margin-bottom: 20px;
-      font-size: 1.8rem;
-      color: #333;
+      font-size: 32px;
+      // color: #333;
     }
   
     .form {
@@ -24,22 +24,27 @@
         flex-direction: column;
   
         label {
-          font-weight: 600;
+          font-weight: 700;
           margin-bottom: 6px;
-          color: #555;
+          font-size: 20px;
+          // color: #555;
         }
   
         input {
+          font-family: var(--btn-font-family);
           padding: 10px 12px;
-          border: 1px solid #ccc;
+          border: none;
           border-radius: 8px;
-          font-size: 1rem;
+          font-size: 16px;
           transition: border-color 0.3s, box-shadow 0.3s;
+          background-color: var(--beige-background);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   
           &:focus {
             outline: none;
-            border-color: #4f46e5; // фіолетовий акцент
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+            border: 1px solid var(--orange-color);
+            // border-color: var(--orange-color);
+            // box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
           }
         }
   
@@ -52,7 +57,7 @@
   
       button {
         padding: 12px;
-        background: #4f46e5;
+        background: var(--btn-color-orange);
         color: #fff;
         font-weight: 600;
         font-size: 1rem;
@@ -62,7 +67,7 @@
         transition: background 0.3s, transform 0.1s;
   
         &:hover {
-          background: #4338ca;
+          background: var(--btn-color-orange-hover);
           transform: translateY(-2px);
         }
   
