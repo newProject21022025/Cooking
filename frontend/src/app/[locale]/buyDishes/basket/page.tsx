@@ -13,6 +13,7 @@ import {
 import OrderForm from "@/components/orderForm/OrderForm";
 import styles from "./page.module.scss";
 import UserLoader from "@/components/UserLoader";
+import Icon_delete from "@/svg/Icon_delete/Icon_delete";
 
 export default function BasketPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,50 +78,89 @@ export default function BasketPage() {
           <div className={styles.checkoutContent}>
             {/* Кошик */}
             <div className={styles.basket}>
-              <h2>Кошик</h2>
+              {/* <h2>Кошик</h2> */}
               <ul className={styles.basketList}>
                 {items.map((item) => {
                   const { partnerDish, dish, quantity } = item;
                   const finalPrice = partnerDish.discount
                     ? partnerDish.price -
                       (partnerDish.price * partnerDish.discount) / 100
-                    : partnerDish.price;
+                    : partnerDish.price; // ✅ 1. РОЗРАХУНОК ЗАГАЛЬНОЇ ЦІНИ БЕЗ ЗНИЖКИ ДЛЯ ПОТОЧНОЇ КІЛЬКОСТІ
+                  const generalPriceTotal = partnerDish.price * quantity; // ✅ 2. ПЕРЕВІРКА НА НАЯВНІСТЬ ЗНИЖКИ
+                  const hasDiscount = (partnerDish.discount ?? 0) > 0;
                   return (
-                    <li key={partnerDish.id} className={styles.basketItem}>
-                      <img
-                        src={dish.photo}
-                        alt={dish.name_ua}
-                        className={styles.dishPhoto}
-                      />
-                      <div className={styles.details}>
-                        <h3>{dish.name_ua}</h3>
-                        <p>{dish.description_ua}</p>
-                        <p>Ціна: {partnerDish.price} грн</p>
-                        <p>Знижка: {partnerDish.discount || 0}%</p>
-                        <p>Сума: {finalPrice * quantity} грн</p>
-                        <div className={styles.controls}>
+                    <li key={partnerDish.id} className={styles.basketCard}>
+                      <div className={styles.basketItemHeader}>
+                        <img
+                          src={dish.photo}
+                          alt={dish.name_ua}
+                          className={styles.dishPhoto}
+                        />
+                        <div>
+                          <h3 className={styles.titleName}>{dish.name_ua}</h3>
+                          <p className={styles.cardDescription}>
+                            {dish.description_ua}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className={styles.portionCalculator}>
+                        <div className={styles.portionInputGroup}>
                           <button
+                            className={styles.portionButton}
                             onClick={() => handleDecrease(partnerDish.id)}
                           >
                             -
                           </button>
-                          <span>{quantity}</span>
+                          <span className={styles.portionInput}>
+                            {quantity}
+                          </span>
                           <button
+                            className={styles.portionButtonPlus}
                             onClick={() => handleIncrease(partnerDish.id)}
                           >
                             +
                           </button>
-                          <button onClick={() => handleRemove(partnerDish.id)}>
-                            Видалити
-                          </button>
+                        </div>
+                        <div>
+                          <p className={styles.cardFinalPrice}>
+                            {(finalPrice * quantity).toFixed(2)}₴
+                          </p>
+                          {hasDiscount && (
+                            <p className={styles.cardGeneralPrice}>
+                              {generalPriceTotal.toFixed(2)}₴
+                            </p>
+                          )}
+                          {hasDiscount && (
+                            <p className={styles.cardDiscountPrice}>
+                              -{partnerDish.discount}%
+                            </p>
+                          )}
                         </div>
                       </div>
+                      <button
+                        className={styles.deleteCartButton}
+                        onClick={() => handleRemove(partnerDish.id)}
+                      >
+                        <span className={styles.deleteIcon}>
+                          <Icon_delete />{" "}
+                        </span>
+                        Видалити
+                      </button>
                     </li>
                   );
                 })}
               </ul>
               <div className={styles.total}>
-                <h3>Загальна сума: {totalSum} грн</h3>
+                <div>
+                  <h3>
+                    Загальна сума:{" "}
+                    <span className={styles.cardFinalPrice}>{totalSum} ₴</span>
+                  </h3>
+                  <p className={styles.freeDelivery}>
+                    Безкоштовна доставка по місту від 500 ₴
+                  </p>
+                </div>
                 <button onClick={() => dispatch(clearBasket())}>
                   Очистити кошик
                 </button>

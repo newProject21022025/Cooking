@@ -1,14 +1,15 @@
 // src/app/[locale]/buyDishes/basket/page.module.scss
 
 .checkoutContainer {
-  max-width: 1200px;
+  min-height: 35vh;
   margin: 0 auto;
-  padding: 24px;
+  // padding: 24px;
 
   .empty {
     text-align: center;
-    font-size: 1.5rem;
-    color: #555;
+    font-size: 20px;
+    margin-top: 150px;
+    // color: #555;
   }
 
   .checkoutContent {
@@ -23,10 +24,10 @@
 
   .basket {
     flex: 1;
-    background: #fff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    // background: #fff;
+    // border-radius: 12px;
+    // padding: 24px;
+    // box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
     h2 {
       margin-bottom: 16px;
@@ -41,11 +42,39 @@
       overflow-y: auto;
     }
 
-    .basketItem {
+    .basketCard {
       display: flex;
+      flex-direction: column;
       gap: 16px;
       border-bottom: 1px solid #eee;
       padding-bottom: 12px;
+      background-color: var(--beige-background);
+      border-radius: 10px;
+
+      .basketItemHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 8px;
+        margin-top: 8px;
+        gap: 20px;
+
+        .titleName {
+          font-family: var(--font-green);
+          color: var(--orange-color);
+        }
+
+        .cardDescription {
+          font-family: var(--btn-font-family);
+          font-size: 16px;
+          color: var(--gray-color);
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          -webkit-line-clamp: 2;
+          text-overflow: ellipsis; /* Не завжди необхідна, але допомагає */
+        }       
+      }
 
       .dishPhoto {
         width: 100px;
@@ -53,44 +82,123 @@
         object-fit: cover;
         border-radius: 8px;
       }
+   
+        // ________________________________________________________________________________
 
-      .details {
-        flex: 1;
-
-        h3 {
-          margin: 0 0 6px 0;
-        }
-
-        p {
-          margin: 2px 0;
-          font-size: 0.95rem;
-          color: #555;
-        }
-
-        .controls {
+        .portionCalculator {
           display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-top: 8px;
+          justify-content: space-between;
+          gap: 24px;
+          padding: 0 20px;
+          background-color: var(--beige-background);
 
-          button {
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            background: #f3f3f3;
-            cursor: pointer;
-            transition: background 0.2s;
+          .portionInputGroup {
+            display: flex;
+            align-items: center;
+            gap: 15px;
 
-            &:hover {
-              background: #e0e0e0;
+            .portionButton {
+              font-size: 16px;
+              border: 1px solid #056c2a;
+              border-radius: 50%;
+              color: var(--green-color);
+              padding: 5px 12px;
+              cursor: pointer;
+              transition: background-color 0.2s ease;
+
+              &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+              }
+
+              &:hover:not(:disabled) {
+                background-color: #e0e0e0;
+              }
+            }
+
+            .portionButtonPlus {
+              border: 1px solid #d87b09;
+              color: var(--orange-color);
+              font-size: 16px;
+              border-radius: 50%;
+              padding: 5px 12px;
+              cursor: pointer;
+              transition: background-color 0.2s ease;
+
+              &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+              }
+
+              &:hover:not(:disabled) {
+                background-color: #e0e0e0;
+              }
+            }
+
+            .portionInput {
+              width: 50px;             
+              border: 1px solid #ccc;
+              border-radius: 6px;
+              text-align: center;
+              font-size: 20px;
             }
           }
+        }      
+    }
 
-          span {
-            min-width: 24px;
-            text-align: center;
-          }
-        }
+    .cardFinalPrice {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green-color);
+    }
+    
+    .cardGeneralPrice {
+      font-family: var(--btn-font-family);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--red-color);
+    }
+    .cardGeneralPrice::after {
+      content: "";
+      display: block;
+      width: 80%;
+      height: 1px;
+      background-color: var(--red-color);
+      position: relative;
+      top: -12px;
+    }
+    .cardDiscountPrice {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--orange-color);
+      margin-top: 5px;
+    }
+    
+
+    .deleteCartButton{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-right: 20px;
+      background: none;
+      border: none;
+      color:var(--red-color);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .deleteIcon svg {
+      width: 24px;
+      height: 24px;     
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.7;
       }
     }
 
@@ -104,17 +212,22 @@
         margin: 0;
       }
 
+      .freeDelivery {
+        font-family: var(--btn-font-family);
+        font-size: 16px;    
+        
+      }
+
       button {
         padding: 8px 16px;
-        background: #4f46e5;
-        color: #fff;
+        background: var(--btn-color-green);       
         border: none;
         border-radius: 8px;
         cursor: pointer;
         transition: background 0.3s;
 
         &:hover {
-          background: #4338ca;
+          background: var(--btn-color-green-hover);
         }
       }
     }
