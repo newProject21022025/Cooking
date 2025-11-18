@@ -33,5 +33,22 @@
     "error": "Помилка завантаження даних",
     "noPartners": "Інформація про партнерів відсутня.",
     "notSpecified": "Не вказано"
+  },
+  "PartnerProfile": {
+    "socialsTitle": "Соцмережі",
+    "partnerAvatarAlt": "Аватар партнера",
+    "partnerPhotoAlt": "Фото партнера",
+    "email": "Email",
+    "firstName": "Ім'я",
+    "lastName": "Прізвище",
+    "phoneNumber": "Телефон",
+    "deliveryAddress": "Адреса доставки",
+    "description": "Опис",
+    "rating": "Рейтинг",
+    "status": "Статус",
+    "statusBlocked": "Заблокований",
+    "statusActive": "Активний",
+    "editProfile": "Редагувати профіль",
+    "notSpecified": "Не вказано"
   }
 }

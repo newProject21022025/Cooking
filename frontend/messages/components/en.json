@@ -33,5 +33,22 @@
     "error": "Error loading data",
     "noPartners": "No partner information available.",
     "notSpecified": "Not specified"
+  },
+  "PartnerProfile": {
+    "socialsTitle": "Social Networks",
+    "partnerAvatarAlt": "Partner avatar",
+    "partnerPhotoAlt": "Partner photo",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone",
+    "deliveryAddress": "Delivery Address",
+    "description": "Description",
+    "rating": "Rating",
+    "status": "Status",
+    "statusBlocked": "Blocked",
+    "statusActive": "Active",
+    "editProfile": "Edit Profile",
+    "notSpecified": "Not specified"
   }
 }
