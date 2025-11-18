@@ -50,5 +50,10 @@
     "statusActive": "Active",
     "editProfile": "Edit Profile",
     "notSpecified": "Not specified"
+  },
+  "DishCard": {
+    "showIngredients": "Ingredients",
+    "hideIngredients": "Hide",
+    "cookButton": "Cook Now"
   }
 }

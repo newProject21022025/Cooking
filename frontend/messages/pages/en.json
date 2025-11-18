@@ -1,12 +1,38 @@
 {
-    "Home" : {
-        "title": "Discover Culinary Excellence!",        
-        "text": "Inspired recipes and ready meals - for those who value taste, convenience, and the harmony of favorite dishes.",
+    "Home": {
+        "title": "Discover Culinary Mastery!",
+        "text": "Inspired recipes and ready-made meals – for those who value taste, convenience, and harmony in their favorite dishes.",
         "recipes": "Recipes",
         "time": "Average delivery time",
         "customers": "Happy customers",
-        "button": "To the menu"
-    },
+        "button": "To Menu",
+        "minutes": " min"
+      },
+      "Steps": {
+        "firstTitle": "Just ",        
+        "secondTitle": " steps to a delicious meal",
+        "subtitle": "Take a few simple steps, from viewing the menu to ordering directly to your table.",
+        "step1Title": "Enter ingredients",
+        "step1Description": "Specify what you have at home—and get a selection of recipes.",
+        "step2Title": "View the menu",
+        "step2Description": "Go to the \"Menu\" section via the main site menu or the button on the banner.",
+        "step3Title": "Choose an action",
+        "step3Description": "Cook independently following the recipe or order the meal ready-made.",
+        "step4Title": "Enjoy the result",
+        "step4Description": "Quick, convenient, and delicious!"
+      },
+      "MenuSection": {
+        "title": "Don't know what to choose? Start with the hit categories",
+        "subtitle": "A quick selection of what people love most. Sometimes the choice is too vast, and it's hard to settle on one thing. That's why we've prepared hit categories—dishes that enjoy the greatest popularity. These are tested flavors chosen again and again. If you're in doubt, start with them."
+      },
+      "SelectedDishesSection": {
+        "title": "Master's main tip: enjoy!",
+        "subtitle": "A quick selection of what people love most. Sometimes the choice is too vast, and it's hard to settle on one thing. That's why we've prepared hit categories—dishes that enjoy the greatest popularity. These are tested flavors chosen again and again. If you're in doubt, start with them."
+      },
+      "PartnersSection": {
+        "title": "Where the most delicious food is cooked",
+        "subtitle": "We have selected establishments for you where every dish is prepared with soul, attention to detail, and a love for taste. Here it's not just food—these are small gastronomic discoveries that you can enjoy right at home. Order your favorite and experience the restaurant atmosphere without queues or unnecessary fuss."
+      },
     "Menu" : {
         "title": "Welcome to our application!",        
         "text": "This is the home page where you can find the latest updates and features."
