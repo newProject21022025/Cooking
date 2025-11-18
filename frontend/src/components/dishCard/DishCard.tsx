@@ -5,9 +5,10 @@
 import React, { useState } from "react";
 import styles from "./DishCard.module.scss";
 import { Dish } from "@/types/dish";
-import { useLocale } from "next-intl";
+// ✅ Додаємо useTranslations
+import { useLocale, useTranslations } from "next-intl"; 
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // ✅ Додаємо useRouter для програмного переходу
+import { useRouter } from "next/navigation"; 
 
 interface DishCardProps {
   dish: Dish;
@@ -15,39 +16,39 @@ interface DishCardProps {
 
 export default function DishCard({ dish }: DishCardProps) {
   const locale = useLocale();
-  const router = useRouter(); // ✅ Ініціалізуємо роутер
+  const router = useRouter(); 
+  // ✅ Ініціалізація перекладу
+  const t = useTranslations("DishCard"); 
   const [showIngredients, setShowIngredients] = useState(false);
 
-  // Функція для переходу на сторінку страви
+  // ... (Функції navigateToDishPage та handleCookClick без змін) ...
   const navigateToDishPage = () => {
     router.push(`/dishes/${dish.id}`);
   };
 
   const handleIngredientsToggle = (e: React.MouseEvent) => {
-    // Зупиняємо розповсюдження події (хоча це вже не обов'язково),
-    // але це добра практика, якщо кнопка знаходиться всередині іншого інтерактивного елемента.
     e.stopPropagation(); 
     setShowIngredients(!showIngredients);
   };
 
-  // ✅ Функція для обробки кліку на кнопку "Приготувати"
   const handleCookClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Важливо, щоб клік не впливав на батьківські елементи
+    e.stopPropagation(); 
     navigateToDishPage();
   };
 
   return (
-    <div className={styles.dishCardContainer}>      
-      {/* 1. БЛОК ФОТО: Тепер це окремий Link */}
+    <div className={styles.dishCardContainer}>      
+      {/* 1. БЛОК ФОТО */}
       <Link href={`/dishes/${dish.id}`} className={styles.dishPhotoLink}> 
         <img 
           src={dish.photo} 
-          alt={dish.name_ua} 
+          // Використовуємо локалізовану назву для alt
+          alt={locale === "uk" ? dish.name_ua : dish.name_en} 
           className={styles.dishPhoto} 
         />
       </Link>
       
-      {/* 2. БЛОК ІНФОРМАЦІЇ: Тепер це звичайний div, без Link */}
+      {/* 2. БЛОК ІНФОРМАЦІЇ */}
       <div className={styles.dishInfo}>
         <h3 className={styles.dishTitle}>
           {locale === "uk" ? dish.name_ua : dish.name_en}
@@ -58,27 +59,29 @@ export default function DishCard({ dish }: DishCardProps) {
       </div>
 
       <div className={styles.buttonsContainer}>
-        {/* ✅ Кнопка для відображення інгредієнтів */}
+        {/* ✅ Кнопка для відображення інгредієнтів: використовуємо t() */}
         <button 
           onClick={handleIngredientsToggle} 
           className={styles.ingredientsButton}
         >
-          {showIngredients ? "Приховати" : "Інгредієнти"}
+          {/* Використовуємо тернарний оператор з перекладом */}
+          {showIngredients ? t("hideIngredients") : t("showIngredients")}
         </button>
         
-        {/* ✅ Кнопка "Приготувати": викликає функцію переходу */}
+        {/* ✅ Кнопка "Приготувати" */}
         <button 
-          onClick={handleCookClick} // ✅ Викликаємо функцію переходу
+          onClick={handleCookClick} 
           className={`${styles.ingredientsButton} ${styles.cookButton}`}
         >
-          Приготувати
+          {t("cookButton")}
         </button>
       </div>
 
-      {/* ✅ Умовне відображення списку інгредієнтів */}
+      {/* Умовне відображення списку інгредієнтів */}
       {showIngredients && (
         <div className={styles.ingredientsList}>
           <ul>
+            {/* ... (список інгредієнтів без змін) ... */}
             {dish.important_ingredients.map((ingredient, index) => (
               <li key={index}>
                 {locale === "uk" ? ingredient.name_ua : ingredient.name_en}

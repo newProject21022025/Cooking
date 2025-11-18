@@ -50,5 +50,10 @@
     "statusActive": "Активний",
     "editProfile": "Редагувати профіль",
     "notSpecified": "Не вказано"
+  },
+  "DishCard": {
+    "showIngredients": "Інгредієнти",
+    "hideIngredients": "Приховати",
+    "cookButton": "Приготувати"
   }
 }
