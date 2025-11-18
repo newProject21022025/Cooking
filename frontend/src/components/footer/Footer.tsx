@@ -1,15 +1,15 @@
 // src/components/footer/Footer.tsx
 
+// src/components/footer/Footer.tsx
+
 import React from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.scss'; 
 import MealUpLogo from '@/svg/Logo/Logo'; 
 import PartnersInfoFooter from '@/components/partners/PartnersListFooter';
 
-
-// import LocationIcon from '@/svg/LocationIcon/LocationIcon';
-// import PhoneIcon from '@/svg/PhoneIcon/PhoneIcon';
-// import EmailIcon from '@/svg/EmailIcon/EmailIcon';
+// 1. ІМПОРТУЄМО useTranslations
+import { useTranslations } from 'next-intl';
 
 import TelegramIcon from '@/svg/TelegramIcon/TelegramIcon';
 import FacebookIcon from '@/svg/FacebookIcon/FacebookIcon';
@@ -19,36 +19,27 @@ import YoutubeIcon from '@/svg/YoutubeIcon/YoutubeIcon';
 import SslIcon from '@/svg/SslIcon/SslIcon';
 import LocalProductIcon from '@/svg/LocalProductIcon/LocalProductIcon';
 
-// Дані для футера
-const quickLinks = [
-    { name: 'Статті', href: '/articles' },
-    { name: 'Про нас', href: '/about' },
-    { name: 'Політика конфіденційності', href: '/confidentiality' },
+// 2. Виносимо константи з перекладеними ключами (замість хардкодованих імен)
+// Ключі для швидких посилань
+const QUICK_LINK_KEYS = [
+    { key: 'articles', href: '/articles' },
+    { key: 'aboutUs', href: '/about' },
+    { key: 'privacyPolicy', href: '/confidentiality' },
 ];
 
-const legalLinks = [
-    { name: 'Умови', href: '/confidentiality' },
-    { name: 'Конфіденційність', href: '/confidentiality' },
-    { name: 'Файли cookie', href: '/confidentiality' },
-    { name: 'Доступність', href: '/confidentiality' },
+// Ключі для юридичних посилань
+const LEGAL_LINK_KEYS = [
+    { key: 'terms', href: '/confidentiality' },
+    { key: 'privacy', href: '/confidentiality' },
+    { key: 'cookies', href: '/confidentiality' },
+    { key: 'accessibility', href: '/confidentiality' },
 ];
 
-// const partnerInfo = [
-//     {
-//         name: "Ім'я партнера",
-//         location: 'М. Київ, вул. Дніпровська набережна, 12',
-//         phone: '+380965874567',
-//         email: 'hello@mealup.com',
-//     },
-//     {
-//         name: "Ім'я партнера",
-//         location: 'М. Київ, вул. Дніпровська набережна, 12',
-//         phone: '+380965874567',
-//         email: 'hello@mealup.com',
-//     },
-// ];
 
 const Footer: React.FC = () => {
+    // 3. ІНІЦІАЛІЗАЦІЯ ПЕРЕКЛАДУ (припускаємо простір імен "Footer")
+    const t = useTranslations('Footer');
+
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
@@ -59,29 +50,31 @@ const Footer: React.FC = () => {
                         <div className={styles.logoContainer}>
                             <MealUpLogo />
                         </div>
+                        {/* 4. Перекладаємо слоган */}
                         <p className={styles.slogan}>
-                            Зв&apos;яжіться з нами – <br />
-                            Разом готувати це смачніше!
+                            {t.rich('slogan', {
+                                br: () => <br />,
+                            })}
                         </p>
 
-                                              
+                        {/* Статичні контакти - краще винести їх у переклади, якщо вони можуть змінюватися */}
                         <div className={styles.contactInfo}>
+                            {/* 5. Перекладаємо адресу */}
                             <div className={styles.contactItem}>
-                                
-                                <span>М. Київ, вул. Дніпровська набережна, 12</span>
+                                <span>{t('address')}</span>
+                            </div>
+                            {/* Телефон та Email (зазвичай статичні або винесені в конфіг/API) */}
+                            <div className={styles.contactItem}>
+                                <span>+380965874567</span> 
                             </div>
                             <div className={styles.contactItem}>
-                                
-                                <span>+380965874567</span>
-                            </div>
-                            <div className={styles.contactItem}>
-                               
                                 <span>hello@mealup.com</span>
                             </div>
                         </div>
 
                         {/* Соціальні мережі */}
                         <div className={styles.socials}>
+                            {/* aria-label залишаємо статичним, або також перекладаємо (якщо потрібно) */}
                             <Link href="#" aria-label="Telegram" className={styles.socialIcon}>
                                 <TelegramIcon />
                             </Link>
@@ -99,51 +92,57 @@ const Footer: React.FC = () => {
 
                     {/* Секція 2: Швидкі посилання */}
                     <div className={styles.quickLinks}>
-                        <h4 className={styles.sectionTitle}>Швидкі посилання</h4>
+                        {/* 6. Перекладаємо заголовок секції */}
+                        <h4 className={styles.sectionTitle}>{t('quickLinksTitle')}</h4> 
                         <ul className={styles.linkList}>
-                            {quickLinks.map((link) => (
-                                <li key={link.name}>
+                            {QUICK_LINK_KEYS.map((link) => (
+                                <li key={link.key}>
                                     <Link href={link.href} className={styles.link}>
-                                        {link.name}
+                                        {/* 7. Перекладаємо назви посилань */}
+                                        {t(`quickLinks.${link.key}`)} 
                                     </Link>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
-                    {/* Секція 3: Інформація про партнерів */}
+                    {/* Секція 3: Інформація про партнерів (переклад вже налаштований у PartnersInfoFooter) */}
                     <div className={styles.partnersSection}>
-                    <PartnersInfoFooter/>
+                        <PartnersInfoFooter/>
                     </div>
                 </div>
 
                 {/* Нижня частина футера (копірайт та посилання) */}
                 <div className={styles.bottomBar}>
+                    {/* 8. Перекладаємо копірайт */}
                     <p className={styles.copyright}>
-                        © MealUp. 2025 Всі права захищені
+                        {t('copyright', { year: 2025 })}
                     </p>
                     
                     {/* Юридичні посилання */}
                     <div className={styles.legalLinks}>
-                        {legalLinks.map((link) => (
-                            <Link key={link.name} href={link.href} className={styles.link}>
-                                {link.name}
+                        {LEGAL_LINK_KEYS.map((link) => (
+                            <Link key={link.key} href={link.href} className={styles.link}>
+                                {/* 9. Перекладаємо юридичні посилання */}
+                                {t(`legalLinks.${link.key}`)} 
                             </Link>
                         ))}
                     </div>
                 </div>
-            </div>
-            
-            {/* Смуга безпеки (найнижча частина) */}
-            <div className={styles.securityBar}>
-                <div className={styles.securityContainer}>
-                    <div className={styles.securityItem}>
-                        {/* <SslIcon className={styles.securityIcon} /> */}
-                        <span>SSL Захищений</span>
-                    </div>
-                    <div className={styles.securityItem}>
-                        {/* <LocalProductIcon className={styles.securityIcon} /> */}
-                        <span>Локальний продукт</span>
+                
+                {/* Смуга безпеки (найнижча частина) */}
+                <div className={styles.securityBar}>
+                    <div className={styles.securityContainer}>
+                        <div className={styles.securityItem}>
+                            {/* <SslIcon className={styles.securityIcon} /> */}
+                            {/* 10. Перекладаємо статус безпеки */}
+                            <span>{t('sslProtected')}</span> 
+                        </div>
+                        <div className={styles.securityItem}>
+                            {/* <LocalProductIcon className={styles.securityIcon} /> */}
+                            {/* 11. Перекладаємо статус продукту */}
+                            <span>{t('localProduct')}</span> 
+                        </div>
                     </div>
                 </div>
             </div>

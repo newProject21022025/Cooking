@@ -1,15 +1,15 @@
 // src/components/partners/PartnerProfileForm.tsx
+"use client";
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { UpdatePartnerProfileData } from "@/types/partner";
-import { formatPhoneNumber } from "./formatters";
+import { uploadToCloudinary } from "@/api/cloudinaryApi";
+import { changePartnerPassword } from "@/api/partnersApi";
 import styles from "./PartnerProfileForm.module.scss";
 import { useState } from "react";
-import { changePartnerPassword } from "@/api/partnersApi"; 
-import { uploadToCloudinary } from "@/api/cloudinaryApi";
+import { PartnerProfileFormValues } from "@/app/[locale]/partners/personal/page";
 
-// Основная валидация профиля
+// Валідація форми
 const validationSchema = Yup.object({
   firstName: Yup.string().max(50, "Ім'я занадто довге").nullable(),
   lastName: Yup.string().max(50, "Прізвище занадто довге").nullable(),
@@ -20,8 +20,10 @@ const validationSchema = Yup.object({
       return cleaned.length >= 10 && cleaned.length <= 15;
     })
     .nullable(),
-  deliveryAddress: Yup.string().max(200, "Адреса занадто довга").nullable(),
-  description: Yup.string().max(500, "Опис занадто довгий").nullable(),
+  deliveryAddressUk: Yup.string().max(200).nullable(),
+  deliveryAddressEn: Yup.string().max(200).nullable(),
+  descriptionUk: Yup.string().max(500).nullable(),
+  descriptionEn: Yup.string().max(500).nullable(),
   socials: Yup.object({
     facebook: Yup.string().url("Невірний URL").nullable(),
     telegram: Yup.string().url("Невірний URL").nullable(),
@@ -30,22 +32,20 @@ const validationSchema = Yup.object({
   }),
 });
 
-// Валідація для зміни пароля
+// Валідація зміни пароля
 const passwordValidationSchema = Yup.object({
   currentPassword: Yup.string().required("Поточний пароль обов'язковий"),
-  newPassword: Yup.string()
-    .min(5, "Мінімум 5 символів")
-    .required("Новий пароль обов'язковий"),
+  newPassword: Yup.string().min(5, "Мінімум 5 символів").required("Новий пароль обов'язковий"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("newPassword")], "Паролі не збігаються")
     .required("Підтвердіть пароль"),
 });
 
 interface PartnerProfileFormProps {
-  initialValues: UpdatePartnerProfileData;
+  initialValues: PartnerProfileFormValues;
   onSubmit: (
-    values: UpdatePartnerProfileData,
-    helpers: FormikHelpers<UpdatePartnerProfileData>
+    values: PartnerProfileFormValues,
+    helpers: FormikHelpers<PartnerProfileFormValues>
   ) => void;
   onCancel: () => void;
 }
@@ -63,48 +63,30 @@ export default function PartnerProfileForm({
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFile: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>
+  ) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-    setAvatarFile(file);
+    setFile(file);
     const reader = new FileReader();
-    reader.onload = (e) => setAvatarPreview(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setPhotoFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+    reader.onload = (event) => setPreview(event.target?.result as string);
     reader.readAsDataURL(file);
   };
 
   const handlePasswordChange = async (
-    values: {
-      currentPassword: string;
-      newPassword: string;
-      confirmPassword: string;
-    },
-    helpers: FormikHelpers<{
-      currentPassword: string;
-      newPassword: string;
-      confirmPassword: string;
-    }>
+    values: { currentPassword: string; newPassword: string; confirmPassword: string },
+    helpers: FormikHelpers<{ currentPassword: string; newPassword: string; confirmPassword: string }>
   ) => {
     try {
       setPasswordError(null);
       setPasswordSuccess(false);
 
-      const partnerId = initialValues.id;
-      if (!partnerId) throw new Error("Не знайдено ID партнера.");
+      if (!initialValues.id) throw new Error("Не знайдено ID партнера.");
 
-      await changePartnerPassword(
-        partnerId,
-        values.currentPassword,
-        values.newPassword
-      );
+      await changePartnerPassword(initialValues.id, values.currentPassword, values.newPassword);
       setPasswordSuccess(true);
       helpers.resetForm();
       setTimeout(() => setPasswordSuccess(false), 3000);
@@ -123,6 +105,7 @@ export default function PartnerProfileForm({
         validationSchema={validationSchema}
         onSubmit={async (values, helpers) => {
           try {
+            // Завантаження аватару/фото
             if (avatarFile) {
               const result = await uploadToCloudinary(avatarFile);
               values.avatar = result.secure_url;
@@ -133,11 +116,10 @@ export default function PartnerProfileForm({
               values.photo = result.secure_url;
             } else if (values.photo === "") values.photo = null;
 
-            onSubmit(values, helpers);
+            // Викликаємо onSubmit з PartnerProfileFormValues
+            await onSubmit(values, helpers);
           } catch (e) {
-            helpers.setStatus({
-              error: "Помилка завантаження зображень. Спробуйте пізніше.",
-            });
+            helpers.setStatus({ error: "Помилка завантаження зображень. Спробуйте пізніше." });
             console.error(e);
             helpers.setSubmitting(false);
           }
@@ -164,11 +146,7 @@ export default function PartnerProfileForm({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    handleAvatarChange(e);
-                    const file = e.target.files?.[0];
-                    if (file) setFieldValue("avatar", file);
-                  }}
+                  onChange={(e) => handleFileChange(e, setAvatarFile, setAvatarPreview)}
                 />
                 {avatarFile && <span>{avatarFile.name}</span>}
               </div>
@@ -192,11 +170,7 @@ export default function PartnerProfileForm({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    handlePhotoChange(e);
-                    const file = e.target.files?.[0];
-                    if (file) setFieldValue("photo", file);
-                  }}
+                  onChange={(e) => handleFileChange(e, setPhotoFile, setPhotoPreview)}
                 />
                 {photoFile && <span>{photoFile.name}</span>}
               </div>
@@ -204,7 +178,7 @@ export default function PartnerProfileForm({
 
             {/* Поля профілю */}
             <div className={styles.formGroup}>
-              <label>Ім&apos;я</label>
+              <label>Ім'я</label>
               <Field name="firstName" placeholder="Ім'я" className={styles.input} />
               <ErrorMessage name="firstName" component="div" className={styles.errorText} />
             </div>
@@ -220,29 +194,40 @@ export default function PartnerProfileForm({
               <Field
                 type="tel"
                 name="phoneNumber"
-                placeholder="+380 (XX) XXX-XX-XX"
                 className={styles.input}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFieldValue("phoneNumber", formatPhoneNumber(e.target.value))
+                  setFieldValue("phoneNumber", e.target.value)
                 }
                 value={values.phoneNumber || ""}
               />
               <ErrorMessage name="phoneNumber" component="div" className={styles.errorText} />
             </div>
 
+            {/* Двомовна адреса */}
             <div className={styles.formGroup}>
-              <label>Адреса доставки</label>
-              <Field name="deliveryAddress" as="textarea" className={styles.textarea} />
-              <ErrorMessage name="deliveryAddress" component="div" className={styles.errorText} />
+              <label>Адреса доставки (укр)</label>
+              <Field name="deliveryAddressUk" as="textarea" className={styles.textarea} />
+              <ErrorMessage name="deliveryAddressUk" component="div" className={styles.errorText} />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Адреса доставки (англ)</label>
+              <Field name="deliveryAddressEn" as="textarea" className={styles.textarea} />
+              <ErrorMessage name="deliveryAddressEn" component="div" className={styles.errorText} />
             </div>
 
+            {/* Двомовний опис */}
             <div className={styles.formGroup}>
-              <label>Опис про себе</label>
-              <Field name="description" as="textarea" className={styles.textarea} />
-              <ErrorMessage name="description" component="div" className={styles.errorText} />
+              <label>Опис (укр)</label>
+              <Field name="descriptionUk" as="textarea" className={styles.textarea} />
+              <ErrorMessage name="descriptionUk" component="div" className={styles.errorText} />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Опис (англ)</label>
+              <Field name="descriptionEn" as="textarea" className={styles.textarea} />
+              <ErrorMessage name="descriptionEn" component="div" className={styles.errorText} />
             </div>
 
-            {/* Соцсети */}
+            {/* Соцмережі */}
             <div className={styles.socialsSection}>
               <h3>Соцмережі</h3>
               {["facebook", "telegram", "linkedin", "whatsapp"].map((social) => (

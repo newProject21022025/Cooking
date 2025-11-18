@@ -9,11 +9,15 @@ import {
   setSelectedPartner,
 } from "@/redux/slices/partnersSlice";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import styles from "./PartnersCard.module.scss";
+
 import Icon_heart_yellow from "@/svg/Icon_heart/Icon_heart_yellow";
 import Icon_Time_green from "@/svg/Icon_Time/Icon_Time_green";
 
 const PartnersCard = () => {
+  const t = useTranslations("PartnersCard");
+
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const pathname = usePathname();
@@ -32,19 +36,17 @@ const PartnersCard = () => {
     router.push(`/${locale}/buyDishes/dishes?partnerId=${partnerId}`);
   };
 
-  if (loading)
-    return <div className={styles.loading}>Завантаження партнерів...</div>;
-  if (error) return <div className={styles.error}>Помилка: {error}</div>;
+  if (loading) return <div className={styles.loading}>{t("loading")}</div>;
+
+  if (error) return <div className={styles.error}>{t("error", { error })}</div>;
 
   return (
     <div className={styles.container}>
       <div className={styles.list}>
         {partners.map((partner) => {
-          // Використовуємо firstName та/або lastName для назви ресторану
-          const partnerName = partner.firstName || "Партнер";
-          // Припускаємо, що рейтинг є, або ставимо 4.5 за замовчуванням
-          // 💡 ЗМІНА ТУТ: Встановлюємо мінімальний рейтинг 4.2
-          const minRating = 4.2; // Використовуємо Math.max, щоб переконатися, що рейтинг не менший за 4.2 // Якщо partner.rating відсутній (null/undefined), беремо 4.2.
+          const partnerName = partner.firstName || t("defaultPartnerName");
+
+          const minRating = 4.2;
           const rating = Math.max(partner.rating ?? minRating, minRating);
 
           return (
@@ -70,27 +72,31 @@ const PartnersCard = () => {
                       <Icon_heart_yellow />
                     </span>
                     <span className={styles.ratingValue}>{rating}</span>
-                    {/* <span className={styles.reviewCount}>(49)</span>{" "} */}
                   </div>
                 </div>
+
                 <div>
                   <p className={styles.description}>
-                    {partner.description || "Смачні страви вдома за 30 - 45 хв"}
+                    {typeof partner.description === "string"
+                      ? partner.description // якщо старий формат
+                      : partner.description?.[locale as "uk" | "en"] ||
+                        t("defaultDescription")}
                   </p>
-                  <p className={styles.callToAction}>Замовляйте зараз!</p>
+                  <p className={styles.callToAction}>{t("callToAction")}</p>
                 </div>
 
-                {/* 3. Секція доставки (Приклад) */}
                 <div className={styles.deliveryInfo}>
-                  <span className={styles.deliveryIcon}><Icon_Time_green/>  </span>                 
-                  Безкоштовна доставка по місту від 500 ₴
+                  <span className={styles.deliveryIcon}>
+                    <Icon_Time_green />
+                  </span>
+                  {t("deliveryFree")}
                 </div>
-                {/* 4. Кнопка дії */}
+
                 <button
                   className={styles.orderButton}
                   onClick={() => handlePartnerClick(partner.id)}
                 >
-                  Замовити страви
+                  {t("orderBtn")}
                 </button>
               </div>
             </div>

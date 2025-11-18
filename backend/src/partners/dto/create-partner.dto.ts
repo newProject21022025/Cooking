@@ -34,18 +34,24 @@ export class CreatePartnerDto {
   @IsString()
   phoneNumber?: string;
 
+  // Поле з перекладом під мови
   @IsOptional()
-  @IsString()
-  deliveryAddress?: string;
+  @IsObject()
+  deliveryAddress?: {
+    uk?: string;
+    en?: string;
+  };
 
-  // ✅ Додаємо нове поле "description"
   @IsOptional()
-  @IsString()
-  description?: string;
+  @IsObject()
+  description?: {
+    uk?: string;
+    en?: string;
+  };
 
   @IsOptional()
   @IsEnum(PartnerRole)
-  role: PartnerRole = PartnerRole.partner; // ✅ дефолт partner
+  role: PartnerRole = PartnerRole.partner;
 
   @IsOptional()
   orderHistory?: any[];
@@ -59,7 +65,7 @@ export class CreatePartnerDto {
 
   @IsOptional()
   @IsBoolean()
-  isBlocked: boolean = false; // ✅ дефолт false
+  isBlocked: boolean = false;
 
   @IsOptional()
   @IsObject()
@@ -69,6 +75,6 @@ export class CreatePartnerDto {
     linkedin?: string;
     whatsapp?: string;
     instagram?: string;
-    [key: string]: string | undefined; // ✅ дозволяє додавати нові соцмережі
+    [key: string]: string | undefined;
   };
 }

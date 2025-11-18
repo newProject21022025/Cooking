@@ -31,12 +31,18 @@ export class UpdatePartnerDto {
   phoneNumber?: string;
 
   @IsOptional()
-  @IsString()
-  deliveryAddress?: string;
+  @IsObject()
+  deliveryAddress?: {
+    uk?: string;
+    en?: string;
+  };
 
   @IsOptional()
-  @IsString()
-  description?: string;
+  @IsObject()
+  description?: {
+    uk?: string;
+    en?: string;
+  };
 
   @IsOptional()
   @IsString()

@@ -1,3 +1,5 @@
+// src/components/partnerProfileForm/PartnerProfileForm.tsx
+
 "use client";
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
