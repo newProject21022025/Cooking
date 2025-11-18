@@ -1,19 +1,47 @@
 // src/components/partners/PartnersListFooter.tsx
-// src/components/partners/PartnersInfoFooter.tsx
+// src/components/partners/PartnersListFooter.tsx
 "use client";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchPartners } from "@/redux/slices/partnersSlice";
-// Імпорт SVG компонентів для іконок (припускаємо, що вони існують)
-import LocationIcon from "@/svg/LocationIcon/LocationIcon"; 
-import  PhoneIcon  from "@/svg/PhoneIcon/PhoneIcon"; 
-import EmailIcon from "@/svg/EmailIcon/EmailIcon"; 
-import styles from "./PartnersListFooter.module.scss"; // Новий модуль стилів
+import LocationIcon from "@/svg/LocationIcon/LocationIcon";
+import PhoneIcon from "@/svg/PhoneIcon/PhoneIcon";
+import EmailIcon from "@/svg/EmailIcon/EmailIcon";
+import styles from "./PartnersListFooter.module.scss";
 
-// Примітка: Для реалізації цього коду вам потрібно створити компоненти
-// GeoIcon, PhoneIcon, MailIcon (або використовувати ваші існуючі SVG компоненти).
+// 1. ІМПОРТУЄМО НЕОБХІДНІ ХУКИ З NEXT-INTL
+import { useTranslations, useLocale } from "next-intl"; 
+import { Partner } from "@/types/partner"; // Додаємо імпорт типу для коректної роботи TS
+
+
+// Функція для безпечного отримання перекладеного поля
+// Вона динамічно вибирає мову згідно з поточною локаллю
+const getLocalizedValue = (
+  field: Partner["deliveryAddress"] | Partner["description"],
+  locale: string,
+  t: ReturnType<typeof useTranslations>
+) => {
+  if (!field) return t("notSpecified");
+  
+  // Приведення типу локалі до ключа об'єкта
+  const currentLang = locale as keyof typeof field;
+
+  // 1. Спробуємо отримати значення за поточною локаллю
+  const localizedValue = field[currentLang];
+
+  if (localizedValue) return localizedValue;
+
+  // 2. Якщо значення для поточної локалі немає, використовуємо резервне поле
+  // Припускаємо, що ваші поля завжди 'uk' або 'en'
+  if (currentLang === 'uk' && field.en) return field.en;
+  if (currentLang === 'en' && field.uk) return field.uk;
+
+  // 3. Крайній випадок: повертаємо текст про відсутність даних
+  return t("notSpecified"); 
+};
+
 
 const PartnersInfoFooter = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,67 +49,86 @@ const PartnersInfoFooter = () => {
     (state: RootState) => state.partners
   );
 
+  // 2. ІНІЦІАЛІЗАЦІЯ ПЕРЕКЛАДУ ТА ЛОКАЛІ
+  const t = useTranslations("PartnersList"); // Використовуємо простір імен PartnersList
+  const locale = useLocale(); // Отримуємо поточну локаль ('uk' або 'en')
+
+
   useEffect(() => {
-    // Завантажуємо дані про партнерів
     dispatch(fetchPartners());
   }, [dispatch]);
 
-  if (loading) return <p>Завантаження інформації про партнерів...</p>;
-  if (error) return <p>Помилка: {error}</p>;
+  // 3. ВИКОРИСТАННЯ ПЕРЕКЛАДУ ДЛЯ СТАТИЧНИХ РЯДКІВ
+  if (loading) return <p>{t("loadingPartners")}</p>;
+  if (error) return <p>{t("error")}: {error}</p>;
   if (!partners || partners.length === 0)
-    return <p>Інформація про партнерів відсутня.</p>;
+    return <p>{t("noPartners")}</p>;
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Локації, інформація про Партнерів</h2>
+      {/* Перекладаємо заголовок */}
+      <h2 className={styles.title}>{t("title")}</h2> 
       <ul className={styles.list}>
-        {partners.map((partner) => (
-          // !!! УВАГА: Прибираємо обробник onClick, щоб уникнути переходу.
-          // Елемент <li> більше не клікабельний.
-          <li key={partner.id} className={styles.item}>
-            <p className={styles.partnerName}>
-              {partner.firstName} {partner.lastName}
-            </p>
+        {partners.map((partner) => {
+          // Динамічно отримуємо адресу для поточної мови
+          const addressToDisplay = getLocalizedValue(
+            partner.deliveryAddress,
+            locale,
+            t
+          );
 
-            {/* Адреса */}
-            {partner.deliveryAddress && (
-              <div className={styles.contactItem}>
-                {/*  */}
-                {/* <GeoIcon className={styles.icon} /> */}
-                <span className={styles.iconPlaceholder}><LocationIcon/></span>
-                <span className={styles.value}>{partner.deliveryAddress}</span>
-              </div>
-            )}
-
-            {/* Телефон */}
-            {partner.phoneNumber && (
-              <div className={styles.contactItem}>
-                {/*  */}
-                {/* <PhoneIcon className={styles.icon} /> */}
-                <span className={styles.iconPlaceholder}><PhoneIcon/> </span>
-                {/* Створюємо посилання для зручного дзвінка */}
-                <a href={`tel:${partner.phoneNumber}`} className={styles.valueLink}>
-                  {partner.phoneNumber}
-                </a>
-              </div>
-            )}
-
-            {/* Email */}
-            {partner.email && (
-              <div className={styles.contactItem}>
-                {/*  */}
-                {/* <MailIcon className={styles.icon} /> */}
-                <span className={styles.iconPlaceholder}><EmailIcon/></span>
-                {/* Створюємо посилання для зручного надсилання email */}
-                <a href={`mailto:${partner.email}`} className={styles.valueLink}>
-                  {partner.email}
-                </a>
-              </div>
-            )}
-            
-            <hr className={styles.divider} /> {/* Відокремлювач між партнерами */}
-          </li>
-        ))}
+          return (
+            <li key={partner.id} className={styles.item}>
+              <p className={styles.partnerName}>
+                {partner.firstName} {partner.lastName}
+              </p>
+              
+              {/* Адреса */}
+              {partner.deliveryAddress && (
+                <div className={styles.contactItem}>
+                  <span className={styles.iconPlaceholder}>
+                    <LocationIcon />
+                  </span>
+                  <span className={styles.value}>
+                    {/* ВИКОРИСТОВУЄМО ДИНАМІЧНО ВИЗНАЧЕНУ АДРЕСУ */}
+                    {addressToDisplay}
+                  </span>
+                </div>
+              )}
+              
+              {/* Телефон */}
+              {partner.phoneNumber && (
+                <div className={styles.contactItem}>
+                  <span className={styles.iconPlaceholder}>
+                    <PhoneIcon />{" "}
+                  </span>
+                  <a
+                    href={`tel:${partner.phoneNumber}`}
+                    className={styles.valueLink}
+                  >
+                    {partner.phoneNumber}
+                  </a>
+                </div>
+              )}
+              
+              {/* Email */}
+              {partner.email && (
+                <div className={styles.contactItem}>
+                  <span className={styles.iconPlaceholder}>
+                    <EmailIcon />
+                  </span>
+                  <a
+                    href={`mailto:${partner.email}`}
+                    className={styles.valueLink}
+                  >
+                    {partner.email}
+                  </a>
+                </div>
+              )}
+              <hr className={styles.divider} />
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

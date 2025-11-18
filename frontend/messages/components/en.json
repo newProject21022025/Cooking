@@ -1,0 +1,54 @@
+{
+  "PartnersCard": {
+    "loading": "Loading partners...",
+    "error": "Error: {error}",
+    "defaultDescription": "Delicious dishes at home in 30 - 45 minutes",
+    "callToAction": "Order now!",
+    "deliveryFree": "Free delivery in the city from 500 ₴",
+    "orderBtn": "Order dishes",
+    "defaultPartnerName": "Partner"
+  },
+  "Footer": {
+    "slogan": "Contact us - Cooking together is tastier!",
+    "address": "Kyiv, Dniprovska Naberezhna St, 12",
+    "quickLinksTitle": "Quick Links",
+    "quickLinks": {
+      "articles": "Articles",
+      "aboutUs": "About Us",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "copyright": "© MealUp. {year} All rights reserved",
+    "legalLinks": {
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "accessibility": "Accessibility"
+    },
+    "sslProtected": "SSL Protected",
+    "localProduct": "Local Product"
+  },
+  "PartnersList": {
+    "title": "Locations and contact information of Partners",
+    "loadingPartners": "Loading partner information...",
+    "error": "Error loading data",
+    "noPartners": "No partner information available.",
+    "notSpecified": "Not specified"
+  },
+  "PartnerProfile": {
+    "socialsTitle": "Social Networks",
+    "partnerAvatarAlt": "Partner avatar",
+    "partnerPhotoAlt": "Partner photo",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone",
+    "deliveryAddress": "Delivery Address",
+    "description": "Description",
+    "rating": "Rating",
+    "status": "Status",
+    "statusBlocked": "Blocked",
+    "statusActive": "Active",
+    "editProfile": "Edit Profile",
+    "notSpecified": "Not specified"
+  }
+}

@@ -2,18 +2,47 @@
 
 import { Partner } from "@/types/partner";
 import { formatPhoneNumber } from "./formatters";
-// import styles from "@/app/[locale]/partners/personal/page.module.scss";
 import styles from "./PartnerProfileView.module.scss";
+
+// 1. ІМПОРТУЄМО NEXT-INTL
+import { useTranslations, useLocale } from "next-intl"; 
 
 interface PartnerProfileViewProps {
   partner: Partner;
   onEdit: () => void;
 }
 
+// 2. Допоміжна функція для динамічного вибору локалі
+const getLocalizedValue = (
+  field: Partner["deliveryAddress"] | Partner["description"],
+  locale: string,
+  fallbackText: string
+) => {
+  if (!field) return fallbackText;
+  
+  const currentLang = locale as keyof typeof field;
+
+  // 1. Спробуємо отримати значення за поточною локаллю
+  const localizedValue = field[currentLang];
+
+  if (localizedValue) return localizedValue;
+  
+  // 2. Резерв на іншу мову (наприклад, якщо вибрано 'en', але є лише 'uk')
+  if (currentLang === 'uk' && field.en) return field.en;
+  if (currentLang === 'en' && field.uk) return field.uk;
+
+  return fallbackText;
+};
+
+
 export default function PartnerProfileView({
   partner,
   onEdit,
 }: PartnerProfileViewProps) {
+  // ІНІЦІАЛІЗАЦІЯ ПЕРЕКЛАДУ
+  const t = useTranslations("PartnerProfile"); // Припускаємо простір імен "PartnerProfile"
+  const locale = useLocale();
+
   const renderSocials = () => {
     if (!partner.socials) return null;
     const { facebook, telegram, linkedin, whatsapp } = partner.socials;
@@ -22,7 +51,8 @@ export default function PartnerProfileView({
 
     return (
       <div className={styles.socials}>
-        <strong>Соцмережі:</strong>
+        {/* Перекладаємо заголовок */}
+        <strong>{t("socialsTitle")}:</strong>
         <ul>
           {facebook && (
             <li>
@@ -57,15 +87,30 @@ export default function PartnerProfileView({
     );
   };
 
+  // Визначення локалізованих значень
+  const addressToDisplay = getLocalizedValue(
+    partner.deliveryAddress,
+    locale,
+    t("notSpecified")
+  );
+
+  const descriptionToDisplay = getLocalizedValue(
+    partner.description,
+    locale,
+    t("notSpecified")
+  );
+
+
   return (
     <>
       <div className={styles.avatarSection}>
+        {/* ... (Аватар та Фото - без змін) ... */}
         <div className={styles.avatarContainer}>
-          {/* Аватар */}
           {partner.avatar ? (
             <img
               src={partner.avatar}
-              alt="Аватар партнера"
+              // Перекладаємо alt
+              alt={t("partnerAvatarAlt")} 
               className={styles.avatar}
             />
           ) : (
@@ -74,11 +119,11 @@ export default function PartnerProfileView({
             </div>
           )}
 
-          {/* Фото */}
           {partner.photo ? (
             <img
               src={partner.photo}
-              alt="Фото партнера"
+              // Перекладаємо alt
+              alt={t("partnerPhotoAlt")}
               className={styles.photo}
             />
           ) : (
@@ -94,49 +139,62 @@ export default function PartnerProfileView({
           <strong>ID:</strong> {partner.id}
         </div>
         <div>
-          <strong>Email:</strong> {partner.email}
+          {/* Перекладаємо підпис */}
+          <strong>{t("email")}:</strong> {partner.email}
         </div>
         <div>
-          <strong>Ім&apos;я:</strong> {partner.firstName}
+          <strong>{t("firstName")}:</strong> {partner.firstName}
         </div>
         <div>
-          <strong>Прізвище:</strong> {partner.lastName}
+          <strong>{t("lastName")}:</strong> {partner.lastName}
         </div>
         {partner.phoneNumber && (
           <div>
-            <strong>Телефон:</strong> {formatPhoneNumber(partner.phoneNumber)}
+            <strong>{t("phoneNumber")}:</strong>{" "}
+            {formatPhoneNumber(partner.phoneNumber)}
           </div>
         )}
+        
+        {/* 3. ВИПРАВЛЕННЯ ПОМИЛКИ: Рендеримо STRING, а не OBJECT */}
         {partner.deliveryAddress && (
           <div>
-            <strong>Адреса доставки:</strong> {partner.deliveryAddress}
+            <strong>{t("deliveryAddress")}:</strong> {addressToDisplay}
           </div>
         )}
+        
+        {/* 4. ВИПРАВЛЕННЯ ПОМИЛКИ: Рендеримо STRING, а не OBJECT */}
         {partner.description && (
           <div>
-            <strong>Опис:</strong> {partner.description}
+            <strong>{t("description")}:</strong> {descriptionToDisplay}
           </div>
         )}
+        
         {renderSocials()}
+        
         {partner.rating !== undefined && (
           <div>
-            <strong>Рейтинг:</strong> {partner.rating}
+            <strong>{t("rating")}:</strong> {partner.rating}
           </div>
         )}
+        
         {partner.isBlocked !== undefined && (
           <div>
-            <strong>Статус:</strong>{" "}
+            <strong>{t("status")}:</strong>{" "}
             <span
               className={
                 partner.isBlocked ? styles.statusBlocked : styles.statusActive
               }
             >
-              {partner.isBlocked ? " Заблокований" : " Активний"}
+              {/* Перекладаємо статус */}
+              {partner.isBlocked ? t("statusBlocked") : t("statusActive")}
             </span>
           </div>
         )}
       </div>
-      <button onClick={onEdit} className={styles.editButton}>Редагувати профіль</button>
+      {/* Перекладаємо текст кнопки */}
+      <button onClick={onEdit} className={styles.editButton}>
+        {t("editProfile")}
+      </button>
     </>
   );
 }

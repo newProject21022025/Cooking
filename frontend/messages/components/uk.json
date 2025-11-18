@@ -1,0 +1,54 @@
+{
+  "PartnersCard": {
+    "loading": "Завантаження партнерів...",
+    "error": "Помилка: {error}",
+    "defaultDescription": "Смачні страви вдома за 30 - 45 хв",
+    "callToAction": "Замовляйте зараз!",
+    "deliveryFree": "Безкоштовна доставка по місту від 500 ₴",
+    "orderBtn": "Замовити страви",
+    "defaultPartnerName": "Партнер"
+  },
+  "Footer": {
+    "slogan": "Зв'яжіться з нами - Разом готувати це смачніше!",
+    "address": "м.Київ, вул. Дніпровська набережна, 12",
+    "quickLinksTitle": "Швидкі посилання",
+    "quickLinks": {
+      "articles": "Статті",
+      "aboutUs": "Про нас",
+      "privacyPolicy": "Політика конфіденційності"
+    },
+    "copyright": "© MealUp. {year} Всі права захищені",
+    "legalLinks": {
+      "terms": "Умови",
+      "privacy": "Конфіденційність",
+      "cookies": "Файли cookie",
+      "accessibility": "Доступність"
+    },
+    "sslProtected": "SSL Захищений",
+    "localProduct": "Локальний продукт"
+  },
+  "PartnersList": {
+    "title": "Локації та контактна інформація Партнерів",
+    "loadingPartners": "Завантаження інформації про партнерів...",
+    "error": "Помилка завантаження даних",
+    "noPartners": "Інформація про партнерів відсутня.",
+    "notSpecified": "Не вказано"
+  },
+  "PartnerProfile": {
+    "socialsTitle": "Соцмережі",
+    "partnerAvatarAlt": "Аватар партнера",
+    "partnerPhotoAlt": "Фото партнера",
+    "email": "Email",
+    "firstName": "Ім'я",
+    "lastName": "Прізвище",
+    "phoneNumber": "Телефон",
+    "deliveryAddress": "Адреса доставки",
+    "description": "Опис",
+    "rating": "Рейтинг",
+    "status": "Статус",
+    "statusBlocked": "Заблокований",
+    "statusActive": "Активний",
+    "editProfile": "Редагувати профіль",
+    "notSpecified": "Не вказано"
+  }
+}

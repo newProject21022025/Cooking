@@ -6,15 +6,15 @@
     border-top: 1px solid #e0e0e0;
   }
   
-  .container {
-    max-width: 1200px;
+  .container {    
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 20px;    
   }
   
   .mainContent {
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 30px;
     padding-bottom: 40px;
   }
@@ -49,18 +49,6 @@
     padding-top: 10px;
   }
   
-  // .socialIcon {
-  //   svg {
-  //     width: 40px;
-  //     height: 40px;
-  //     fill: white; /* Колір акценту */
-  //     transition: opacity 0.3s ease;
-      
-  //     &:hover {
-  //       opacity: 0.8;
-  //     }
-  //   }
-  // }
   
   /* Секції посилань та партнерів */
   .sectionTitle {

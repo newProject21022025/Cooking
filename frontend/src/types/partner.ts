@@ -7,12 +7,15 @@ export interface Partner {
   id: string;
   firstName: string;
   lastName: string;
-  avatar?: string| null; 
-  photo?: string| null;
+  avatar?: string | null; 
+  photo?: string | null;
   email: string;
   phoneNumber?: string | null;
-  deliveryAddress?: string;
-  description?: string;
+
+  // 🔹 Двомовні поля
+  deliveryAddress?: { uk?: string; en?: string };
+  description?: { uk?: string; en?: string };
+
   role?: string;
   orderHistory?: unknown[];
   favorites?: unknown[];
@@ -28,6 +31,7 @@ export interface Partner {
     instagram?: string;
     [key: string]: string | undefined;
   };
+  
 }
 
 // ⚡ Універсальний тип страви партнера
@@ -51,10 +55,13 @@ export interface UpdatePartnerProfileData {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string | null;
-  deliveryAddress?: string;
-  avatar?: string| null;
-  photo?: string| null;
-  description?: string;
+
+  // 🔹 Двомовні поля
+  deliveryAddress?: { uk?: string; en?: string };
+  description?: { uk?: string; en?: string };
+
+  avatar?: string | null;
+  photo?: string | null;
   socials?: {
     facebook?: string;
     telegram?: string;

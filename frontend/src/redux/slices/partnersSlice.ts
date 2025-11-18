@@ -10,7 +10,34 @@ export const fetchPartners = createAsyncThunk<Partner[]>(
   'partners/fetchAll',
   async () => {
     const response = await api.getPartners();
-    return response.data as Partner[];
+    const rawPartners = response.data as Partner[];
+
+    // ⬇️ ПАРСИМО JSON-РЯДКИ В ОБ'ЄКТИ
+    const partners = rawPartners.map(partner => {
+      // Функція для безпечного парсингу
+      const safeParse = (value: string | object | undefined): { uk?: string; en?: string } | undefined => {
+        if (typeof value === 'string') {
+          try {
+            return JSON.parse(value);
+          } catch (e) {
+            console.error("Помилка парсингу JSON:", e, "для значення:", value);
+            return undefined; // Повертаємо undefined у разі помилки парсингу
+          }
+        }
+        // Якщо це вже об'єкт або undefined/null, повертаємо як є
+        return value as { uk?: string; en?: string } | undefined;
+      };
+
+      return {
+        ...partner,
+        // Парсимо deliveryAddress
+        deliveryAddress: safeParse(partner.deliveryAddress),
+        // Парсимо description, якщо воно є
+        description: safeParse(partner.description),
+      };
+    });
+
+    return partners as Partner[];
   }
 );
 
