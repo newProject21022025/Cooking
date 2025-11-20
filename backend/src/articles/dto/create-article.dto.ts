@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 
 class MultiLangDto {
   @IsString()
-  ua: string;
+  uk: string;
 
   @IsString()
   en: string;

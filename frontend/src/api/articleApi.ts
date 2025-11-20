@@ -8,7 +8,7 @@ import axios from 'axios';
 // -----------------------------------------------------------------------------
 
 export interface MultiLang {
-  ua: string;
+  uk: string;
   en: string;
 }
 
