@@ -1,29 +1,28 @@
 // src/app/[locale]/articles/page.tsx
-
-// src/app/[locale]/articles/page.tsx
 import React from "react";
 import Link from "next/link";
-// Імпортуємо наш об'єкт articlesApi з попереднього кроку
 import { articlesApi, Article } from "@/api/articleApi"; 
-// import { Article } from "@/types/article"; // Або шлях до ваших типів
 import styles from "./page.module.scss";
 
 type Locale = "ua" | "en";
 
+// 1. Оновлюємо тип: params тепер Promise
 interface PageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export default async function Articles({ params: { locale } }: PageProps) {
-  // 1. Отримуємо статті через наш сервіс
-  // Важливо: Оскільки це Server Component, ми можемо викликати це напряму
+// 2. Прибираємо деструктуризацію з аргументів функції
+export default async function Articles(props: PageProps) {
+  // 3. Чекаємо (await) на отримання параметрів
+  const params = await props.params;
+  const { locale } = params;
+
   let articles: Article[] = [];
   
   try {
     articles = await articlesApi.getAll();
   } catch (error) {
     console.error("Failed to fetch articles:", error);
-    // Тут можна додати відображення помилки, якщо API не працює
   }
 
   const currentLocale = (locale as Locale) || "ua";
@@ -37,7 +36,6 @@ export default async function Articles({ params: { locale } }: PageProps) {
 
       <div className={styles.grid}>
         {articles.map((article) => {
-          // Отримуємо заголовок поточною мовою
           const title = article.title[currentLocale];
 
           return (
@@ -46,7 +44,6 @@ export default async function Articles({ params: { locale } }: PageProps) {
               href={`/${currentLocale}/articles/${article.id}`}
               className={styles.card}
             >
-              {/* Обгортка для фото */}
               <div className={styles.imageWrapper}>
                 <img 
                   src={article.photo} 
@@ -56,7 +53,6 @@ export default async function Articles({ params: { locale } }: PageProps) {
                 />
               </div>
 
-              {/* Назва статті */}
               <div className={styles.content}>
                 <h3 className={styles.cardTitle}>{title}</h3>
               </div>
