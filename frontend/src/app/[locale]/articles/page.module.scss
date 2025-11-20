@@ -1,10 +1,115 @@
-.page{
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 40px 20px;
+    min-height: 50vh;
+    font-family: sans-serif; // Або ваш шрифт
+  }
+  
+  .header {
+    margin-bottom: 40px;
+    text-align: left; // Або center, залежно від дизайну шапки
+  }
+  
+  .pageTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .pageSubtitle {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .articlesList {
+    display: flex;
+    flex-direction: column;
+    gap: 60px; // Відстань між картками статей
+  }
+  
+  .articleCard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    width: 100%;
+  }
+  
+  .textInfo {
     text-align: center;
-    margin-top: 100px;
-    min-height: 50vh;
-}
+    margin-bottom: 20px;
+    max-width: 800px;
+  }
+  
+  .articleTitle {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+  }
+  
+  .articleDescription {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  .imageWrapper {
+    position: relative; // Важливо для позиціонування кнопки
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    
+    // Щоб при наведенні було приємно (опціонально)
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
+  
+  .articleImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    min-height: 400px; // Мінімальна висота для красивого вигляду
+    max-height: 600px;
+  }
+  
+  .readButton {
+    position: absolute;
+    bottom: 30px; // Відступ знизу
+    left: 50%;
+    transform: translateX(-50%); // Центрування по горизонталі
+    
+    background-color: #107a38; // Зелений колір як на фото
+    color: white;
+    text-decoration: none;
+    padding: 12px 40px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  
+    &:hover {
+      background-color: #0d632d; // Темніший зелений при наведенні
+    }
+  }
+  
+  .separator {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d4a373, transparent); // Золотиста лінія зверху наступної секції
+    margin-top: 60px;
+    opacity: 0.5;
+    
+    // Ховаємо лінію для останнього елемента
+    .articleCard:last-child & {
+      display: none;
+    }
+  }
