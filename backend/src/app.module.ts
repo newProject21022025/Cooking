@@ -12,6 +12,7 @@ import { MailerModule } from './mailer/mailer.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AppController } from './app.controller';
     OrdersModule,
     MailerModule,
     IngredientsModule,
+    ArticlesModule,
   ],
   controllers: [AppController], // ✔ тут підключаємо контролер
   providers: [AppService],      // ✔ тут сервіс
@@ -32,21 +34,3 @@ import { AppController } from './app.controller';
 export class AppModule {}
 
 
-// @Module({
-//   imports: [
-//     ConfigModule.forRoot({
-//       isGlobal: true,
-//     }),
-//     SupabaseModule,
-//     UsersModule,
-//     AuthModule,
-//     DishesModule,
-//     PartnersModule,
-//     PartnerDishesModule,
-//     OrdersModule,
-//     MailerModule,
-//     IngredientsModule,
-//     AppService,
-//   ],
-// })
-// export class AppModule {}
