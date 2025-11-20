@@ -1,4 +1,12 @@
 // // src/app/[locale]/articles/[id]/page.tsx
+import React from 'react'
+
+export default function page() {
+  return (
+    <div>page</div>
+  )
+}
+
 
 // import { fetchArticleById } from "@/api/articleApi";
 // import { Article, ArticleBlock } from "@/types/article";
