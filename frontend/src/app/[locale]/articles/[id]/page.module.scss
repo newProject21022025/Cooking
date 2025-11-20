@@ -1,0 +1,66 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  color: #555;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 350px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.description {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Блоки статті */
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.block {
+  background: #fff;
+  padding: 20px 22px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.blockTitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.blockDescription {
+  font-size: 17px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.notFound {
+  text-align: center;
+  padding: 50px;
+  font-size: 22px;
+  color: #777;
+}

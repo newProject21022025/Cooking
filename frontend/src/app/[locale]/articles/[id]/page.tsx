@@ -1,56 +1,56 @@
-// // src/app/[locale]/articles/[id]/page.tsx
-import React from 'react'
+// src/app/[locale]/articles/[id]/page.tsx
+import React from "react";
+import { articlesApi } from "@/api/articleApi";
+import styles from "./page.module.scss";
 
-export default function page() {
-  return (
-    <div>page</div>
-  )
+type Locale = "uk" | "en";
+
+interface PageProps {
+  params: Promise<{ locale: string; id: string }>;
 }
 
+export default async function ArticlePage(props: PageProps) {
+  const { locale, id } = await props.params;
 
-// import { fetchArticleById } from "@/api/articleApi";
-// import { Article, ArticleBlock } from "@/types/article";
+  const currentLocale: Locale = locale === "en" ? "en" : "uk";
 
-// async function getArticle(id: number) {
-//   const article = await fetchArticleById(id);
-//   return article;
-// }
+  let article = null;
+  try {
+    article = await articlesApi.getOne(Number(id));
+  } catch (e) {
+    console.error("Failed to load article:", e);
+  }
 
-// const currentLocale = "ua";
+  if (!article) {
+    return <div className={styles.notFound}>Статтю не знайдено</div>;
+  }
 
-// export default async function ArticlePage({
-//   params,
-// }: {
-//   params: { id: string };
-// }) {
-//   const article = await getArticle(Number(params.id));
+  return (
+    <div className={styles.container}>
+      <div className={styles.imageWrapper}>
+        <img
+          src={article.photo}
+          alt={article.title[currentLocale]}
+          className={styles.image}
+        />
+      </div>
 
-//   const title = article.title[currentLocale as keyof Article["title"]];
-//   const introDescription =
-//     article.description[currentLocale as keyof Article["description"]];
+      <h1 className={styles.title}>{article.title[currentLocale]}</h1>
 
-//   return (
-//     <article>
-//       <h1>{title}</h1>
+      <p className={styles.description}>
+        {article.description[currentLocale]}
+      </p>
 
-//       <img src={article.photo} alt={title} className="article-main-photo" />
-
-//       <p className="article-intro">{introDescription}</p>
-
-//       <section className="article-content">
-//         {article.blocks.map((block, index) => (
-//           <div key={index} className="content-block">
-//             <h2>{block.title[currentLocale as keyof ArticleBlock["title"]]}</h2>
-//             <p>
-//               {
-//                 block.description[
-//                   currentLocale as keyof ArticleBlock["description"]
-//                 ]
-//               }
-//             </p>
-//           </div>
-//         ))}
-//       </section>
-//     </article>
-//   );
-// }
+      <div className={styles.blocks}>
+        {article.blocks.map((block, idx) => (
+          <div key={idx} className={styles.block}>
+            <h3 className={styles.blockTitle}>{block.title[currentLocale]}</h3>
+            <p className={styles.blockDescription}>
+              {block.description[currentLocale]}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
