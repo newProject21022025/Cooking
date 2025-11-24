@@ -1,0 +1,102 @@
+.adminPage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  
+    h1, h2 {
+      font-weight: 700;
+    }
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .articleList {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .articleCard {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+  
+    img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+  
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+  
+    p {
+      color: #4b5563; // text-gray-600
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+  
+    .actions {
+      display: flex;
+      justify-content: space-between;
+  
+      a {
+        color: #4f46e5; // indigo-600
+        text-decoration: none;
+        font-weight: 500;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+  
+      button {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        background-color: #dc2626; // red-600
+        color: #fff;
+        transition: background-color 0.2s ease;
+  
+        &:hover:not(:disabled) {
+          background-color: #b91c1c; // red-700
+        }
+  
+        &:disabled {
+          background-color: #fca5a5; // red-300
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+  
+  .loading,
+  .empty {
+    font-size: 1rem;
+    color: #374151; // text-gray-700
+  }
+  
