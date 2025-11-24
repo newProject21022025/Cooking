@@ -1,6 +1,5 @@
 // src/api/articleApi.ts
 
-// src/api/articles.ts
 import axios from 'axios';
 
 // -----------------------------------------------------------------------------
