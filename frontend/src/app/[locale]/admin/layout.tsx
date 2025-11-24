@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store"; // Припущено, що це правильний шлях
 import styles from "./page.module.scss";
 
-const TABS = ["edit", "create", "users", "comments", "partners", "ingredients"];
+const TABS = ["edit", "create", "users", "comments", "partners", "ingredients", "article"];
 
 export default function AUFLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
