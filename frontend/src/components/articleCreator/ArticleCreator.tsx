@@ -1,7 +1,7 @@
 // src/components/ArticleCreator.tsx
 
 import React, { useState } from "react";
-import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
+import { Formik, Form, Field, FieldArray, ErrorMessage, FieldProps, FormikHelpers } from "formik";
 import { articlesApi, CreateArticleDto } from "@/api/articleApi"; // Ваш API
 import {
   ArticleValidationSchema,
@@ -35,7 +35,7 @@ const MultiLangField: React.FC<MultiLangFieldProps> = ({
 
       {/* Поле для UKR */}
       <Field name={nameUk}>
-        {({ field, meta }: { field: any; meta: any }) => (
+        {({ field, meta }: FieldProps) => (
           <div>
             <InputComponent
               {...field}
@@ -58,7 +58,7 @@ const MultiLangField: React.FC<MultiLangFieldProps> = ({
 
       {/* Поле для ENG */}
       <Field name={nameEn}>
-        {({ field, meta }: { field: any; meta: any }) => (
+        {({ field, meta }: FieldProps) => (
           <div>
             <InputComponent
               {...field}
@@ -93,18 +93,15 @@ export const ArticleCreator: React.FC = () => {
   // ---------------------------------
   const handleSubmit = async (
     values: CreateArticleDto,
-    { setSubmitting, resetForm }: any
+    { setSubmitting, resetForm }: FormikHelpers<CreateArticleDto>
   ) => {
     setSubmitting(true);
     setSubmitError(null);
     setSubmitSuccess(false);
-
+  
     try {
-      // Виклик API для створення статті
       const newArticle = await articlesApi.create(values);
       console.log("Стаття успішно створена:", newArticle);
-
-      // Очищення форми та повідомлення про успіх
       resetForm();
       setSubmitSuccess(true);
     } catch (error) {
