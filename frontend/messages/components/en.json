@@ -198,5 +198,119 @@
       "address": "Address",
       "freeDelivery": "Free city delivery for orders over 500 ₴"
     }
+  },
+  "LoginForm": {
+    "titleLogin": "Login",
+    "titleRegister": "Register",
+    "titleReset": "Reset Password",
+    "placeholderFirstName": "First Name",
+    "placeholderLastName": "Last Name",
+    "placeholderEmail": "Email",
+    "placeholderPassword": "Password",
+    "validation": {
+      "emailInvalid": "Invalid email",
+      "emailRequired": "Email is required",
+      "passwordMin": "Minimum 5 characters",
+      "passwordRequired": "Password is required",
+      "firstNameRequired": "First Name is required",
+      "lastNameRequired": "Last Name is required"
+    },
+    "buttonLoading": "Loading...",
+    "buttonRegister": "Register",
+    "buttonReset": "Reset Password",
+    "buttonLogin": "Login",
+    "linkForgotPassword": "Forgot password?",
+    "textNoAccount": "Don't have an account?",
+    "linkRegister": "Register",
+    "linkBackToLogin": "Back to Login",
+    "register": {
+      "successAlert": "Registration successful! You can now log in.",
+      "defaultError": "An error occurred during registration"
+    },
+    "reset": {
+      "successMessage": "Password reset instructions sent to email",
+      "defaultError": "An error occurred during password reset",
+      "unknownError": "An unknown error occurred"
+    }
+  },
+  "ProfileLayout": {
+    "title": "Personal Account",
+    "tabProfile": "Profile and Password",
+    "tabHistory": "Order History",
+    "tabFavorites": "Favorite Dishes"
+  } ,"ProfileSettingsPage": {
+    "Title": "Profile Settings",
+    "Messages": {
+      "loading": "Loading profile...",
+      "updateSuccess": "Profile successfully updated!"
+    },
+    "Errors": {
+      "loadConsole": "Error loading profile:",
+      "loadDefault": "Error loading profile",
+      "dataMissing": "User data is missing",
+      "updateDefault": "Error updating profile",
+      "passwordChangeDefault": "An error occurred while changing the password",
+      "unknownError": "An unknown error occurred"
+    }
+  },
+  "ProfileForm": {
+    "Fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "deliveryAddress": "Delivery Address",
+      "phonePlaceholder": "+380 (XX) XXX-XX-XX"
+    },
+    "Buttons": {
+      "saving": "Saving...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "uploading": "Uploading...",
+      "choosePhoto": "Choose Photo"
+    },
+    "Validation": {
+      "firstNameRequired": "First name is required",
+      "firstNameMax": "First name is too long",
+      "lastNameRequired": "Last name is required",
+      "lastNameMax": "Last name is too long",
+      "phoneFormatInvalid": "Invalid phone format",
+      "addressMax": "Address is too long"
+    },
+    "Errors": {
+      "uploadFailedAlert": "Failed to upload photo. Please try again."
+    },
+    "ImageAlt": {
+      "avatarPreview": "Avatar preview"
+    }
+  },
+  "PurchaseHistoryPage": {
+    "Title": "Order History",
+    "Description": "View your past orders and reorder items.",
+    "Errors": {
+      "loadConsole": "Error loading user:"
+    }
+  },
+  "UserHistory": {
+    "Title": "Order History",
+    "Currency": "UAH",
+    "Messages": {
+      "loading": "Loading history...",
+      "emptyHistory": "Order history is empty"
+    },
+    "Errors": {
+      "generalError": "Error"
+    },
+    "Fields": {
+      "orderNumber": "Order Number",
+      "date": "Date",
+      "items": "Dishes",
+      "itemDetail": "{{name}} x {{quantity}} = {{total}} {{currency}}",
+      "status": "Status",
+      "statusUndefined": "Not defined",
+      "totalSum": "Order Total"
+    },
+    "ImageAlt": {
+      "partnerPhoto": "Partner photo: {{firstName}} {{lastName}}"
+    }
   }
 }

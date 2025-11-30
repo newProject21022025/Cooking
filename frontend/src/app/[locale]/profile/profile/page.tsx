@@ -14,8 +14,13 @@ import {
 import ProfileForm from "@/components/profileForm/ProfileForm";
 import PasswordForm from "@/components/profileForm/PasswordForm";
 import { AxiosError } from "axios";
+// ➡️ NEXT-INTL IMPORTS
+import { useTranslations } from "next-intl"; 
+
 
 export default function ProfileSettingsPage() {
+  const t = useTranslations("ProfileSettingsPage"); // ⬅️ Використовуємо простір імен ProfileSettingsPage
+
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,8 +42,10 @@ export default function ProfileSettingsPage() {
       setUser(userData);
     } catch (err: unknown) {
       const e = err as { message?: string; response?: { status?: number } };
-      console.error("Помилка завантаження профілю:", e);
-      setError(e.message || "Помилка завантаження профілю");
+      // ➡️ Переклад повідомлення в консолі
+      console.error(t("Errors.loadConsole"), e); 
+      // ➡️ Переклад повідомлення про помилку
+      setError(e.message || t("Errors.loadDefault")); 
       if (e.response?.status === 401) {
         localStorage.removeItem("token");
       }
@@ -56,8 +63,8 @@ export default function ProfileSettingsPage() {
       setError(null);
       setUpdateSuccess(false);
 
-      if (!user) throw new Error("Дані користувача відсутні");
-
+      if (!user) throw new Error(t("Errors.dataMissing")); // ➡️ Переклад
+      
       const updatedUser = await updateCurrentUserProfile(values);
       setUser(updatedUser);
       setIsEditing(false);
@@ -77,7 +84,8 @@ export default function ProfileSettingsPage() {
         });
         setErrors(formikErrors);
       } else {
-        setError(e.message || "Помилка оновлення профілю");
+        // ➡️ Переклад повідомлення про помилку
+        setError(e.message || t("Errors.updateDefault")); 
       }
     } finally {
       setIsSubmitting(false);
@@ -100,7 +108,7 @@ export default function ProfileSettingsPage() {
       setIsSubmitting(true);
       setPasswordError(null);
 
-      if (!user) throw new Error("Дані користувача відсутні");
+      if (!user) throw new Error(t("Errors.dataMissing")); // ➡️ Переклад
 
       await updateCurrentUserProfile({ password: values.newPassword });
       setPasswordSuccess(true);
@@ -109,10 +117,12 @@ export default function ProfileSettingsPage() {
     } catch (err: unknown) {
       if (err instanceof AxiosError && err.response) {
         setPasswordError(
-          err.response.data.message || "Сталася помилка при зміні пароля"
+          // ➡️ Переклад повідомлення про помилку
+          err.response.data.message || t("Errors.passwordChangeDefault") 
         );
       } else {
-        setPasswordError("Сталася невідома помилка");
+        // ➡️ Переклад повідомлення про помилку
+        setPasswordError(t("Errors.unknownError")); 
       }
     } finally {
       setIsSubmitting(false);
@@ -120,8 +130,9 @@ export default function ProfileSettingsPage() {
     }
   };
 
+  // ➡️ Переклад повідомлень на екрані
   if (loading) {
-    return <div className={styles.loading}>Завантаження профілю...</div>;
+    return <div className={styles.loading}>{t("Messages.loading")}</div>;
   }
 
   if (error && !user) {
@@ -129,15 +140,17 @@ export default function ProfileSettingsPage() {
   }
 
   if (!user) {
-    return <div className={styles.error}>Дані користувача відсутні</div>;
+    return <div className={styles.error}>{t("Errors.dataMissing")}</div>;
   }
 
   return (
     <div>
-      <h2 className={styles.profileTitle}>Налаштування профілю</h2>
+      {/* ➡️ Переклад заголовка */}
+      <h2 className={styles.profileTitle}>{t("Title")}</h2> 
 
+      {/* ➡️ Переклад повідомлення про успіх */}
       {updateSuccess && (
-        <div className={styles.success}>Профіль успішно оновлено!</div>
+        <div className={styles.success}>{t("Messages.updateSuccess")}</div>
       )}
       {error && <div className={styles.error}>{error}</div>}
       <div className={styles.card}>
@@ -156,30 +169,6 @@ export default function ProfileSettingsPage() {
         />
       </div>
 
-      {/* <div className={styles.card}>
-        {!isEditing ? (
-          <ProfileView 
-            user={user} 
-            onEdit={() => setIsEditing(true)} 
-          />
-        ) : (
-          <>
-            <ProfileForm
-              user={user}
-              onSubmit={handleProfileSubmit}
-              onCancel={() => setIsEditing(false)}
-              isSubmitting={isSubmitting}
-            />
-
-            <PasswordForm
-              onSubmit={handlePasswordChange}
-              isSubmitting={isSubmitting}
-              success={passwordSuccess}
-              error={passwordError}
-            />
-          </>
-        )}
-      </div> */}
     </div>
   );
 }

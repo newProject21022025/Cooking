@@ -1,8 +1,9 @@
 // src/app/[locale]/profile/layout.tsx
 "use client";
 
-import { useState, useMemo } from "react"; // ✅ Додаємо useMemo
-import { useRouter, usePathname } from "next/navigation"; // ✅ Додаємо usePathname
+import { useMemo } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl"; 
 import styles from "./layout.module.scss";
 
 interface ProfileLayoutProps {
@@ -10,68 +11,80 @@ interface ProfileLayoutProps {
 }
 
 export default function ProfileLayout({ children }: ProfileLayoutProps) {
+  const t = useTranslations("ProfileLayout");
+
   const router = useRouter();
-  const pathname = usePathname(); // ✅ Отримуємо поточний шлях // 1. ВИЗНАЧЕННЯ АКТИВНОЇ ВКЛАДКИ НА ОСНОВІ URL
+  const pathname = usePathname();
 
+  // 1. ВИЗНАЧЕННЯ АКТИВНОЇ ВКЛАДКИ НА ОСНОВІ URL
   const activeTab = useMemo(() => {
-    // Шлях матиме вигляд, наприклад: /uk/profile/favorites
-    const segments = pathname.split("/"); // Останній сегмент (наприклад, 'favorites', 'history', 'profile')
-    const currentSegment = segments[segments.length - 1]; // Забезпечуємо, що ми повертаємо одну з валідних вкладок. // Якщо останній сегмент - 'profile' або порожній (коли /profile), // або якщо це взагалі не сторінка профілю, повертаємо 'profile' за замовчуванням.
-    if (["profile", "history", "favorites"].includes(currentSegment)) {
-      return currentSegment;
-    } // Для кореневого шляху профілю (/uk/profile) або будь-якого іншого невідомого шляху
+    // Шлях може бути: "/uk/profile", "/uk/profile/", або "/uk/profile/history"
+    const segments = pathname.split('/').filter(segment => segment); // Видаляємо порожні сегменти ('', 'uk')
+    
+    // Останній сегмент повинен бути або 'profile', 'history', або 'favorites'.
+    // Якщо segments = ["uk", "profile", "history"], то lastSegment = "history"
+    // Якщо segments = ["uk", "profile"], то lastSegment = "profile"
+    const lastSegment = segments[segments.length - 1];
 
+    // Якщо шлях закінчується на /profile або /profile/, останній сегмент = 'profile'.
+    if (lastSegment === 'profile' || lastSegment === undefined) {
+      return "profile";
+    }
+
+    // Перевіряємо інші валідні вкладки
+    if (["history", "favorites"].includes(lastSegment)) {
+      return lastSegment;
+    }
+    
+    // Якщо жоден з вищезазначених, повертаємо 'profile' як стандартний.
+    // Це потрібно для шляхів типу: /uk/profile/
     return "profile";
-  }, [pathname]); // Перераховуємо лише при зміні шляху // 2. Локальний стан більше не потрібен, але ми залишаємо handleTabClick для навігації // const [activeTab, setActiveTab] = useState("profile"); // ❌ ВИДАЛЯЄМО
+  }, [pathname]);
 
   const handleTabClick = (tab: string) => {
-    // setActiveTab(tab); // ❌ НЕ ПОТРІБНО, оновлюється через URL
-    // Примітка: router.push сам оновив шлях, що, в свою чергу,
-    // оновлює activeTab через useMemo.
+    // Next.js правильно обробляє відносний шлях, зберігаючи поточну локаль.
     router.push(`/profile/${tab}`);
   };
 
   return (
     <div className={styles.container}>
-         <h1 className={styles.title}>Особистий кабінет</h1>     
+      <h1 className={styles.title}>{t("title")}</h1> 
       <div className={styles.layout}>
-            {/* Боковая панель с навигацией */}   
         <nav className={styles.sidebar}>
-               {/* Тепер activeTab коректно відображає поточний URL */} 
-            
+          {/* Профіль та пароль */}
           <button
             className={`${styles.navButton} ${
               activeTab === "profile" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("profile")}
           >
-                   Профіль та пароль     
+            {t("tabProfile")} 
           </button>
-                   
+          
+          {/* Історія замовлень */}
           <button
             className={`${styles.navButton} ${
               activeTab === "history" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("history")}
           >
-                   Історія замовлень     
+            {t("tabHistory")} 
           </button>
-                   
+          
+          {/* Улюблені страви */}
           <button
             className={`${styles.navButton} ${
               activeTab === "favorites" ? styles.active : ""
             }`}
             onClick={() => handleTabClick("favorites")}
           >
-                   Улюблені страви     
+            {t("tabFavorites")} 
           </button>
-             
         </nav>
-            {/* Основной контент */}   
-        <main className={styles.content}>     {children}    </main> 
         
+        {/* Основний контент */}
+        <main className={styles.content}>{children}</main> 
       </div>
-       
     </div>
   );
 }

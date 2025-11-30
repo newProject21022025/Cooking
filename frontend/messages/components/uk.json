@@ -196,5 +196,121 @@
       "address": "Адреса",
       "freeDelivery": "Безкоштовна доставка по місту від 500 ₴"
     }
+  },
+  "LoginForm": {
+    "titleLogin": "Вхід",
+    "titleRegister": "Реєстрація",
+    "titleReset": "Відновлення пароля",
+    "placeholderFirstName": "Ім'я",
+    "placeholderLastName": "Прізвище",
+    "placeholderEmail": "Ел. пошта",
+    "placeholderPassword": "Пароль",
+    "validation": {
+      "emailInvalid": "Некоректний email",
+      "emailRequired": "Email обов'язковий",
+      "passwordMin": "Мінімум 5 символів",
+      "passwordRequired": "Пароль обов'язковий",
+      "firstNameRequired": "Ім'я обов'язкове",
+      "lastNameRequired": "Прізвище обов'язкове"
+    },
+    "buttonLoading": "Завантаження...",
+    "buttonRegister": "Зареєструватися",
+    "buttonReset": "Відновити пароль",
+    "buttonLogin": "Увійти",
+    "linkForgotPassword": "Забули пароль?",
+    "textNoAccount": "Немає облікового запису?",
+    "linkRegister": "Зареєструватися",
+    "linkBackToLogin": "Повернутись до входу",
+    "register": {
+      "successAlert": "Реєстрація успішна! Тепер можна увійти.",
+      "defaultError": "Сталася помилка при реєстрації"
+    },
+    "reset": {
+      "successMessage": "Інструкція для відновлення пароля надіслана на email",
+      "defaultError": "Сталася помилка при відновленні пароля",
+      "unknownError": "Сталася невідома помилка"
+    }
+  },
+  "ProfileLayout": {
+    "title": "Особистий кабінет",
+    "tabProfile": "Профіль та пароль",
+    "tabHistory": "Історія замовлень",
+    "tabFavorites": "Улюблені страви"
+  }
+  ,
+  "ProfileSettingsPage": {
+    "Title": "Налаштування профілю",
+    "Messages": {
+      "loading": "Завантаження профілю...",
+      "updateSuccess": "Профіль успішно оновлено!"
+    },
+    "Errors": {
+      "loadConsole": "Помилка завантаження профілю:",
+      "loadDefault": "Помилка завантаження профілю",
+      "dataMissing": "Дані користувача відсутні",
+      "updateDefault": "Помилка оновлення профілю",
+      "passwordChangeDefault": "Сталася помилка при зміні пароля",
+      "unknownError": "Сталася невідома помилка"
+    }
+  },
+  "ProfileForm": {
+    "Fields": {
+      "firstName": "Ім'я",
+      "lastName": "Прізвище",
+      "phoneNumber": "Телефон",
+      "deliveryAddress": "Адреса доставки",
+      "phonePlaceholder": "+380 (XX) XXX-XX-XX"
+    },
+    "Buttons": {
+      "saving": "Збереження...",
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "uploading": "Завантаження...",
+      "choosePhoto": "Обрати фото"
+    },
+    "Validation": {
+      "firstNameRequired": "Ім'я обов'язкове",
+      "firstNameMax": "Ім'я занадто довге",
+      "lastNameRequired": "Прізвище обов'язкове",
+      "lastNameMax": "Прізвище занадто довге",
+      "phoneFormatInvalid": "Невірний формат телефону",
+      "addressMax": "Адреса занадто довга"
+    },
+    "Errors": {
+      "uploadFailedAlert": "Не вдалося завантажити фото. Спробуйте ще раз."
+    },
+    "ImageAlt": {
+      "avatarPreview": "Попередній перегляд аватара"
+    }
+  },
+  "PurchaseHistoryPage": {
+    "Title": "Історія замовлень",
+    "Description": "Дивіться свої попередні замовлення та замовляйте знову.",
+    "Errors": {
+      "loadConsole": "Помилка завантаження користувача:"
+    }
+  },
+  "UserHistory": {
+    "Title": "Історія замовлень",
+    "Currency": "грн",
+    "Messages": {
+      "loading": "Завантаження історії...",
+      "emptyHistory": "Історія замовлень порожня"
+    },
+    "Errors": {
+      "generalError": "Помилка"
+    },
+    "Fields": {
+      "orderNumber": "Номер замовлення",
+      "date": "Дата",
+      "items": "Страви",
+      "itemDetail": "{{name}} x {{quantity}} = {{total}} {{currency}}",
+      "status": "Статус",
+      "statusUndefined": "Не визначено",
+      "totalSum": "Сума замовлення"
+    },
+    "ImageAlt": {
+      "partnerPhoto": "Фото партнера: {{firstName}} {{lastName}}"
+    }
   }
 }

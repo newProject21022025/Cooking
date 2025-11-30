@@ -5,8 +5,13 @@ import UserHistory from "@/components/userHistory/UserHistory";
 import { useEffect, useState } from "react";
 import { getCurrentUserProfile } from "@/api/usersApi";
 import { User } from "@/types/user";
+// ➡️ NEXT-INTL IMPORTS
+import { useTranslations } from "next-intl";
 
 export default function PurchaseHistoryPage() {
+  // ➡️ Ініціалізація функції перекладу
+  const t = useTranslations("PurchaseHistoryPage");
+
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -15,17 +20,20 @@ export default function PurchaseHistoryPage() {
         const userData = await getCurrentUserProfile();
         setUser(userData);
       } catch (error) {
-        console.error("Помилка завантаження користувача:", error);
+        // ➡️ Переклад повідомлення в консолі
+        console.error(t("Errors.loadConsole"), error); 
       }
     };
 
     loadUser();
-  }, []);
+  }, [t]); // Додаємо t у залежності для чистоти (хоча t стабільний)
 
   return (
     <div>
-      <h2>Історія замовлень</h2>
-      <p>Дивіться свої попередні замовлення та замовляйте знову.</p>
+      {/* ➡️ Переклад заголовка */}
+      <h2>{t("Title")}</h2>
+      {/* ➡️ Переклад опису */}
+      <p>{t("Description")}</p>
       
       {user && <UserHistory userId={user.id} />}
     </div>
