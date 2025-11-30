@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Formik,
   Form as FormikForm,
@@ -17,26 +17,40 @@ import { registerUser, CreateUserData, resetPassword } from "@/api/usersApi";
 import { AxiosError } from "axios";
 import styles from "./LoginForm.module.scss";
 
-// ====================== ВАЛІДАЦІЯ ======================
-const LoginSchema = Yup.object().shape({
-  email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string()
-    .min(5, "Мінімум 5 символів")
-    .required("Пароль обов'язковий"),
-});
+// ➡️ NEXT-INTL IMPORTS
+import { useLocale, useTranslations } from "next-intl";
 
-const RegisterSchema = Yup.object().shape({
-  firstName: Yup.string().required("Ім'я обов'язкове"),
-  lastName: Yup.string().required("Прізвище обов'язкове"),
-  email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-  password: Yup.string()
-    .min(5, "Мінімум 5 символів")
-    .required("Пароль обов'язковий"),
-});
+// ====================== ВАЛІДАЦІЯ (З ВИКОРИСТАННЯМ t()) ======================
 
-const ResetPasswordSchema = Yup.object().shape({
-  email: Yup.string().email("Некоректний email").required("Email обов'язковий"),
-});
+// Функції для створення схем валідації, що приймають функцію t для перекладів
+const createLoginSchema = (t: ReturnType<typeof useTranslations>) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(t("validation.emailInvalid"))
+      .required(t("validation.emailRequired")),
+    password: Yup.string()
+      .min(5, t("validation.passwordMin"))
+      .required(t("validation.passwordRequired")),
+  });
+
+const createRegisterSchema = (t: ReturnType<typeof useTranslations>) =>
+  Yup.object().shape({
+    firstName: Yup.string().required(t("validation.firstNameRequired")),
+    lastName: Yup.string().required(t("validation.lastNameRequired")),
+    email: Yup.string()
+      .email(t("validation.emailInvalid"))
+      .required(t("validation.emailRequired")),
+    password: Yup.string()
+      .min(5, t("validation.passwordMin"))
+      .required(t("validation.passwordRequired")),
+  });
+
+const createResetPasswordSchema = (t: ReturnType<typeof useTranslations>) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(t("validation.emailInvalid"))
+      .required(t("validation.emailRequired")),
+  });
 
 // ====================== ТИПИ ФОРМИ ======================
 interface FormValues extends CreateUserData {
@@ -47,6 +61,10 @@ interface FormValues extends CreateUserData {
 }
 
 export default function LoginForm() {
+  // ➡️ Ініціалізація перекладів з простором імен "LoginForm"
+  const t = useTranslations("LoginForm");
+  const locale = useLocale();
+
   const dispatch = useAppDispatch();
   const { loading: authLoading, error: authError } = useAppSelector(
     (state) => state.auth
@@ -56,6 +74,12 @@ export default function LoginForm() {
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [formError, setFormError] = useState("");
   const [resetMessage, setResetMessage] = useState("");
+
+  // Створюємо схеми валідації, передаючи функцію t
+  const LoginSchema = createLoginSchema(t);
+  const RegisterSchema = createRegisterSchema(t);
+  const ResetPasswordSchema = createResetPasswordSchema(t);
+
 
   // ====================== ПЕРЕМИКАЧІ ======================
   const toggleForm = () => {
@@ -80,7 +104,8 @@ export default function LoginForm() {
     try {
       const { firstName, lastName, email, password } = values;
       await registerUser({ firstName, lastName, email, password });
-      alert("Реєстрація успішна! Тепер можна увійти.");
+      // ➡️ Використовуємо t() для alert
+      alert(t("register.successAlert"));
       setIsRegister(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -88,7 +113,8 @@ export default function LoginForm() {
       } else {
         const e = err as { response?: { data?: { message?: string } } };
         setFormError(
-          e.response?.data?.message || "Сталася помилка при реєстрації"
+          // ➡️ Використовуємо t() для повідомлення про помилку
+          e.response?.data?.message || t("register.defaultError")
         );
       }
     } finally {
@@ -103,16 +129,19 @@ export default function LoginForm() {
   ) => {
     try {
       await resetPassword({ email: values.email });
-      setResetMessage("Інструкція для відновлення пароля надіслана на email");
+      // ➡️ Використовуємо t() для повідомлення про успіх
+      setResetMessage(t("reset.successMessage"));
       setFormError("");
     } catch (err: unknown) {
       if (err instanceof AxiosError && err.response) {
         setFormError(
           (err.response.data.message as string) ||
-            "Сталася помилка при відновленні пароля"
+            // ➡️ Використовуємо t() для повідомлення про помилку
+            t("reset.defaultError")
         );
       } else {
-        setFormError("Сталася невідома помилка");
+        // ➡️ Використовуємо t() для невідомої помилки
+        setFormError(t("reset.unknownError"));
       }
       setResetMessage("");
     } finally {
@@ -144,11 +173,12 @@ export default function LoginForm() {
       {({ isSubmitting }) => (
         <FormikForm className={styles.form}>
           <h2 className={styles.title}>
+            {/* ➡️ Переклад заголовка форми */}
             {isRegister
-              ? "Реєстрація"
+              ? t("titleRegister")
               : isResetPassword
-              ? "Відновлення пароля"
-              : "Вхід"}
+              ? t("titleReset")
+              : t("titleLogin")}
           </h2>
 
           {/* Ім'я та Прізвище */}
@@ -158,7 +188,8 @@ export default function LoginForm() {
                 <Field
                   type="text"
                   name="firstName"
-                  placeholder="Ім'я"
+                  // ➡️ Переклад плейсхолдера
+                  placeholder={t("placeholderFirstName")}
                   className={styles.input}
                 />
                 <ErrorMessage
@@ -171,7 +202,8 @@ export default function LoginForm() {
                 <Field
                   type="text"
                   name="lastName"
-                  placeholder="Прізвище"
+                  // ➡️ Переклад плейсхолдера
+                  placeholder={t("placeholderLastName")}
                   className={styles.input}
                 />
                 <ErrorMessage
@@ -188,7 +220,8 @@ export default function LoginForm() {
             <Field
               type="email"
               name="email"
-              placeholder="Ел. пошта"
+              // ➡️ Переклад плейсхолдера
+              placeholder={t("placeholderEmail")}
               className={styles.input}
             />
             <ErrorMessage name="email" component="div" className={styles.error} />
@@ -200,7 +233,8 @@ export default function LoginForm() {
               <Field
                 type="password"
                 name="password"
-                placeholder="Пароль"
+                // ➡️ Переклад плейсхолдера
+                placeholder={t("placeholderPassword")}
                 className={styles.input}
               />
               <ErrorMessage
@@ -217,13 +251,14 @@ export default function LoginForm() {
             className={styles.button}
             disabled={isSubmitting || authLoading}
           >
+            {/* ➡️ Переклад тексту кнопки */}
             {isSubmitting || authLoading
-              ? "Завантаження..."
+              ? t("buttonLoading")
               : isRegister
-              ? "Зареєструватися"
+              ? t("buttonRegister")
               : isResetPassword
-              ? "Відновити пароль"
-              : "Увійти"}
+              ? t("buttonReset")
+              : t("buttonLogin")}
           </button>
 
           {/* Повідомлення */}
@@ -241,16 +276,18 @@ export default function LoginForm() {
                   className={styles.linkButton}
                   onClick={toggleResetPassword}
                 >
-                  Забули пароль?
+                  {/* ➡️ Переклад посилання */}
+                  {t("linkForgotPassword")}
                 </button>
                 <p className={styles.text}>
-                  Немає облікового запису?{" "}
+                  {/* ➡️ Переклад тексту посилання */}
+                  {t("textNoAccount")}{" "}
                   <button
                     type="button"
                     className={styles.linkButton}
                     onClick={toggleForm}
                   >
-                    Зареєструватися
+                    {t("linkRegister")}
                   </button>
                 </p>
               </>
@@ -260,7 +297,8 @@ export default function LoginForm() {
                 className={styles.linkButton}
                 onClick={toggleResetPassword}
               >
-                Повернутись до входу
+                {/* ➡️ Переклад посилання */}
+                {t("linkBackToLogin")}
               </button>
             )}
           </div>

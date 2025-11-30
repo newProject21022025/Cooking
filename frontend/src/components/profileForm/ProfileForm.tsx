@@ -7,23 +7,27 @@ import * as Yup from "yup";
 import styles from "./ProfileForm.module.scss";
 import { User, UpdateUserProfileData } from "@/types/user";
 import { uploadToCloudinary } from "@/api/cloudinaryApi";
-import { useState, useMemo } from "react";
+import { useState } from "react";
+// ➡️ NEXT-INTL IMPORTS
+import { useTranslations } from "next-intl";
 
-const validationSchema = Yup.object({
-  firstName: Yup.string()
-    .required("Ім'я обов'язкове")
-    .max(50, "Ім'я занадто довге"),
-  lastName: Yup.string()
-    .required("Прізвище обов'язкове")
-    .max(50, "Прізвище занадто довге"),
-  phoneNumber: Yup.string()
-    .matches(
-      /^\+?380\s?\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/,
-      "Невірний формат телефону"
-    )
-    .nullable(),
-  deliveryAddress: Yup.string().max(200, "Адреса занадто довга").nullable(),
-});
+// Функція валідації, що приймає t()
+const createValidationSchema = (t: ReturnType<typeof useTranslations>) => 
+  Yup.object({
+    firstName: Yup.string()
+      .required(t("Validation.firstNameRequired"))
+      .max(50, t("Validation.firstNameMax")),
+    lastName: Yup.string()
+      .required(t("Validation.lastNameRequired"))
+      .max(50, t("Validation.lastNameMax")),
+    phoneNumber: Yup.string()
+      .matches(
+        /^\+?380\s?\(?\d{2}\)?\s?\d{3}-?\d{2}-?\d{2}$/,
+        t("Validation.phoneFormatInvalid")
+      )
+      .nullable(),
+    deliveryAddress: Yup.string().max(200, t("Validation.addressMax")).nullable(),
+  });
 
 const formatPhoneNumber = (input: string): string => {
   const cleaned = input.replace(/\D/g, "");
@@ -56,12 +60,19 @@ export default function ProfileForm({
   onCancel,
   isSubmitting,
 }: ProfileFormProps) {
+  // ➡️ Ініціалізація функції перекладу
+  const t = useTranslations("ProfileForm");
+
+  // Створення схеми валідації з використанням t
+  const validationSchema = createValidationSchema(t);
+  
   const [uploading, setUploading] = useState(false);
 
   const initialValues: UpdateUserProfileData = {
     firstName: user.firstName || "",
     lastName: user.lastName || "",
-    phoneNumber: user.phoneNumber || "+380",
+    // Перевіряємо, чи номер телефону існує, інакше встановлюємо +380
+    phoneNumber: user.phoneNumber || "+380", 
     deliveryAddress: user.deliveryAddress || "",
     photo: user.photo || "",
   };
@@ -78,8 +89,9 @@ export default function ProfileForm({
       const result = await uploadToCloudinary(file);
       setFieldValue("photo", result.secure_url);
     } catch (err) {
-      console.error("Помилка завантаження фото:", err);
-      alert("Не вдалося завантажити фото. Спробуйте ще раз.");
+      console.error("Error uploading photo:", err); // ➡️ Переклад
+      // ➡️ Переклад alert
+      alert(t("Errors.uploadFailedAlert")); 
     } finally {
       setUploading(false);
     }
@@ -99,7 +111,7 @@ export default function ProfileForm({
               <div>
                 <img
                   src={values.photo}
-                  alt="Avatar preview"
+                  alt={t("ImageAlt.avatarPreview")} // ➡️ Переклад alt
                   className={styles.previewImage}
                 />
               </div>
@@ -111,13 +123,14 @@ export default function ProfileForm({
               id="photo"
               accept="image/*"
               onChange={(e) => handleFileChange(e, setFieldValue)}
-              disabled={uploading}
+              disabled={isSubmitting || uploading}
               className={styles.hiddenInput}
             />
 
             {/* Створюємо власну кнопку */}
             <label htmlFor="photo" className={styles.customFileButton}>
-              {uploading ? "Завантаження..." : "Обрати фото"}
+              {/* ➡️ Переклад тексту кнопки */}
+              {uploading ? t("Buttons.uploading") : t("Buttons.choosePhoto")}
             </label>
 
             <ErrorMessage
@@ -129,7 +142,8 @@ export default function ProfileForm({
 
           <div className={styles.form}>
             <div className={styles.formGroup}>
-              <label htmlFor="firstName">Ім&apos;я</label>
+              {/* ➡️ Переклад лейбла */}
+              <label htmlFor="firstName">{t("Fields.firstName")}</label>
               <Field
                 type="text"
                 id="firstName"
@@ -144,7 +158,8 @@ export default function ProfileForm({
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="lastName">Прізвище</label>
+              {/* ➡️ Переклад лейбла */}
+              <label htmlFor="lastName">{t("Fields.lastName")}</label>
               <Field
                 type="text"
                 id="lastName"
@@ -159,13 +174,15 @@ export default function ProfileForm({
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="phoneNumber">Телефон</label>
+              {/* ➡️ Переклад лейбла */}
+              <label htmlFor="phoneNumber">{t("Fields.phoneNumber")}</label>
               <Field
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
                 className={styles.input}
-                placeholder="+380 (XX) XXX-XX-XX"
+                // ➡️ Переклад плейсхолдера
+                placeholder={t("Fields.phonePlaceholder")}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const formatted = formatPhoneNumber(e.target.value);
                   setFieldValue("phoneNumber", formatted);
@@ -180,9 +197,10 @@ export default function ProfileForm({
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="deliveryAddress">Адреса доставки</label>
+              {/* ➡️ Переклад лейбла */}
+              <label htmlFor="deliveryAddress">{t("Fields.deliveryAddress")}</label>
               <Field
-                // as="textarea"
+                // as="textarea" 
                 id="deliveryAddress"
                 name="deliveryAddress"
                 className={styles.textarea}
@@ -195,23 +213,23 @@ export default function ProfileForm({
               />
             </div>
 
-            {/* ✅ Фото-профиль с Cloudinary */}
-
             <div className={styles.buttonGroup}>
               <button
                 type="submit"
                 className={styles.saveButton}
                 disabled={isSubmitting || uploading || !dirty}
               >
-                {isSubmitting ? "Збереження..." : "Зберегти"}
+                {/* ➡️ Переклад тексту кнопки */}
+                {isSubmitting ? t("Buttons.saving") : t("Buttons.save")}
               </button>
               <button
                 type="button"
                 className={styles.cancelButton}
                 onClick={onCancel}
-                disabled={isSubmitting}
+                disabled={isSubmitting || uploading}
               >
-                Скасувати
+                {/* ➡️ Переклад тексту кнопки */}
+                {t("Buttons.cancel")}
               </button>
             </div>
           </div>
