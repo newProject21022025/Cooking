@@ -15,8 +15,15 @@ import styles from "./page.module.scss";
 import UserLoader from "@/components/UserLoader";
 import Icon_delete from "@/svg/Icon_delete/Icon_delete";
 
+// 🛑 ДОДАНО: useLocale та useTranslations
+import { useLocale, useTranslations } from "next-intl";
+
 export default function BasketPage() {
   const dispatch = useDispatch<AppDispatch>();
+  // 🛑 Ініціалізація хуків локалізації
+  const locale = useLocale();
+  const t = useTranslations("BasketPage");
+
   const items = useSelector((state: RootState) => state.basket.items);
   const user = useSelector((state: RootState) => state.user.data);
   const [isClient, setIsClient] = React.useState(false);
@@ -59,13 +66,12 @@ export default function BasketPage() {
 
   const orderFormUser = user
     ? {
-        // Перетворюємо string | null на string | undefined для всіх полів
         id: user.id || undefined,
-        firstName: user.firstName || undefined, // <-- ВИПРАВЛЕННЯ
-        lastName: user.lastName || undefined, // <-- ВИПРАВЛЕННЯ
-        email: user.email || undefined, // <-- ВИПРАВЛЕННЯ
-        phoneNumber: user.phoneNumber || undefined, // <-- ВИПРАВЛЕННЯ
-        deliveryAddress: user.deliveryAddress || undefined, // <-- ВИПРАВЛЕННЯ
+        firstName: user.firstName || undefined,
+        lastName: user.lastName || undefined,
+        email: user.email || undefined,
+        phoneNumber: user.phoneNumber || undefined,
+        deliveryAddress: user.deliveryAddress || undefined,
       }
     : null;
 
@@ -73,33 +79,39 @@ export default function BasketPage() {
     <UserLoader>
       <div className={styles.checkoutContainer}>
         {items.length === 0 ? (
-          <p className={styles.empty}>Кошик порожній</p>
+          <p className={styles.empty}>{t("emptyBasket")}</p>
         ) : (
           <div className={styles.checkoutContent}>
-            {/* Кошик */}
+            {/* Basket */}
             <div className={styles.basket}>
-              {/* <h2>Кошик</h2> */}
               <ul className={styles.basketList}>
                 {items.map((item) => {
                   const { partnerDish, dish, quantity } = item;
                   const finalPrice = partnerDish.discount
                     ? partnerDish.price -
                       (partnerDish.price * partnerDish.discount) / 100
-                    : partnerDish.price; // ✅ 1. РОЗРАХУНОК ЗАГАЛЬНОЇ ЦІНИ БЕЗ ЗНИЖКИ ДЛЯ ПОТОЧНОЇ КІЛЬКОСТІ
-                  const generalPriceTotal = partnerDish.price * quantity; // ✅ 2. ПЕРЕВІРКА НА НАЯВНІСТЬ ЗНИЖКИ
+                    : partnerDish.price;
+                  const generalPriceTotal = partnerDish.price * quantity;
                   const hasDiscount = (partnerDish.discount ?? 0) > 0;
+
+                 
+                  const dishName =
+                    locale === "uk" ? dish.name_ua : dish.name_en;
+                  const dishDescription =
+                    locale === "uk" ? dish.description_ua : dish.description_en;
+
                   return (
                     <li key={partnerDish.id} className={styles.basketCard}>
                       <div className={styles.basketItemHeader}>
                         <img
                           src={dish.photo}
-                          alt={dish.name_ua}
+                          alt={dishName}
                           className={styles.dishPhoto}
                         />
                         <div>
-                          <h3 className={styles.titleName}>{dish.name_ua}</h3>
+                          <h3 className={styles.titleName}>{dishName}</h3>
                           <p className={styles.cardDescription}>
-                            {dish.description_ua}
+                            {dishDescription}
                           </p>
                         </div>
                       </div>
@@ -145,7 +157,7 @@ export default function BasketPage() {
                         <span className={styles.deleteIcon}>
                           <Icon_delete />{" "}
                         </span>
-                        Видалити
+                        {t("removeButton")} 
                       </button>
                     </li>
                   );
@@ -154,20 +166,22 @@ export default function BasketPage() {
               <div className={styles.total}>
                 <div>
                   <h3>
-                    Загальна сума:{" "}
-                    <span className={styles.cardFinalPrice}>{totalSum} ₴</span>
+                    {t("totalSum")}: 
+                    <span className={styles.cardFinalPrice}>
+                      {totalSum.toFixed(2)} ₴
+                    </span>
                   </h3>
                   <p className={styles.freeDelivery}>
-                    Безкоштовна доставка по місту від 500 ₴
+                    {t("freeDelivery")} 
                   </p>
                 </div>
                 <button onClick={() => dispatch(clearBasket())}>
-                  Очистити кошик
+                  {t("clearBasketButton")} 
                 </button>
               </div>
             </div>
 
-            {/* Форма замовлення */}
+            {/* Order Form */}
             <div className={styles.orderFormContainer}>
               <OrderForm user={orderFormUser} />
             </div>
