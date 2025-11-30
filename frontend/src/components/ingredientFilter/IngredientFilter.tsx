@@ -1,131 +1,144 @@
 // src/components/IngredientFilter/IngredientFilter.tsx
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./IngredientFilter.module.scss";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
+
 import {
   mainCategories,
   ingredientsByCategory,
 } from "@/components/createDishForm/constants/ingredientsData";
+
 import { fetchDishesApi } from "@/api/dishesApi";
 import { Dish, Ingredient, PaginatedDishesResponse } from "@/types/dish";
 import DishCard from "@/components/dishCard/DishCard";
 
+// -----------------------------
+// TYPES
+// -----------------------------
 interface IngredientOption {
   name_ua: string;
   name_en: string;
 }
 
 const DISHES_PER_PAGE = 7;
+const MAX_VISIBLE_PAGES = 3;
 
-// Константа для контролю кількості відображуваних сторінок навколо поточної
-const MAX_VISIBLE_PAGES = 3; 
+// -----------------------------
+// PAGINATION
+// -----------------------------
+const renderPageNumbers = (
+  currentPage: number,
+  totalPages: number,
+  goToPage: (page: number) => void
+) => {
+  const pageNumbers: (number | string)[] = [];
+  const maxPagesToShow = MAX_VISIBLE_PAGES;
 
-// ----------------------------------------------------------------------
-// ✅ ДОПОМІЖНА ФУНКЦІЯ: ГЕНЕРАЦІЯ СКОРОЧЕНОГО СПИСКУ НОМЕРІВ СТОРІНОК
-// ----------------------------------------------------------------------
-const renderPageNumbers = (currentPage: number, totalPages: number, goToPage: (page: number) => void) => {
-    const pageNumbers: (number | string)[] = [];
-    const maxPagesToShow = MAX_VISIBLE_PAGES;
+  if (totalPages <= maxPagesToShow + 2) {
+    for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
+  } else {
+    const boundary = 1;
+    const visibleRange = Math.floor(maxPagesToShow / 2);
+    let start = Math.max(2, currentPage - visibleRange);
+    let end = Math.min(totalPages - 1, currentPage + visibleRange);
 
-    if (totalPages <= maxPagesToShow + 2) {
-        // Якщо сторінок мало, відображаємо всі
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i);
-        }
-    } else {
-        const boundary = 1; // Завжди показуємо першу та останню сторінки
-        const visibleRange = Math.floor(maxPagesToShow / 2);
-
-        let start = Math.max(2, currentPage - visibleRange);
-        let end = Math.min(totalPages - 1, currentPage + visibleRange);
-
-        // Коригування, якщо діапазон прилипає до початку/кінця
-        if (currentPage <= MAX_VISIBLE_PAGES) { // ✅ ВИПРАВЛЕНО
-          end = MAX_VISIBLE_PAGES + 1; // ✅ ВИПРАВЛЕНО (Використовуємо MAX_VISIBLE_PAGES)
-      } else if (currentPage > totalPages - MAX_VISIBLE_PAGES) { // ✅ ВИПРАВЛЕНО
-          start = totalPages - MAX_VISIBLE_PAGES; // ✅ ВИПРАВЛЕНО
-      }
-
-        pageNumbers.push(1); // Перша сторінка
-
-        // Пропуск на початку
-        if (start > boundary + 1) {
-            pageNumbers.push("...");
-        }
-
-        // Середній діапазон
-        for (let i = start; i <= end; i++) {
-            pageNumbers.push(i);
-        }
-
-        // Пропуск в кінці
-        if (end < totalPages - boundary) {
-            pageNumbers.push("...");
-        }
-
-        // Остання сторінка (якщо вона не 1)
-        if (totalPages > 1 && pageNumbers[pageNumbers.length - 1] !== totalPages) {
-            pageNumbers.push(totalPages);
-        }
+    if (currentPage <= MAX_VISIBLE_PAGES) {
+      end = MAX_VISIBLE_PAGES + 1;
+    } else if (currentPage > totalPages - MAX_VISIBLE_PAGES) {
+      start = totalPages - MAX_VISIBLE_PAGES;
     }
 
-    return pageNumbers.map((pageNumber, index) => {
-        if (pageNumber === "...") {
-            return <span key={`dots-${index}`} className={styles.dots}>...</span>;
+    pageNumbers.push(1);
+
+    if (start > boundary + 1) pageNumbers.push("...");
+
+    for (let i = start; i <= end; i++) pageNumbers.push(i);
+
+    if (end < totalPages - boundary) pageNumbers.push("...");
+
+    if (totalPages > 1 && pageNumbers[pageNumbers.length - 1] !== totalPages) {
+      pageNumbers.push(totalPages);
+    }
+  }
+
+  return pageNumbers.map((pageNumber, index) => {
+    if (pageNumber === "...") {
+      return (
+        <span key={`dots-${index}`} className={styles.dots}>
+          ...
+        </span>
+      );
+    }
+
+    const pageNum = pageNumber as number;
+
+    return (
+      <button
+        key={pageNum}
+        onClick={() => goToPage(pageNum)}
+        className={
+          pageNum === currentPage ? styles.activePage : styles.pageButton
         }
-
-        const pageNum = pageNumber as number; // TypeScript fix
-
-        return (
-            <button
-                key={pageNum}
-                onClick={() => goToPage(pageNum)}
-                className={
-                    pageNum === currentPage
-                        ? styles.activePage
-                        : styles.pageButton
-                }
-            >
-                {pageNum}
-            </button>
-        );
-    });
+      >
+        {pageNum}
+      </button>
+    );
+  });
 };
 
-// ----------------------------------------------------------------------
-// ОСНОВНИЙ КОМПОНЕНТ
-// ----------------------------------------------------------------------
-
+// -----------------------------
+// DISH TYPES
+// -----------------------------
 const dishTypes = [
-    {
-      value: "all",
-      label: "Всі страви / All dishes",
-      image_url: "/photo/AllDishes.jpg",
-    },
-    { value: "soup", label: "Суп / Soup", image_url: "/photo/Soups.jpg" },
-    {
-      value: "main_course",
-      label: "Основне блюдо / Main course",
-      image_url: "/photo/MainDishes.jpg",
-    },
-    {
-      value: "side_dish",
-      label: "Гарнір / Side dish",
-      image_url: "/photo/SideDishes.jpg",
-    },
-    { value: "salad", label: "Салат / Salad", image_url: "/photo/Salads.jpg" },
-    {
-      value: "appetizer",
-      label: "Закуска / Appetizer",
-      image_url: "/photo/Appetizers.jpg",
-    },
+  {
+    value: "all",
+    label_ua: "Всі страви",
+    label_en: "All dishes",
+    image_url: "/photo/AllDishes.jpg",
+  },
+  {
+    value: "soup",
+    label_ua: "Суп",
+    label_en: "Soup",
+    image_url: "/photo/Soups.jpg",
+  },
+  {
+    value: "main_course",
+    label_ua: "Основне блюдо",
+    label_en: "Main course",
+    image_url: "/photo/MainDishes.jpg",
+  },
+  {
+    value: "side_dish",
+    label_ua: "Гарнір",
+    label_en: "Side dish",
+    image_url: "/photo/SideDishes.jpg",
+  },
+  {
+    value: "salad",
+    label_ua: "Салат",
+    label_en: "Salad",
+    image_url: "/photo/Salads.jpg",
+  },
+  {
+    value: "appetizer",
+    label_ua: "Закуска",
+    label_en: "Appetizer",
+    image_url: "/photo/Appetizers.jpg",
+  },
 ];
 
+// -----------------------------
+// MAIN COMPONENT
+// -----------------------------
 export default function IngredientFilter() {
+  const t = useTranslations("IngredientFilter");
+  const locale = useLocale();
+  const searchParams = useSearchParams();
+
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -138,29 +151,31 @@ export default function IngredientFilter() {
       limit: DISHES_PER_PAGE,
     });
 
-  const dishes = paginatedResponse.data;
-
   const [loading, setLoading] = useState<boolean>(true);
-  const locale = useLocale();
-
-  const searchParams = useSearchParams();
+  const dishes = paginatedResponse.data;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedSearchQuery, setSubmittedSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
+  // --------------------------
+  // LOAD CATEGORY FROM URL
+  // --------------------------
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category") || "all";
-    setSelectedCategory(categoryFromUrl);
 
+    setSelectedCategory(categoryFromUrl);
     setSelectedIngredients([]);
     setSubmittedSearchQuery("");
     setSearchQuery("");
     setCurrentPage(1);
   }, [searchParams]);
 
+  // --------------------------
+  // FETCH DISHES
+  // --------------------------
   const getDishes = useCallback(async () => {
     setLoading(true);
 
@@ -180,9 +195,13 @@ export default function IngredientFilter() {
       setPaginatedResponse(response);
       setTotalPages(Math.ceil(totalCount / DISHES_PER_PAGE));
     } catch (err) {
-      // Обробка помилок
       console.error("Помилка завантаження страв:", err);
-      setPaginatedResponse({ data: [], count: 0, page: 1, limit: DISHES_PER_PAGE });
+      setPaginatedResponse({
+        data: [],
+        count: 0,
+        page: 1,
+        limit: DISHES_PER_PAGE,
+      });
       setTotalPages(1);
     } finally {
       setLoading(false);
@@ -198,10 +217,11 @@ export default function IngredientFilter() {
     getDishes();
   }, [getDishes]);
 
+  // --------------------------
+  // HANDLERS
+  // --------------------------
   const goToPage = (pageNumber: number) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+    if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
   const handleCheckboxChange = (ingredientName: string) => {
@@ -210,6 +230,7 @@ export default function IngredientFilter() {
         ? prev.filter((i) => i !== ingredientName)
         : [...prev, ingredientName]
     );
+
     setSubmittedSearchQuery("");
     setSearchQuery("");
     setCurrentPage(1);
@@ -229,44 +250,45 @@ export default function IngredientFilter() {
   const handleSearch = () => {
     setSubmittedSearchQuery(searchQuery);
     setSelectedCategory("all");
-    setSelectedIngredients([]);
+    // setSelectedIngredients([]);
     setCurrentPage(1);
   };
 
-  const filterClasses = styles.filterWrapper;
-
+  // --------------------------
+  // RENDER
+  // --------------------------
   return (
     <div className={styles.page}>
+      {/* HEADER */}
       <div className={styles.header}>
         <p>svg</p>
         <div className={styles.boxTitle}>
-          <h2 className={styles.filterTitle}>Наше меню</h2>
-          <p className={styles.filterSubTitle}>
-            Дивіться наше меню і обирайте найулюбленіші страви для себе.
-          </p>
+          <h2 className={styles.filterTitle}>{t("menuTitle")}</h2>
+          <p className={styles.filterSubTitle}>{t("menuSubtitle")}</p>
         </div>
       </div>
-      <h2 className={styles.filterTitleSearch}>Пошук за назвою страви</h2>
+
+      {/* SEARCH */}
+      <h2 className={styles.filterTitleSearch}>{t("searchTitle")}</h2>
 
       <div className={styles.searchContainer}>
         <p>svg</p>
+
         <input
           type="text"
-          placeholder="Введіть назву страви, яку б ви хотіли знайти"
+          placeholder={t("searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className={styles.searchBar}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch();
-            }
-          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         />
+
         <button onClick={handleSearch} className={styles.searchButton}>
-          Знайти страву
+          {t("searchBtn")}
         </button>
       </div>
 
+      {/* CATEGORY BUTTONS */}
       <div className={styles.categoryButtonsContainer}>
         {dishTypes.map((type) => (
           <button
@@ -280,28 +302,27 @@ export default function IngredientFilter() {
               className={styles.imageContainer}
               style={{ backgroundImage: `url(${type.image_url})` }}
             />
+
             <span className={styles.buttonLabel}>
-              {locale === "uk"
-                ? type.label.split("/")[0].trim()
-                : type.label.split("/")[1].trim()}
+              {locale === "uk" ? type.label_ua : type.label_en}
             </span>
           </button>
         ))}
       </div>
 
+      {/* INGREDIENT FILTER */}
       <div className={styles.filterHeader}>
         <div className={styles.header}>
           <p>svg</p>
           <div className={styles.BoxTitle}>
-            <h2 className={styles.filterTitle}>Фільтр за інгредієнтами</h2>
+            <h2 className={styles.filterTitle}>{t("ingredientFilterTitle")}</h2>
             <p className={styles.filterSubTitle}>
-              Обирайте свою вишукану страву з наявних інгредієнтів, які ви
-              маєте, готуйте з задоволенням та насолоджуйтесь своєю кулінарною
-              майстерністю.
+              {t("ingredientFilterSubtitle")}
             </p>
           </div>
         </div>
       </div>
+
       <div className={styles.filterClasses}>
         <div className={styles.dropdownContainer}>
           {mainCategories.map((category) => (
@@ -310,7 +331,8 @@ export default function IngredientFilter() {
                 className={styles.dropdownHeader}
                 onClick={() => handleCategoryToggle(category)}
               >
-                {category}
+                {/* {t(category)} */}
+                {t(`category.${category}`)}
                 <span
                   className={`${styles.arrow} ${
                     openCategory === category ? styles.arrowUp : ""
@@ -319,45 +341,49 @@ export default function IngredientFilter() {
                   ▼
                 </span>
               </button>
+
               <div
                 className={`${styles.dropdownContent} ${
                   openCategory === category ? styles.open : ""
                 }`}
               >
-                {ingredientsByCategory[category].map(
-                  (ingredient: IngredientOption) => (
-                    <label
-                      key={ingredient.name_ua}
-                      className={styles.ingredientLabel}
-                    >
-                      <input
-                        type="checkbox"
-                        value={ingredient.name_ua}
-                        checked={selectedIngredients.includes(
-                          ingredient.name_ua
-                        )}
-                        onChange={() =>
-                          handleCheckboxChange(ingredient.name_ua)
-                        }
-                      />
-                      {locale === "uk"
-                        ? ingredient.name_ua
-                        : ingredient.name_en}
-                    </label>
-                  )
-                )}
+           {ingredientsByCategory[category].map(
+         (ingredient: IngredientOption) => {
+          // Змінюємо: повертаємо ingredient.name_ua як унікальний ключ/значення
+          const ingredientValue = ingredient.name_ua; // ✅ ВИПРАВЛЕНО
+          return (
+           <label
+            key={ingredientValue} // Використовуємо name_ua як ключ
+            className={styles.ingredientLabel}
+           >
+            <input
+             type="checkbox"
+             value={ingredientValue} // Передаємо name_ua як значення
+             checked={selectedIngredients.includes(
+              ingredientValue
+             )}
+             onChange={() => handleCheckboxChange(ingredientValue)}
+            />
+            {locale === "uk"
+             ? ingredient.name_ua
+             : ingredient.name_en}
+           </label>
+          );
+         }
+        )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* RESULTS */}
       <h3 className={styles.resultsHeader}>
-        Результати фільтрації (Знайдено: {paginatedResponse.count})
+        {t("resultsTitle")} ({t("found")}: {paginatedResponse.count})
       </h3>
 
       {loading ? (
-        <p className={styles.filterText}>Завантаження страв...</p>
+        <p className={styles.filterText}>{t("loading")}</p>
       ) : dishes.length > 0 ? (
         <>
           <div className={styles.dishList}>
@@ -366,32 +392,29 @@ export default function IngredientFilter() {
             ))}
           </div>
 
-          {/* ✅ ОНОВЛЕНИЙ БЛОК ПАГІНАЦІЇ (Варіант 1: Скорочена) */}
+          {/* PAGINATION */}
           {totalPages > 1 && (
             <div className={styles.paginationControls}>
               <button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
               >
-                &lt; Попередня
+                &lt; {t("prev")}
               </button>
 
-              {/* ✅ ВИКЛИК НОВОЇ ФУНКЦІЇ ДЛЯ СКОРОЧЕНОГО СПИСКУ */}
               {renderPageNumbers(currentPage, totalPages, goToPage)}
 
               <button
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
-                Наступна &gt;
+                {t("next")} &gt;
               </button>
             </div>
           )}
         </>
       ) : (
-        <p className={styles.noResults}>
-          Не знайдено страв за обраними критеріями
-        </p>
+        <p className={styles.noResults}>{t("noResults")}</p>
       )}
     </div>
   );

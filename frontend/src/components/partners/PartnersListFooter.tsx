@@ -50,7 +50,7 @@ const PartnersInfoFooter = () => {
   );
 
   // 2. ІНІЦІАЛІЗАЦІЯ ПЕРЕКЛАДУ ТА ЛОКАЛІ
-  const t = useTranslations("PartnersList"); // Використовуємо простір імен PartnersList
+  const t = useTranslations("PartnersListFooter"); // Використовуємо простір імен PartnersList
   const locale = useLocale(); // Отримуємо поточну локаль ('uk' або 'en')
 
 
