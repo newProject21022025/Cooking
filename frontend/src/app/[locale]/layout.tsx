@@ -62,8 +62,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body>
         <ReduxProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {/* <Header locale={locale} /> */}
-            <Header />
+            <Header locale={locale as "uk" | "en"} />
+            {/* <Header /> */}
             {children}
             <Footer />
           </NextIntlClientProvider>
