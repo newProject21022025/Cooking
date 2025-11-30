@@ -95,5 +95,108 @@
     "login": "Login",
     "admin": "Admin",
     "logout": "Logout"
+  },
+  "BuyDishesLayout": {
+    "dishes": "Menu",
+    "basket": "Basket",
+    "info": "Information",
+    "infoTitleStart": "Discover",
+    "infoSubtitle": "Learn more about the history, values, and offers",
+    "dishesBasketTitleStart": "Order Dishes",
+    "dishesBasketSubtitle1": "We have collected the tastiest meals from our partners - just for you!",
+    "dishesBasketSubtitle2": "Your meal is nearby - choose a dish and order!"
+  },
+  "PartnerDishes": {
+    "loadingMenu": "Loading menu...",
+    "emptyMenu": "Menu is empty or no dishes found for your query.",
+    "menuTitle": "Menu",
+    "searchPlaceholder": "Search dish...",
+    "searchButton": "Search",
+    "freeDelivery": "Free city delivery for orders over 500 ₴",
+    "ingredientsButton": "Ingredients",
+    "hideIngredients": "Hide ingredients",
+    "orderButton": "Order",
+    "addedToBasket": "Item added to basket",
+    "mainIngredientsTitle": "Main Ingredients"
+  },
+   "BasketPage": {
+    "emptyBasket": "Basket is empty",
+    "removeButton": "Remove",
+    "totalSum": "Total amount",
+    "freeDelivery": "Free city delivery for orders over 500 ₴",
+    "clearBasketButton": "Clear basket"
+  },
+  "OrderForm": {
+    "title": "Place Order",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "validation": {
+      "firstNameRequired": "Enter first name",
+      "lastNameRequired": "Enter last name",
+      "emailInvalid": "Invalid email",
+      "emailRequired": "Enter email",
+      "phoneInvalid": "Invalid phone format. Example: +380 (67) 123-45-67",
+      "phoneRequired": "Enter phone number",
+      "addressRequired": "Enter delivery address"
+    },
+    "submitButton": "Submit Order",
+    "alert": {
+      "emptyBasket": "Basket is empty",
+      "orderSuccess": "Order created! Number: {orderNumber}",
+      "orderError": "Error creating order",
+      "orderErrorGeneric": "Error creating order"
+    }
+  },
+  
+ "PartnerInfoPage": {
+    "loading": "Loading...",
+    "error": "Error",
+    "notFound": "Partner not found.",
+    "sections": {
+      "historyTitle": "Our History",
+      "historyText": "The idea to found {partnerName} arose from the desire to have an establishment where food is not just satisfying taste, but a way to share care and hospitality. We started with a small menu, focusing on the quality of products, clean recipes, and service. From the very first days, we decided that delivery should be not only fast but also aesthetic: attention to packaging, food temperature, and preserving the taste. Over time, {partnerName} expanded its assortment, introduced signature recipes, seasonal offers, and customer feedback systems to constantly improve.",
+      "valuesTitle": "Our Values",
+      "offersTitle": "Our Offers"
+    },
+    "values": {
+      "quality": "Quality in detail - every ingredient, every cooking method is important, because details shape the taste.",
+      "hospitality": "Hospitality and attention to the client - we strive for everyone to feel like a welcome guest, even when ordering from home.",
+      "convenience": "Time and convenience - ordering must be simple, delivery fast, and the dishes must retain their taste and appearance.",
+      "innovation": "Innovative approach - adaptation to modern trends, new menu formats, eco-friendly packaging, and digital solutions.",
+      "authenticity": "Authenticity and transparency - honest ingredients, open prices, responsible attitude towards suppliers and standards."
+    },
+    "offers": {
+      "restaurantMenuTitle": "Restaurant Menu",
+      "restaurantMenuPoint1": "Diverse dishes - from traditional classics to our chef's signature items",
+      "restaurantMenuPoint2": "Fresh salads, appetizers, hot meals, and desserts for any mood",
+      "restaurantMenuPoint3": "Weekly specials and seasonal offers",
+      "deliveryTitle": "Home Delivery",
+      "deliveryPoint1": "Convenient online ordering via website or mobile app",
+      "deliveryPoint2": "Fast and accurate delivery in eco-friendly packaging",
+      "deliveryPoint3": "Option for pre-ordering for a specific time",
+      "healthyFoodTitle": "Healthy Nutrition",
+      "healthyFoodPoint1": "Options for vegetarians and vegans",
+      "healthyFoodPoint2": "Gluten-free and lactose-free dishes",
+      "healthyFoodPoint3": "A balance of taste and health benefits",
+      "specialOffersTitle": "Special Offers",
+      "specialOffersPoint1": "Gift sets and boxes for friends and colleagues",
+      "specialOffersPoint2": "Business lunches delivered to the office",
+      "specialOffersPoint3": "Discounts for regular customers and a loyalty program",
+      "forEveryOccasionTitle": "For Every Occasion",
+      "forEveryOccasionPoint1": "Family dinners at home",
+      "forEveryOccasionPoint2": "Romantic dinners",
+      "forEveryOccasionPoint3": "Celebrations and corporate orders"
+    },
+    "contact": {
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "freeDelivery": "Free city delivery for orders over 500 ₴"
+    }
   }
 }
