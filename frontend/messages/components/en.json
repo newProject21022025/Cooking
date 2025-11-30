@@ -27,12 +27,18 @@
     "sslProtected": "SSL Protected",
     "localProduct": "Local Product"
   },
-  "PartnersList": {
+  "PartnersListFooter": {
     "title": "Locations and contact information of Partners",
     "loadingPartners": "Loading partner information...",
     "error": "Error loading data",
     "noPartners": "No partner information available.",
     "notSpecified": "Not specified"
+  },
+  "PartnersList": {
+    "title": "Our friends and like-minded partners",
+    "subtitle": "Tasty and fast! Order from our trusted partners today!",
+    "loading": "Loading partners...",
+    "error": "Error"
   },
   "PartnerProfile": {
     "socialsTitle": "Social Networks",
@@ -51,9 +57,43 @@
     "editProfile": "Edit Profile",
     "notSpecified": "Not specified"
   },
+  
   "DishCard": {
     "showIngredients": "Ingredients",
     "hideIngredients": "Hide",
     "cookButton": "Cook Now"
+  },
+  "IngredientFilter": {
+    "menuTitle": "Our Menu",
+    "menuSubtitle": "Browse our menu and choose your favorite dishes.",
+    "searchTitle": "Search by Dish Name",
+    "searchPlaceholder": "Enter the name of the dish you would like to find",
+    "searchBtn": "Find Dish",
+    "ingredientFilterTitle": "Ingredient Filter",
+    "ingredientFilterSubtitle": "Choose your exquisite dish based on available ingredients.",
+    "resultsTitle": "Filtering Results",
+    "found": "Found",
+    "loading": "Loading dishes...",
+    "noResults": "No dishes found matching the selected criteria",
+    "prev": "Previous",
+    "next": "Next",
+    "category":{
+    "М'ясо": "Meat",
+    "Риба": "Fish",
+    "Морепродукти": "Seafood",
+    "Крупи": "Cereals",
+    "Овочі": "Vegetables",
+    "Фрукти": "Fruits",
+    "Молочка": "Dairy",
+    "Зелень": "Greens",
+    "Спеції": "Spices",
+    "Інше": "Other"
+  }
+  },
+  "Header": {
+    "menu": "Menu",
+    "login": "Login",
+    "admin": "Admin",
+    "logout": "Logout"
   }
 }

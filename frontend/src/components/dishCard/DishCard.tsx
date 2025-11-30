@@ -37,7 +37,7 @@ export default function DishCard({ dish }: DishCardProps) {
   };
 
   return (
-    <div className={styles.dishCardContainer}>      
+    <div className={styles.dishCardContainer}> 
       {/* 1. БЛОК ФОТО */}
       <Link href={`/dishes/${dish.id}`} className={styles.dishPhotoLink}> 
         <img 

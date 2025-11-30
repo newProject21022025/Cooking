@@ -9,33 +9,28 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #FBF9F7;
+  background-color: #fbf9f7;
   transition: box-shadow 0.3s ease;
   overflow: hidden;
 
   &:hover {
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 }
 
 .dishCard {
-  // 2. БЛОК LINK: Цей блок повинен займати весь вертикальний простір
-  // до кнопки інгредієнтів.
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* ДОЗВОЛЯЄ РОЗТЯГУВАТИСЯ */
+  flex-grow: 1;
 }
 
-// ✅ НОВИЙ СТИЛЬ: Обгортка для фото, щоб вона була клікабельною
 .dishPhotoLink {
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  // ✅ Знімаємо flex-grow, оскільки .dishInfo тепер має його
-  // flex-grow: 1; 
 }
 
 .dishPhoto {
@@ -50,7 +45,11 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1; /* ✅ ВАЖЛИВО: дозволяє блоку з текстом розтягуватися */
-  min-height: 100px; 
+  min-height: 100px;
+
+  @media (max-width: 600px) {
+    padding: 0.75rem;
+  }
 }
 
 .dishTitle {
@@ -65,7 +64,7 @@
   color: #666;
   margin: 0;
   line-height: 1.4;
-  
+
   // Техніка для обмеження тексту кількома рядками
   display: -webkit-box;
   -webkit-line-clamp: 3; /* Обмежити 3 рядками */
@@ -79,85 +78,90 @@
 // ✅ НОВИЙ СТИЛЬ: Контейнер для кнопок, щоб розмістити їх в один ряд
 .buttonsContainer {
   position: relative; /* Для роботи z-index */
-    z-index: 20; /* Вище, ніж z-index: 10 у .ingredientsList */
-    display: flex;   
-    gap: 5px;
-    width: 100%;
-    padding: 5px;
-    
-  
+  z-index: 20; /* Вище, ніж z-index: 10 у .ingredientsList */
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  padding: 5px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 10px;
+  }
   // Якщо інгредієнти приховані, застосувати border-radius до контейнера кнопок
   .dishCardContainer:not(:has(.ingredientsList)) & {
-      .ingredientsButton:first-child { // Ліва кнопка
-          border-bottom-left-radius: 8px;
-      }
-      .ingredientsButton:last-child { // Права кнопка
-          border-bottom-right-radius: 8px;
-      }
+    .ingredientsButton:first-child {
+      // Ліва кнопка
+      border-bottom-left-radius: 8px;
+    }
+    .ingredientsButton:last-child {
+      // Права кнопка
+      border-bottom-right-radius: 8px;
+    }
   }
 }
 
 .ingredientsButton {
-flex: 1; /* ✅ ВАЖЛИВО: Забезпечує однакову ширину для обох кнопок */
-background-color: var(--btn-color-green);
-padding: 0.75rem;
-border: none;
-cursor: pointer;
-font-size: 1rem;
-font-weight: 500;
-transition: background-color 0.3s ease;
-border-radius: 5px; /* Прибираємо радіус з самої кнопки */
+  flex: 1; /* ✅ ВАЖЛИВО: Забезпечує однакову ширину для обох кнопок */
+  background-color: var(--btn-color-green);
+  padding: 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  border-radius: 5px; /* Прибираємо радіус з самої кнопки */
 
-&:hover {
-  background-color: var(--btn-color-green-hover);
-}
+  &:hover {
+    background-color: var(--btn-color-green-hover);
+  }
 }
 
 .cookButton {
-  background-color: var(--btn-color-orange); 
-  
+  background-color: var(--btn-color-orange);
+
   &:hover {
-      background-color: #ffb74d;
+    background-color: #ffb74d;
   }
 }
 
 .ingredientsList {
   // ✅ ЗМІНИ ДЛЯ ПОЗИЦІОНУВАННЯ ПОВЕРХ КОНТЕНТУ
-  position: absolute; 
+  position: absolute;
   bottom: 10px; // Розміщуємо його на нижньому краю картки
   left: 0;
   width: 100%; // Займає всю ширину картки
   height: 245px;
   z-index: 10; // Гарантуємо, що він буде вище за інший контент
-  
+
   // ✅ Стилі для зовнішнього вигляду
   padding: 0.5rem 1rem 1rem;
   background-color: #f9f9f9;
   border-top: 1px solid #eee;
-  
+
   // Додаємо нижній border-radius
   border-radius: 0 0 8px 8px;
-  
+
   padding: 0.5rem 1rem 1rem;
   background-color: #f9f9f9;
   border-top: 1px solid #eee;
-  
+
   // Додаємо нижній border-radius, коли видимі
-  border-radius: 0 0 8px 8px; 
+  border-radius: 0 0 8px 8px;
 
   h4 {
-      margin: 0 0 0.5rem;
-      color: #555;
+    margin: 0 0 0.5rem;
+    color: #555;
   }
 
   ul {
-      list-style-type: disc;
-      padding-left: 1.25rem;
-      margin: 0;
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin: 0;
   }
 
   li {
-      font-size: 0.9rem;
-      color: #666;
+    font-size: 0.9rem;
+    color: #666;
   }
 }
