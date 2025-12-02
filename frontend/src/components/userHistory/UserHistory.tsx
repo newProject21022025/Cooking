@@ -62,19 +62,17 @@ export default function UserHistory({ userId }: UserHistoryProps) {
                 <img
                   src={order.partnerPhoto}
                   // ⭐️ ЗАЛИШАЄМО ТІЛЬКИ ВАЛІДНИЙ РЯДОК З ШАБЛОНОМ
-                  alt={`Фото партнера: ${order.partnerFirstName} ${order.partnerLastName}`}
+                  alt={`Фото партнера: ${order.partnerFirstName}`}
                   className={styles.partnerPhoto}
                 />
               )}
-              <h3>
-                {order.partnerFirstName} {order.partnerLastName}
-              </h3>
+              <h3>{order.partnerFirstName}</h3>
             </div>
             {/* ⬇️ ПОЧАТОК ФРАГМЕНТА БЕЗ ПЕРЕКЛАДУ (як на фото) ⬇️ */}
             <div className={styles.orderInfo}>
               <p>
                 {/* Жорстко закодований український текст */}
-               {t("Fields.orderNumber")}: <strong>{order.orderNumber}</strong>
+                {t("Fields.orderNumber")}: <strong>{order.orderNumber}</strong>
               </p>
               <p>
                 {/* Жорстко закодований український текст */}
