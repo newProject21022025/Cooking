@@ -183,7 +183,7 @@ export default function BasketPage() {
 
             {/* Order Form */}
             <div className={styles.orderFormContainer}>
-              <OrderForm user={orderFormUser} />
+              <OrderForm user={orderFormUser} currentLocale={locale} />
             </div>
           </div>
         )}

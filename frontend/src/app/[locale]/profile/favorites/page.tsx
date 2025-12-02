@@ -11,9 +11,11 @@ import { Dish } from '@/types/dish';
 import { fetchDishesByIdsApi } from '@/api/dishesApi'; 
 // ✅ НОВИЙ ІМПОРТ: Компонент картки страви
 import DishCard from '@/components/dishCard/DishCard'; 
+import { useTranslations } from "next-intl"; 
 
 
 export default function FavoritesPage() {
+    const t = useTranslations("FavoritesPage");
     const isAuthLoading = useSelector((state: RootState) => state.auth.loading); 
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const user = useSelector((state: RootState) => state.user.data);
@@ -63,35 +65,35 @@ export default function FavoritesPage() {
     if (isAuthLoading) {
         return (
             <div className={styles.container}>
-                <h2>Улюблені страви</h2> 
-                <p>Перевірка статусу користувача...</p> 
+                <h2>{t("Title")}</h2> 
+                <p>{t("LoadingAuth")}</p> 
             </div>
         );
     }
 
     const renderContent = () => {
         if (!isAuthenticated) {
-            return <p>Будь ласка, увійдіть у профіль, щоб переглянути ваші улюблені страви.</p>;
+            return <p>{t("NotAuthenticated")}</p>; // Змінено
         }
 
         if (isLoadingData) {
-            return <p>Завантаження улюблених страв...</p>;
+            return <p>{t("LoadingData")}</p>; // Змінено
         }
 
         if (error) {
-            return <p className={styles.error}>Помилка: {error}</p>;
+            // Використовуємо t("Error.prefix") для "Помилка: "
+            return <p className={styles.error}>{t("Error.prefix")}{error}</p>; // Змінено
         }
         
         if (favoriteDishes.length === 0) {
-            return <p>На жаль, ви ще не додали жодної страви до обраного. ❤️ Почніть перегляд меню, щоб додати улюблені страви!</p>;
+            return <p>{t("EmptyList")}</p>; // Змінено
         }
 
         return (
-            // ✅ ВИКОРИСТОВУЄМО DISHCARD та СІТКУ
             <div className={styles.dishesGrid}>
                 {favoriteDishes.map((dish) => (
                     <div key={dish.id} className={styles.dishItem}> 
-                        <DishCard dish={dish} /> {/* ✅ Ваш компонент */}
+                        <DishCard dish={dish} /> 
                     </div>
                 ))}
             </div>
@@ -100,7 +102,8 @@ export default function FavoritesPage() {
 
     return (
         <div>
-            <h2>Улюблені страви ({favoriteDishes.length})</h2> 
+            {/* Використовуємо Title з динамічним підрахунком */}
+            <h2>{t("Title")} ({favoriteDishes.length})</h2> 
             {renderContent()}
         </div>
     );

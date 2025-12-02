@@ -3,6 +3,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { loginUser } from "@/api/authApi";
 import { LoginRequest, LoginResponse } from "@/types/auth";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 // 🔹 Тип користувача
 interface User {
@@ -22,43 +23,59 @@ interface AuthState {
   error: string | null;
 }
 
+const isTokenExpired = (token: string | null): boolean => {
+  if (!token) return true;
+  try {
+    const decoded: JwtPayload = jwtDecode(token);
+    // Якщо немає exp або час exp менше поточного часу (в секундах)
+    if (!decoded.exp) return false;
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
+  } catch (e) {
+    // Якщо токен невалідний або помилка декодування - вважаємо його простроченим
+    console.error("Помилка декодування токена:", e);
+    return true;
+  }
+};
+
 // 🔹 Ініціалізація з localStorage
 const tokenFromStorage =
   typeof window !== "undefined" ? localStorage.getItem("token") : null;
 const userFromStorage =
   typeof window !== "undefined" ? localStorage.getItem("user") : null;
 
+// 💡 Визначаємо валідність токена
+const isTokenValid = !isTokenExpired(tokenFromStorage);
+
 const initialState: AuthState = {
-  token: tokenFromStorage,
-  user: userFromStorage ? JSON.parse(userFromStorage) : null,
-  isAuthenticated: !!tokenFromStorage,
+  token: isTokenValid ? tokenFromStorage : null, // ⬅️ Якщо прострочений, токен = null
+  user: isTokenValid && userFromStorage ? JSON.parse(userFromStorage) : null,
+  isAuthenticated: isTokenValid, // ⬅️ Стан залежить від ВАЛІДНОСТІ
   loading: false,
   error: null,
 };
 
 // 🔹 Логін
 export const login = createAsyncThunk<
-  LoginResponse,             // тип даних при успішному логіні
-  LoginRequest,              // тип параметрів (credentials)
-  { rejectValue: string }    // тип для rejectWithValue
->(
-  "auth/login",
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await loginUser(credentials);
-      return response;
-    } catch (error: unknown) {
-      // Без any, ESLint задоволений
-      if (error instanceof Error) return rejectWithValue(error.message);
+  LoginResponse, // тип даних при успішному логіні
+  LoginRequest, // тип параметрів (credentials)
+  { rejectValue: string } // тип для rejectWithValue
+>("auth/login", async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await loginUser(credentials);
+    return response;
+  } catch (error: unknown) {
+    // Без any, ESLint задоволений
+    if (error instanceof Error) return rejectWithValue(error.message);
 
-      // Якщо axios/fetch повертає structured error
-      const err = error as { response?: { data?: { message?: string } } };
-      if (err.response?.data?.message) return rejectWithValue(err.response.data.message);
+    // Якщо axios/fetch повертає structured error
+    const err = error as { response?: { data?: { message?: string } } };
+    if (err.response?.data?.message)
+      return rejectWithValue(err.response.data.message);
 
-      return rejectWithValue("Login failed");
-    }
+    return rejectWithValue("Login failed");
   }
-);
+});
 
 // 🔹 Логаут
 export const logout = createAsyncThunk("auth/logout", async () => true);
@@ -75,17 +92,20 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
-        state.loading = false;
-        state.token = action.payload.access_token;
-        state.user = action.payload.user;
-        state.isAuthenticated = true;
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<LoginResponse>) => {
+          state.loading = false;
+          state.token = action.payload.access_token;
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("token", action.payload.access_token);
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
+          if (typeof window !== "undefined") {
+            localStorage.setItem("token", action.payload.access_token);
+            localStorage.setItem("user", JSON.stringify(action.payload.user));
+          }
         }
-      })
+      )
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Помилка входу";
@@ -105,4 +125,3 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-

@@ -28,9 +28,10 @@ interface OrderFormProps {
   phoneNumber?: string;
   deliveryAddress?: string;
  } | null;
+ currentLocale: string;
 }
 
-export default function OrderForm({ user }: OrderFormProps) {
+export default function OrderForm({ user, currentLocale }: OrderFormProps) {
  const dispatch = useDispatch<AppDispatch>();
  const router = useRouter();
  const t = useTranslations("OrderForm"); 
@@ -66,11 +67,13 @@ export default function OrderForm({ user }: OrderFormProps) {
    alert(t("alert.emptyBasket")); 
   }
 
-    
+  // 🛑 ВИПРАВЛЕННЯ: Вибір назви страви залежно від поточної локалі
+    const isUkrainian = currentLocale === "uk"; 
+  
   const orderItems = items.map((i) => ({
    partnerDishId: i.partnerDish.id,
    dishId: i.dish.id.toString(),
-   name: i.dish.name_en, 
+   name: isUkrainian ? i.dish.name_ua : i.dish.name_en, 
    photo: i.dish.photo,
    price: i.partnerDish.price,
    discount: i.partnerDish.discount,

@@ -312,5 +312,20 @@
     "ImageAlt": {
       "partnerPhoto": "Partner photo: {{firstName}} {{lastName}}"
     }
+  },
+  "FavoritesPage": {
+    "Title": "Favorite Dishes",
+    "LoadingAuth": "Checking user status...",
+    "NotAuthenticated": "Please log in to your profile to view your favorite dishes.",
+    "LoadingData": "Loading favorite dishes...",
+    "EmptyList": "Unfortunately, you haven't added any dishes to your favorites yet. ❤️ Start browsing the menu to add your favorite dishes!",
+    "Error": {
+      "loadFail": "Failed to load favorite dishes.",
+      "general": "Error",
+      "prefix": "Error: "
+    },
+    "Console": {
+      "errorLoading": "Error loading favorite dishes:"
+    }
   }
 }

@@ -40,8 +40,8 @@ const UserLoader: React.FC<UserLoaderProps> = ({ children }) => {
         if (!response.ok) {
           if (response.status === 401) {
             // 💡 Якщо токен недійсний:
-            localStorage.removeItem("token");
-            localStorage.removeItem("user"); // Очищуємо також дані користувача з localStorage
+            // localStorage.removeItem("token");
+            // localStorage.removeItem("user"); // Очищуємо також дані користувача з localStorage
             dispatch(logout()); // 💡 Викликаємо logout, щоб очистити authSlice
             dispatch(clearUser());
             return;
