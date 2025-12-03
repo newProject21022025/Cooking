@@ -327,5 +327,13 @@
     "Console": {
       "errorLoading": "Помилка завантаження обраних страв:"
     }
+  },
+  "PartnerLayout": {
+    "partnerPanelTitle": "Панель партнера",
+    "personal": "Особисте",
+    "allDishes": "Усі страви",
+    "edit": "Редагувати",
+    "orders": "Замовлення"
+    
   }
 }

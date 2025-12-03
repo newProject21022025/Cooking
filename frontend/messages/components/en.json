@@ -327,5 +327,12 @@
     "Console": {
       "errorLoading": "Error loading favorite dishes:"
     }
-  }
+  },
+  "PartnerLayout": {
+    "partnerPanelTitle": "Partner Panel",
+    "personal": "Personal",
+    "allDishes": "All Dishes",
+    "edit": "Edit",
+    "orders": "Orders"
+  } 
 }

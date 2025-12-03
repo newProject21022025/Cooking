@@ -1,5 +1,6 @@
 /* 1. Імпортуємо змінні */
-@import './variables'; 
+// @import './variables'; 
+@use './variables' as *;
 
 /* 2. Глобальні скиди та стилі */
 * {
