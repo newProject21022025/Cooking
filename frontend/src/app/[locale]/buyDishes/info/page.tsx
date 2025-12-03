@@ -27,46 +27,53 @@ import Icon_people_partner from "@/svg/Icon_partners/Icon_people_partner";
 import { useLocale, useTranslations } from "next-intl";
 
 export default function Info() {
-  const searchParams = useSearchParams(); // 🛑 ВИПРАВЛЕННЯ: Тепер partnerId беремо з Redux-стану (якщо він зберігається)
+  // =========================================
+  // 1. ВИКЛИК УСІХ HOOKS НА ВЕРХНЬОМУ РІВНІ
+  // =========================================
+  const searchParams = useSearchParams();
   const { partners, loading, error, selectedPartnerId } = useSelector(
-    (state: RootState) => state.partners // <-- ДОДАЙТЕ selectedPartnerId У СЕЛЕКТОР
+    (state: RootState) => state.partners
   );
-
   const dispatch = useDispatch<AppDispatch>();
   const locale = useLocale();
-  const t = useTranslations("PartnerInfoPage"); // 💡 Якщо ви використовуєте `partnerId` з URL, а він порожній, // то беремо ідентифікатор, збережений у Redux-стані
+  const t = useTranslations("PartnerInfoPage");
 
   const urlPartnerId = searchParams.get("partnerId");
-  const partnerIdToUse = urlPartnerId || selectedPartnerId; // Якщо ідентифікатора немає ніде, ми не можемо продовжувати
+  // 💡 Використовуємо ID з Redux або URL (якщо він є)
+  const partnerIdToUse = urlPartnerId || selectedPartnerId; // Знаходимо партнера в поточному Redux-стані
 
-  if (!partnerIdToUse) {
-    return <p className={styles.notFound}>{t("notFound")}</p>;
-  } // Тепер використовуємо partnerIdToUse
-
-  const selectedPartner = partners.find((p) => p.id === partnerIdToUse);
+  const selectedPartner = partners.find((p) => p.id === partnerIdToUse); // ========================================= // 2. useEffect (зберігаємо його на верхньому рівні) // =========================================
 
   useEffect(() => {
     // 💡 Умовна логіка знаходиться всередині хука
     if (partnerIdToUse) {
-      const selectedPartner = partners.find((p) => p.id === partnerIdToUse);
-
-      // Викликаємо завантаження лише якщо партнер відсутній або при зміні локалі,
-      // або якщо дані ще не завантажувались.
-      if (!selectedPartner) { 
+      // Викликаємо завантаження лише якщо партнер відсутній
+      // (що станеться, якщо Redux-стан скинувся при зміні локалі)
+      if (!selectedPartner) {
+        // Якщо partnerIdToUse існує, але партнера немає в 'partners', завантажуємо його.
         dispatch(fetchPartnerMenu(partnerIdToUse));
       }
     }
-  }, [dispatch, partnerIdToUse, locale, partners]); // Додаємо всі необхідні залежності
+    // 🛑 Примітка: Видаляємо `partners` з залежностей, щоб уникнути
+    // циклів, якщо `fetchPartnerMenu` змінює `partners`.
+    // selectedPartner достатньо, щоб відстежувати, чи він вже завантажений.
+  }, [dispatch, partnerIdToUse, selectedPartner, locale]); // ========================================= // 3. УМОВНИЙ РЕНДЕРИНГ (після всіх хуків) // =========================================
 
+  // 🛑 ПЕРЕНОСИМО РАННІЙ RETURN СЮДИ!
+  if (!partnerIdToUse) {
+    return <p className={styles.notFound}>{t("notFound")}</p>;
+  } // Показуємо лоадер, якщо:
+
+  // - ми знаходимося в процесі завантаження (loading = true)
+  // - або ідентифікатор є, але selectedPartner ще не завантажений
   if (loading || !selectedPartner)
     return <p className={styles.loading}>{t("loading")}</p>;
   if (error)
     return (
       <p className={styles.error}>
-        {t("error")}: {error}
+            {t("error")}: {error}  {" "}
       </p>
     );
-
   const partnerName = `${selectedPartner.firstName} ${selectedPartner.lastName}`;
 
   // 🛑 Логіка вибору опису та адреси залежно від локалі
