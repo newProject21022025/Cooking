@@ -46,13 +46,17 @@ export default function Info() {
   const selectedPartner = partners.find((p) => p.id === partnerIdToUse);
 
   useEffect(() => {
-    // partnerIdToUse гарантовано має значення (або ми вже вийшли з функції)
-    if (!selectedPartner || locale) {
-      // При зміні локалі або відсутності партнера
-      // Запускаємо завантаження
-      dispatch(fetchPartnerMenu(partnerIdToUse));
+    // 💡 Умовна логіка знаходиться всередині хука
+    if (partnerIdToUse) {
+      const selectedPartner = partners.find((p) => p.id === partnerIdToUse);
+
+      // Викликаємо завантаження лише якщо партнер відсутній або при зміні локалі,
+      // або якщо дані ще не завантажувались.
+      if (!selectedPartner) { 
+        dispatch(fetchPartnerMenu(partnerIdToUse));
+      }
     }
-  }, [dispatch, partnerIdToUse, locale, selectedPartner]); // Додано selectedPartner // 💡 Логіка рендерингу для відображення лоадера, поки дані завантажуються знову
+  }, [dispatch, partnerIdToUse, locale, partners]); // Додаємо всі необхідні залежності
 
   if (loading || !selectedPartner)
     return <p className={styles.loading}>{t("loading")}</p>;
