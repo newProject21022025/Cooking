@@ -49,14 +49,6 @@
     "sideDish": "🍚 Side dish",
     "salad": "🥗 Salad",
     "appetizer": "🍢 Appetizer"
-  },
-  "PartnerLayout": {
-    "partnerPanelTitle": "Partner Panel",
-    "personal": "Personal",
-    "allDishes": "All Dishes",
-    "edit": "Edit",
-    "orders": "Orders"
   }
- 
 
 }

@@ -5,12 +5,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import styles from "./IngredientFilter.module.scss";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-
+import Icon_shef from "@/svg/Icon_shef/Icon_shef";
+import Icon_shef_filtr from "@/svg/Icon_shef_filtr/Icon_shef_filtr";
+import Icon_search from "@/svg/Icon_search/Icon_search";
 import {
   mainCategories,
   ingredientsByCategory,
 } from "@/components/createDishForm/constants/ingredientsData";
-
 import { fetchDishesApi } from "@/api/dishesApi";
 import { Dish, Ingredient, PaginatedDishesResponse } from "@/types/dish";
 import DishCard from "@/components/dishCard/DishCard";
@@ -261,7 +262,7 @@ export default function IngredientFilter() {
     <div className={styles.page}>
       {/* HEADER */}
       <div className={styles.header}>
-        <p>svg</p>
+        <p><Icon_shef/></p>
         <div className={styles.boxTitle}>
           <h2 className={styles.filterTitle}>{t("menuTitle")}</h2>
           <p className={styles.filterSubTitle}>{t("menuSubtitle")}</p>
@@ -272,7 +273,7 @@ export default function IngredientFilter() {
       <h2 className={styles.filterTitleSearch}>{t("searchTitle")}</h2>
 
       <div className={styles.searchContainer}>
-        <p>svg</p>
+        <p><Icon_search/></p>
 
         <input
           type="text"
@@ -313,7 +314,7 @@ export default function IngredientFilter() {
       {/* INGREDIENT FILTER */}
       <div className={styles.filterHeader}>
         <div className={styles.header}>
-          <p>svg</p>
+          <p><Icon_shef_filtr/></p>
           <div className={styles.BoxTitle}>
             <h2 className={styles.filterTitle}>{t("ingredientFilterTitle")}</h2>
             <p className={styles.filterSubTitle}>
