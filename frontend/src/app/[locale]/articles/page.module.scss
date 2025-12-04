@@ -1,101 +1,137 @@
+
 .container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
-  margin-top: 100px;
   padding: 40px 20px;
-  min-height: 50vh;
-  font-family: sans-serif;
-  color: black;
+  margin-top: 100px;
+  font-family: var(--primary-font-family);
 }
 
+// =========================================
+// ЗАГОЛОВОК СТОРІНКИ
+// =========================================
 .header {
-  text-align: center;
+  text-align: left; // Заголовок та підзаголовок вирівнюємо по лівому краю
   margin-bottom: 40px;
 }
 
 .title {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 10px;
+  color: var(--dark-color); // Використовуємо CSS-змінні
+  margin-bottom: 8px;  
 }
 
 .subtitle {
-  font-size: 18px;
-  color: #666;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--dark-color); 
 }
 
-/* === СТАТЬИ В СТОЛБИК === */
-.grid {
+// =========================================
+// СІТКА ТА КАРТКА СТАТТІ
+// =========================================
+.textContent{
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  padding: 0 40px;
+  align-items: center;
+  background-color: #f5f5f570 ;  
+  border-radius: 20px 20px 0 0;
+  border-top: 4px solid orange;
 }
 
-/* === КАРТОЧКА НА ВСЮ ШИРИНУ === */
-.card {
-  width: 100%;
-  background: #fff;
+.grid {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  text-decoration: none;
-  border-radius: 12px;
-  overflow: hidden;
-  color: inherit;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transition: 0.2s ease;
+  flex-direction: column; // Статті йдуть вертикальним стовпцем
+  gap: 40px; // Відстань між картками
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+.card {
+  display: block; // Забезпечує, що Link займає повну ширину
+  text-decoration: none; 
+  width: 100%;  
+ 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;  
+  
+  &:hover {
+      transform: translateY(-3px);      
+  }
 }
 
-/* === ФОТО СЛЕВА === */
 .imageWrapper {
-  width: 280px;
-  min-width: 280px;
-  height: 180px;
+  width: 100%;
+  height: 500px; 
   overflow: hidden;
+  border-radius: 8px; 
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; 
+  display: block;
+  transition: transform 0.5s ease;
+  
+  .card:hover & {
+      transform: scale(1.03); 
+  }
 }
 
-/* === КОНТЕНТ СПРАВА === */
+// =========================================
+// КОНТЕНТ КАРТКИ (Заголовок, Опис, Кнопка)
+// =========================================
+
 .content {
-  padding: 20px;
-  display: flex;
-  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px; 
+  text-align: center; 
 }
 
 .cardTitle {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-/* === ЕСЛИ СТАТЕЙ НЕТ === */
-.empty {
-  margin-top: 40px;
-  font-size: 20px;
+.cardDescription {
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+// КНОПКА "Читати статтю"
+.readMoreButton {
+  display: inline-block;
+  padding: 10px 50px;
+  background-color: var(--btn-color-green); 
+  color: var(--white-color);
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 5px; // Кругла форма кнопки
   text-align: center;
-  color: #666;
+  text-transform: none;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none; 
+
+  &:hover {
+      background-color: var(--btn-color-green-hover);
+  }
 }
 
-/* === АДАПТИВ ДЛЯ МОБИЛКИ === */
-@media (max-width: 600px) {
-  .card {
-    flex-direction: column;
-  }
-
-  .imageWrapper {
-    width: 100%;
-    height: 200px;
-    min-width: auto;
-  }
+// =========================================
+// ПОВІДОМЛЕННЯ ПРО ВІДСУТНІСТЬ СТАТЕЙ
+// =========================================
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 18px;
+  color: var(--dark-color);
+  opacity: 0.7;
 }
