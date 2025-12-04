@@ -60,6 +60,14 @@
         "deleteError": "Error deleting user:",
         "searchPlaceholder": "Search by email",
         "search": "Search"
-      }
-      
+      },
+      "Articles": {
+        "title": "Useful Articles",        
+        "subtitle": "Inspiration for daily culinary discoveries",
+        "moreButton": "Read Article"
+      },
+      "ArticlePage": {
+        "backButton": "Back to Articles",
+        "notFound": "Article not found"
+      }      
 }

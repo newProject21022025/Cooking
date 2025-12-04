@@ -59,5 +59,14 @@
         "deleteError": "Помилка при видаленні користувача:",
         "searchPlaceholder": "Пошук за email",
         "search": "Пошук"
+      },
+      "Articles": {
+        "title": "Корисні статті",        
+        "subtitle": "Натхнення для щоденних кулінарних відкриттів",
+        "moreButton": "Читати статтю"
+      },
+      "ArticlePage": {
+        "backButton": "Назад до статей",
+        "notFound": "Статтю не знайдено"
       }
 }

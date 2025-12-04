@@ -80,7 +80,7 @@
         cursor: pointer;
         background-color: #dc2626; // red-600
         color: #fff;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease;        
   
         &:hover:not(:disabled) {
           background-color: #b91c1c; // red-700
@@ -92,7 +92,7 @@
         }
       }
     }
-  }
+  }  
   
   .loading,
   .empty {
