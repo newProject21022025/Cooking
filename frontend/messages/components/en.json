@@ -150,6 +150,10 @@
       "orderSuccess": "Order created! Number: {orderNumber}",
       "orderError": "Error creating order",
       "orderErrorGeneric": "Error creating order"
+    },
+    "modal": {
+      "title": "Thank you for your order!",
+      "subtitle": "Our manager will contact you shortly"
     }
   },
   
